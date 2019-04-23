@@ -1,0 +1,89 @@
+[{
+        "event": "start",
+        "count": 57466560
+    },
+    {
+        "event": "spoil",
+        "count": 1350622
+    },
+    {
+        "event": "youtube",
+        "count": 328367
+    },
+    {
+        "event": "share:line",
+        "count": 66659
+    },
+    {
+        "event": "profile",
+        "count": 63104
+    },
+    {
+        "event": "emo:like",
+        "count": 49617
+    },
+    {
+        "event": "bookmark:add",
+        "count": 26104
+    },
+    {
+        "event": "vote:add",
+        "count": 20473
+    },
+    {
+        "event": "share:facebook",
+        "count": 19258
+    },
+    {
+        "event": "toy",
+        "count": 12998
+    },
+    {
+        "event": "emo:haha",
+        "count": 4996
+    },
+    {
+        "event": "bookmark:del",
+        "count": 2956
+    },
+    {
+        "event": "inform",
+        "count": 2782
+    },
+    {
+        "event": "pinit",
+        "count": 2107
+    },
+    {
+        "event": "emo:scare",
+        "count": 1650
+    },
+    {
+        "event": "emo:love",
+        "count": 1408
+    },
+    {
+        "event": "emo:wow",
+        "count": 1341
+    },
+    {
+        "event": "share:twitter",
+        "count": 958
+    },
+    {
+        "event": "share:google",
+        "count": 678
+    },
+    {
+        "event": "emo:impress",
+        "count": 612
+    },
+    {
+        "event": "vote:del",
+        "count": 469
+    },
+    {
+        "event": "end",
+        "count": 6
+    }
+]
