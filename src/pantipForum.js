@@ -1,4 +1,8 @@
 // var forumSchema = new Schema({
+//     topicID: {
+//         type: String,
+//         required: true
+//     },
 //     tile: {
 //         type: String,
 //         required: true
@@ -29,5 +33,13 @@
 //     budget: {
 //         type: String,
 //         required: true
-//     }
+//     },
+//     view: {
+//         type: integer,
+//         required: true
+//     },
+//     score: {
+//         type: integer,
+//         required: true
+//     },
 // })

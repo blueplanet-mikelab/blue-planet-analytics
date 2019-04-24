@@ -7,7 +7,7 @@ var filePath = path.join(__dirname, '/json/counting/combined/tagsTotalCount.json
 let topCountries = []
 
 //TODO plus score in the country that find city
-let japanCity = ['ประเทศญี่ปุ่น','โตเกียว','โอซาก้า','คันไซ']
+let japanCity = ['ประเทศญี่ปุ่น','โตเกียว','โอซาก้า','คันไซ','เที่ยวญี่ปุ่น']
 let koreanCity = ['ประเทศเกาหลีใต้','โซล','สถานที่ท่องเที่ยวเกาหลี']
 let taiwanCity = ['ไต้หวัน','ไทเป']
 let finlandCity = ['ประเทศฟินแลนด์','เฮลซิงกิ']
@@ -34,9 +34,9 @@ fs.readFile(filePath, async function (err, data) {
             }
         })
         console.log(topCountries)
-        await db.get('TopCountries').insert({createdDate: moment(), topCountries: JSON.stringify(topCountries)})
+        await db.get('TopCountries2').insert({createdDate: moment(), topCountries: topCountries})
         .then(result => console.log(result))
-        // db.close()
+        .then(() => db.close())
     } else {
         console.log(err);
     }

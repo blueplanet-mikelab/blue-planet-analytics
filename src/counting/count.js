@@ -3,7 +3,6 @@
 const fs = require('fs');
 const zlib = require('zlib');
 const readline = require('readline');
-const mkdirp = require('mkdirp');
 const path = require('path');
 const directoryPath = path.join('/amazon_data/blueplanet');
 // const directoryPath = path.join(__dirname, 'testdata');
