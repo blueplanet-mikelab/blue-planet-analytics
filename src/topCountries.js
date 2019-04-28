@@ -1,3 +1,5 @@
+//sort top coutries from exist tags
+
 const fs = require('fs')
 const path = require('path')
 const db = require('monk')('localhost/pantip-blueplanet')
@@ -7,17 +9,17 @@ var filePath = path.join(__dirname, '/json/counting/combined/tagsTotalCount.json
 let topCountries = []
 
 //TODO plus score in the country that find city
-let japanCity = ['ประเทศญี่ปุ่น','โตเกียว','โอซาก้า','คันไซ','เที่ยวญี่ปุ่น']
-let koreanCity = ['ประเทศเกาหลีใต้','โซล','สถานที่ท่องเที่ยวเกาหลี']
-let taiwanCity = ['ไต้หวัน','ไทเป']
-let finlandCity = ['ประเทศฟินแลนด์','เฮลซิงกิ']
-let napaiCity = ['ประเทศเนปาล','กาฐมาณฑุ']
-let omanCity = ['ประเทศโอมาน','มัสกัต']
-let luxembourgCity = ['ประเทศลักเซมเบิร์ก','ลักเซมเบิร์ก']
-let maxicoCity = ['ประเทศเม็กซิโก','เม็กซิโกซิตี']
-let denmarkCity = ['ประเทศเดนมาร์ก','โคเปนเฮเกน']
-let slovakiaCity = ['ประเทศสโลวาเกีย','บราติสลาวา']
-let portugalCity = ['ประเทศโปรตุเกส','ลิสบอน']
+let japanCity = ['ประเทศญี่ปุ่น', 'โตเกียว', 'โอซาก้า', 'คันไซ', 'เที่ยวญี่ปุ่น']
+let koreanCity = ['ประเทศเกาหลีใต้', 'โซล', 'สถานที่ท่องเที่ยวเกาหลี']
+let taiwanCity = ['ไต้หวัน', 'ไทเป']
+let finlandCity = ['ประเทศฟินแลนด์', 'เฮลซิงกิ']
+let napaiCity = ['ประเทศเนปาล', 'กาฐมาณฑุ']
+let omanCity = ['ประเทศโอมาน', 'มัสกัต']
+let luxembourgCity = ['ประเทศลักเซมเบิร์ก', 'ลักเซมเบิร์ก']
+let maxicoCity = ['ประเทศเม็กซิโก', 'เม็กซิโกซิตี']
+let denmarkCity = ['ประเทศเดนมาร์ก', 'โคเปนเฮเกน']
+let slovakiaCity = ['ประเทศสโลวาเกีย', 'บราติสลาวา']
+let portugalCity = ['ประเทศโปรตุเกส', 'ลิสบอน']
 
 
 fs.readFile(filePath, async function (err, data) {
@@ -25,18 +27,44 @@ fs.readFile(filePath, async function (err, data) {
         // console.log('received data: ' + data);
         let tagsArray = JSON.parse(data)
         // console.log(tagsArray)
-        tagsArray.forEach(function(item){
+        tagsArray.forEach(function (item) {
             // console.log(item)
             let tag = item['tags']
             // console.log(tag)
-            if(tag.startsWith('ประเทศ') || tag === 'ฮ่องกง' || tag === 'ไต้หวัน' || tag === 'นครรัฐวาติกัน'){
+            if (tag.startsWith('ประเทศ') || tag === 'ฮ่องกง' || tag === 'ไต้หวัน' || tag === 'นครรัฐวาติกัน') {
                 topCountries.push(item)
             }
         })
-        console.log(topCountries)
-        await db.get('TopCountries2').insert({createdDate: moment(), topCountries: topCountries})
-        .then(result => console.log(result))
-        .then(() => db.close())
+        
+
+        // Add country in English
+        let countriesList = JSON.parse(fs.readFileSync("./json/countries-list-th-eng.json")) //Object
+        let countriesListTH = Object.keys(countriesList)
+        topCountries.forEach(function (item){
+            topCountry = item['tags']
+            
+            for(var country of countriesListTH) {
+                if(topCountry.includes(country)){
+                    item.countryEng = countriesList[country]
+                    break;
+                }
+            }
+        })
+
+        // console.log(topCountries)
+
+        let created = moment().format()
+        console.log(">>>>>>", created)
+        // Add to mongo
+        // await db.get('TopCountries3').insert({createdDate: created, topCountries: topCountries})
+        // .then(result => console.log(result))
+        // .then(() => db.close())
+
+        // JSON file
+        let foldername = './json/';
+        fs.writeFileSync(foldername + 'topCoutries.json', JSON.stringify({createdDate: created, topCountries: topCountries}))
+        console.log('success create topCoutries.json')
+    
     } else {
         console.log(err);
     }
