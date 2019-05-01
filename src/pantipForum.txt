@@ -22,7 +22,7 @@ var forumSchema = new Schema({
         type: String,
         required: true
     },
-    period: {
+    season: {
         type: String,
         required: true
     },
