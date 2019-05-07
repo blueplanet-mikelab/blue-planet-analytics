@@ -2,7 +2,8 @@
 
 const fs = require('fs')
 const path = require('path')
-const db = require('monk')('localhost/pantip-blueplanet')
+const db = require('monk')(process.env.MONGODB_URI,{authSource:'admin'})
+// const db = require('monk')('localhost/pantip-blueplanet')
 const moment = require('moment')
 var filePath = path.join(__dirname, '/json/counting/combined/tagsTotalCount.json');
 // var filePath = path.join(__dirname, '/json/tc/tcCount-blueplanet-20181112.json');
@@ -56,14 +57,14 @@ fs.readFile(filePath, async function (err, data) {
         let created = moment().format()
         console.log(">>>>>>", created)
         // Add to mongo
-        // await db.get('TopCountries3').insert({createdDate: created, topCountries: topCountries})
-        // .then(result => console.log(result))
-        // .then(() => db.close())
+        await db.get('topCountries').insert({createdDate: created, topCountries: topCountries})
+            .then(result => console.log(result))
+            .then(() => db.close())
 
-        // JSON file
-        let foldername = './json/';
-        fs.writeFileSync(foldername + 'topCoutries.json', JSON.stringify({createdDate: created, topCountries: topCountries}))
-        console.log('success create topCoutries.json')
+        // create JSON file
+        // let foldername = './json/';
+        // fs.writeFileSync(foldername + 'topCoutries.json', JSON.stringify({createdDate: created, topCountries: topCountries}))
+        // console.log('success create topCoutries.json')
     
     } else {
         console.log(err);

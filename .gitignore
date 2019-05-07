@@ -2,3 +2,5 @@ node_modules/
 src/testdata/
 src/test/
 src/json/readTopics/
+config/
+LDAjava.java
