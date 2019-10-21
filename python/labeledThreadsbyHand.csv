@@ -1,0 +1,127 @@
+Timestamp,By,TopicID,Type,Country,Duration,Season,Theme,Budget (maximum รวมค่าใช้จ่ายทั้งหมด) (ใส่ -1 ถ้ากระทู้ไม่ได้บอก)
+6/5/2019 5:25:02,Ben,30691041,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Spring (March-April-May),"Mountain, Adventure, Photography, Eating",2500
+6/5/2019 5:29:20,Ben,34214815,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Autumn (September-October-November),"Water Activities, Religion",150
+6/5/2019 5:36:04,Ben,36215277,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Spring (March-April-May),"Mountain, Adventure, Honeymoon",1360
+6/11/2019 0:48:55,Aom,38455954,Review,"""ไทย"": ""Thailand""",More than 12 Days,Spring (March-April-May),"Honeymoon, Eating",-1
+7/1/2019 23:56:31,Aom,38372332,Review,"""ไทย"": ""Thailand""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Mountain, Honeymoon, Photography",15000
+7/2/2019 0:23:20,Aom,36245659,Review,"""ไต้หวัน"": ""Taiwan""",4 to 6 Days,Spring (March-April-May),"Mountain, Religion, Backpack, Photography",11000
+7/2/2019 0:52:03,Aom,38258388,Communication,"""ไทย"": ""Thailand""",1 to 3 Days,Autumn (September-October-November),Photography,-1
+7/2/2019 21:38:20,Aom,36406091,Review,"""ไต้หวัน"": ""Taiwan""",4 to 6 Days,Spring (March-April-May),"Mountain, Religion, Backpack, Photography, Eating",10000
+7/2/2019 22:08:54,Aom,34934967,Review,"""ฮ่องกง"": ""Hongkong""",1 to 3 Days,Autumn (September-October-November),"Mountain, Religion, Photography, Eating",-1
+7/16/2019 1:39:09,Aom,36513030,Communication,"""เวียดนาม"": ""Vietnam""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Mountain, Backpack, Honeymoon, Photography",-1
+7/16/2019 2:06:03,Aom,36568103,Review,"""สิงคโปร์"": ""Singapore""",10 to 12 Days,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Religion, Backpack, Photography, Eating",35000
+7/16/2019 7:27:52,Mai,36604647,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Autumn (September-October-November),"Mountain, Water Activities, Adventure, Photography, Eating",625
+7/16/2019 9:08:58,Mai,32225058,Review,"""ไทย"": ""Thailand""",Not Define,Summer (June-July-August),Water Activities,-1
+7/16/2019 9:13:59,Mai,37362428,Review,"""ไทย"": ""Thailand""",4 to 6 Days,Winter (December-January-February),"Mountain, Adventure, Religion, Photography",-1
+7/16/2019 9:18:45,Mai,37723893,Review,"""ญี่ปุ่น"": ""Japan""",4 to 6 Days,Spring (March-April-May),"Religion, Backpack, Photography, Eating",-1
+7/16/2019 9:23:21,Mai,34998022,Review,"""ไทย"": ""Thailand""",Not Define,Winter (December-January-February),"Mountain, Adventure, Backpack, Photography",-1
+7/16/2019 9:26:02,Mai,34600830,Review,"""ไทย"": ""Thailand""",Not Define,Winter (December-January-February),"Mountain, Adventure, Photography",-1
+7/16/2019 9:28:36,Mai,37198669,Review,"""ไทย"": ""Thailand""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Backpack, Honeymoon",-1
+7/16/2019 9:32:10,Mai,37859814,Question,"""ญี่ปุ่น"": ""Japan""",Not Define,Spring (March-April-May),"Backpack, Photography",-1
+7/16/2019 9:34:41,Mai,37063122,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Adventure, Backpack, Photography",2855
+7/16/2019 10:20:08,Aom,38171139,Review,"""ไทย"": ""Thailand"", ""มาเลเซีย"": ""Malaysia"", ""สิงคโปร์"": ""Singapore""",1 to 3 Days,Autumn (September-October-November),"Photography, Eating",100000
+7/17/2019 0:29:46,Aom,35476416,Review,"""ไทย"": ""Thailand""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Mountain, Photography",-1
+7/17/2019 0:35:37,Aom,34755893,Review,"""เวียดนาม"": ""Vietnam""",4 to 6 Days,Winter (December-January-February),"Mountain, Honeymoon, Photography, Eating",12000
+7/17/2019 0:39:41,Aom,37205167,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Winter (December-January-February),"Water Activities, Backpack, Honeymoon, Photography",5000
+7/17/2019 21:50:11,Aom,33738228,Review,"""ไทย"": ""Thailand""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Religion, Photography",-1
+7/17/2019 21:54:33,Aom,38068111,Review,"""ไทย"": ""Thailand""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Mountain, Religion, Honeymoon, Photography, Eating",-1
+7/17/2019 22:14:57,Aom,38297135,Communication,"""ไทย"": ""Thailand""",1 to 3 Days,Autumn (September-October-November),Eating,-1
+7/17/2019 22:23:35,Aom,38361198,Review,"""ไทย"": ""Thailand""",Not Define,Winter (December-January-February),"Religion, Photography, Eating",-1
+7/17/2019 22:27:39,Aom,35044128,Review,"""ไทย"": ""Thailand""",1 to 3 Days,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Religion, Photography",300
+7/17/2019 22:31:38,Aom,35525644,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Summer (June-July-August),"Mountain, Backpack, Photography",400
+7/17/2019 22:47:19,Aom,36162009,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Spring (March-April-May),"Water Activities, Photography, Eating",-1
+7/17/2019 23:01:07,Aom,33978116,Review,"""ไต้หวัน"": ""Taiwan""",4 to 6 Days,Spring (March-April-May),"Mountain, Religion, Photography, Eating",13099
+7/17/2019 23:11:55,Aom,38394894,Review,"""ไทย"": ""Thailand""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)",Eating,-1
+7/18/2019 13:07:52,Aom,36160751,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Not Define,"Mountain, Photography",-1
+7/18/2019 21:13:17,Aom,35724927,Review,"""ไทย"": ""Thailand""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Mountain, Photography, Eating",-1
+7/18/2019 21:21:50,Aom,36690494,Review,"""เวียดนาม"": ""Vietnam""",1 to 3 Days,Winter (December-January-February),"Mountain, Photography",7500
+7/22/2019 5:50:02,Mai,37307621,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Winter (December-January-February),Water Activities,-1
+7/22/2019 5:57:14,Mai,35009559,Review,"""ลาว"": ""Laos""",1 to 3 Days,Spring (March-April-May),"Water Activities, Religion, Backpack, Eating",-1
+7/22/2019 7:02:33,Mai,35675480,Review,"""ญี่ปุ่น"": ""Japan""",1 to 3 Days,Autumn (September-October-November),"Adventure, Backpack, Photography, Eating",4000
+7/24/2019 0:32:00,Aom,37956320,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Mountain, Religion, Photography, Eating",-1
+7/24/2019 0:39:33,Aom,38267984,Communication,"""จีน"": ""China""",Not Define,Winter (December-January-February),"Mountain, Photography",-1
+7/24/2019 0:53:37,Aom,35620594,Question,"""เกาหลีใต้"": ""South Korea""",Not Define,Not Define,Photography,-1
+7/24/2019 1:00:08,Aom,33351479,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Not Define,"Water Activities, Backpack, Photography",-1
+7/24/2019 1:03:14,Aom,37523289,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Spring (March-April-May),"Mountain, Water Activities, Religion, Photography, Eating",3000
+7/24/2019 1:11:31,Aom,34113419,Review,"""ไทย"": ""Thailand""",1 to 3 Days,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Mountain, Backpack, Photography, Eating",3700
+7/24/2019 1:15:20,Aom,35651432,Review,"""ญี่ปุ่น"": ""Japan""",1 to 3 Days,Autumn (September-October-November),"Mountain, Religion, Photography",1400
+7/24/2019 1:19:02,Aom,37272322,Review,"""ไทย"": ""Thailand""",4 to 6 Days,Winter (December-January-February),"Mountain, Religion, Photography, Eating",-1
+7/25/2019 10:24:30,Ben,37331561,Review,"""พม่า"": ""Myanmar""",1 to 3 Days,Winter (December-January-February),Religion,14385
+7/25/2019 10:28:36,Ben,35871049,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Winter (December-January-February),"Mountain, Religion, Photography, Eating",3500
+7/25/2019 10:31:38,Ben,37752470,Review,"""พม่า"": ""Myanmar""",1 to 3 Days,Not Define,Religion,7500
+7/25/2019 10:36:52,Ben,33177773,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Water Activities, Adventure, Photography",1000
+7/25/2019 10:39:59,Ben,37430405,Review,"""ญี่ปุ่น"": ""Japan""",4 to 6 Days,Winter (December-January-February),"Honeymoon, Photography, Eating",33000
+7/25/2019 10:42:09,Ben,36714939,Review,"""เวียดนาม"": ""Vietnam""",Not Define,Not Define,"Photography, Eating",-1
+7/25/2019 10:44:39,Ben,37882184,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,Adventure,200
+7/25/2019 10:49:34,Ben,36237113,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Water Activities, Photography, Eating",6850
+7/25/2019 10:50:49,Ben,31016036,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,Religion,-1
+7/25/2019 10:59:53,Ben,35980528,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Mountain, Adventure, Photography",2580
+7/25/2019 11:05:46,Ben,35783941,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Mountain, Photography",800
+7/25/2019 11:12:07,Ben,35147712,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Photography, Eating",-1
+7/25/2019 11:14:48,Ben,31895260,Question,"""ไทย"": ""Thailand""",Not Define,Not Define,Eating,-1
+7/25/2019 11:29:58,Ben,37389668,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Water Activities, Photography",2500
+7/25/2019 11:35:46,Ben,38509692,Review,"""เกาหลีใต้"": ""South Korea""",4 to 6 Days,"Not Define, Autumn (September-October-November), Winter (December-January-February)","Photography, Eating",26000
+7/31/2019 5:54:57,Mai,33642217,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Spring (March-April-May),"Water Activities, Adventure, Photography, Eating",6900
+7/31/2019 6:03:25,Mai,38297038,Review,"""เวียดนาม"": ""Vietnam""",1 to 3 Days,Autumn (September-October-November),"Mountain, Backpack, Photography, Eating",3000
+7/31/2019 6:26:14,Mai,36440265,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Religion, Backpack, Photography",-1
+7/31/2019 6:36:34,Mai,37289234,Review,"""อินโดนีเซีย"": ""Indonesia""",Not Define,Winter (December-January-February),"Mountain, Water Activities, Adventure, Religion, Backpack, Photography, Eating",14023
+7/31/2019 6:38:40,Mai,36873870,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Mountain, Water Activities, Adventure, Backpack, Photography",-1
+7/31/2019 6:42:04,Mai,35089767,Review,"""ฮ่องกง"": ""Hongkong""",Not Define,Not Define,Religion,-1
+7/31/2019 6:45:20,Mai,34732985,Review,"""ญี่ปุ่น"": ""Japan""",1 to 3 Days,Winter (December-January-February),"Mountain, Backpack, Photography",-1
+7/31/2019 6:49:31,Mai,31216866,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Backpack, Photography",-1
+7/31/2019 6:51:17,Mai,31566664,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Mountain, Photography",-1
+7/31/2019 6:55:52,Mai,37889517,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Photography, Eating",-1
+7/31/2019 7:01:26,Mai,36868903,Review,"""จีน"": ""China""",Not Define,Not Define,"Backpack, Photography, Eating",-1
+7/31/2019 7:11:06,Mai,35640258,Review,"""ลาว"": ""Laos""",1 to 3 Days,Autumn (September-October-November),"Mountain, Water Activities, Adventure, Backpack",2859
+7/31/2019 7:15:45,Mai,37039696,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Autumn (September-October-November),"Backpack, Photography, Eating",1415
+7/31/2019 7:36:44,Mai,36405851,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,Spring (March-April-May),"Photography, Eating",-1
+8/1/2019 15:53:01,Aom,36410691,Review,"""เวียดนาม"": ""Vietnam""",1 to 3 Days,Spring (March-April-May),"Mountain, Photography",-1
+8/1/2019 16:05:33,Aom,37414361,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Winter (December-January-February),"Mountain, Religion, Photography, Eating",5500
+8/1/2019 16:11:01,Aom,31176438,Communication,"""ไทย"": ""Thailand""",1 to 3 Days,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Water Activities, Religion, Photography",-1
+8/1/2019 16:16:51,Aom,32447263,Communication,"""ไทย"": ""Thailand""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Water Activities, Religion, Photography",-1
+8/1/2019 16:31:22,Aom,38602203,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Spring (March-April-May),"Water Activities, Photography, Eating",7000
+8/2/2019 15:26:12,Aom,32999895,Review,"""ญี่ปุ่น"": ""Japan""",1 to 3 Days,Autumn (September-October-November),"Mountain, Photography, Eating",-1
+8/2/2019 15:28:17,Aom,35076280,Communication,"""ไทย"": ""Thailand""",1 to 3 Days,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Water Activities, Eating",1500
+8/6/2019 7:01:32,Mai,36131645,Review,"""ญี่ปุ่น"": ""Japan""",1 to 3 Days,Winter (December-January-February),"Mountain, Adventure, Photography, Eating",38500
+8/6/2019 7:24:35,Mai,38311757,Review,"""อินโดนีเซีย"": ""Indonesia""",4 to 6 Days,Not Define,"Adventure, Religion, Photography, Eating",13616
+8/13/2019 5:09:07,Aom,33395992,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,Religion,-1
+8/13/2019 5:14:44,Aom,38191948,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,Eating,-1
+8/13/2019 6:27:32,Aom,37318314,Communication,"""ญี่ปุ่น"": ""Japan""",4 to 6 Days,Winter (December-January-February),"Photography, Eating",15000
+8/13/2019 6:31:27,Aom,36072564,Review,"""ฮ่องกง"": ""Hongkong""",4 to 6 Days,Winter (December-January-February),"Religion, Photography, Eating",12000
+8/13/2019 8:09:17,Aom,37956611,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,"Mountain, Religion, Eating",-1
+8/13/2019 8:31:30,Aom,31174470,Communication,"""ไทย"": ""Thailand""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)",Photography,-1
+8/13/2019 8:41:18,Aom,34766752,Review,"""ฮ่องกง"": ""Hongkong""",Not Define,Not Define,Eating,-1
+8/13/2019 8:49:37,Aom,37593221,Review,"""ตุรกี"": ""Turkey""",7 to 9 Days,Spring (March-April-May),"Mountain, Adventure, Photography",37854
+8/13/2019 9:06:09,Aom,35671495,Review,"""ไทย"": ""Thailand""",4 to 6 Days,"Spring (March-April-May), Autumn (September-October-November), Winter (December-January-February)",Mountain,-1
+8/13/2019 10:23:50,Aom,37243891,Review,"""ไทย"": ""Thailand""",4 to 6 Days,Winter (December-January-February),"Water Activities, Religion, Photography",-1
+8/13/2019 10:26:29,Aom,32981674,Communication,"""ไทย"": ""Thailand""",Not Define,Not Define,"Mountain, Religion, Photography",-1
+8/13/2019 12:13:16,Aom,30305751,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Not Define,Water Activities,2837
+8/14/2019 5:19:44,Aom,34096916,Review,"""ไทย"": ""Thailand""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)",Eating,-1
+8/14/2019 5:21:50,Aom,33297576,Review,"""ไทย"": ""Thailand""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)",Eating,-1
+8/14/2019 5:33:18,Aom,35299215,Review,"""ญี่ปุ่น"": ""Japan""",4 to 6 Days,Spring (March-April-May),"Mountain, Religion, Photography, Eating",20000
+8/14/2019 5:44:07,Aom,33458694,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Spring (March-April-May),"Water Activities, Photography, Eating",11081
+8/14/2019 6:04:32,Aom,35073967,Review,"""เวียดนาม"": ""Vietnam""",Not Define,Not Define,Souvenir,-1
+8/14/2019 6:19:19,Aom,35189164,Review,"""ไทย"": ""Thailand""",Not Define,Spring (March-April-May),"Mountain, Photography",-1
+8/14/2019 6:25:44,Aom,36110028,Question,"""ไทย"": ""Thailand""",1 to 3 Days,Winter (December-January-February),"Mountain, Photography",-1
+8/14/2019 6:29:46,Aom,36324285,Review,"""ไทย"": ""Thailand""",Not Define,Not Define,Mountain,-1
+8/14/2019 8:12:43,Aom,38258097,Review,"""ไทย"": ""Thailand""",1 to 3 Days,"Autumn (September-October-November), Winter (December-January-February)",Photography,-1
+8/15/2019 6:25:32,Aom,36723354,Review,"""ไทย"": ""Thailand""",1 to 3 Days,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)",Transportation,759
+8/15/2019 6:43:19,Aom,35779215,Review,"""ไทย"": ""Thailand""",1 to 3 Days,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)",Zoo,620
+8/15/2019 6:44:10,Aom,36723354,Review,"""ไทย"": ""Thailand""",1 to 3 Days,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)",Transportation,759
+8/15/2019 13:22:58,Aom,35870061,Review,"""ญี่ปุ่น"": ""Japan""",10 to 12 Days,Winter (December-January-February),"Backpack, Honeymoon",41000
+8/15/2019 13:31:34,Aom,38429703,Review,"""สหรัฐอเมริกา"": ""United States of America""",Not Define,Winter (December-January-February),Event,-1
+8/15/2019 13:33:36,Aom,37263229,Review,"""ไทย"": ""Thailand""",1 to 3 Days,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Mountain, Religion",-1
+8/15/2019 13:41:01,Aom,37279318,Review,"""ไต้หวัน"": ""Taiwan""",Not Define,Winter (December-January-February),Eating,-1
+8/15/2019 13:47:00,Aom,36360083,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Spring (March-April-May),"Mountain, Water Activities, Religion, Eating",-1
+8/15/2019 13:50:46,Aom,35766867,Review,"""ไทย"": ""Thailand""",1 to 3 Days,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Mountain, Eating",1578
+8/16/2019 6:13:08,Aom,37566673,News,"""ไต้หวัน"": ""Taiwan""",4 to 6 Days,Spring (March-April-May),"Mountain, Religion, Photography, Eating",-1
+8/16/2019 6:39:46,Aom,38434932,Review,"""ไทย"": ""Thailand""",4 to 6 Days,Winter (December-January-February),"Water Activities, Eating",8500
+8/16/2019 8:10:19,Aom,37708160,Communication,"""ฮ่องกง"": ""Hongkong""",4 to 6 Days,Not Define,"Religion, Photography, Eating",-1
+8/16/2019 8:24:47,Aom,35850673,Review,"""ญี่ปุ่น"": ""Japan""",7 to 9 Days,Not Define,"Religion, Photography, Eating",-1
+8/16/2019 8:40:06,Aom,36781921,News,"""เวียดนาม"": ""Vietnam""",4 to 6 Days,Summer (June-July-August),"Mountain, Photography",5000
+8/16/2019 8:46:10,Aom,35930335,Review,"""ไทย"": ""Thailand""",1 to 3 Days,Winter (December-January-February),Transportation,544
+8/16/2019 8:54:42,Aom,37054760,Review,"""จีน"": ""China""",4 to 6 Days,Not Define,"Religion, Eating, Photography",-1
+8/16/2019 9:18:13,Aom,36233295,Review,"""อินโดนีเซีย"": ""Indonesia""",4 to 6 Days,Not Define,"Mountain, Water Activities, Photography, Eating",18000
+8/16/2019 9:23:24,Aom,32969433,Review,"""ญี่ปุ่น"": ""Japan""",4 to 6 Days,Winter (December-January-February),"Religion, Photography, Eating",-1
+8/16/2019 9:24:44,Aom,38103291,Review,"""ไทย"": ""Thailand""",Not Define,"Spring (March-April-May), Summer (June-July-August), Autumn (September-October-November), Winter (December-January-February)","Mountain, Water Activities, Adventure, Photography, Eating",-1
+8/16/2019 13:03:30,Aom,37791351,Review,"""ตุรกี"": ""Turkey""",More than 12 Days,Spring (March-April-May),"Mountain, Water Activities, Adventure, Photography, Eating",35000
