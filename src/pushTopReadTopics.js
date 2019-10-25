@@ -1,4 +1,4 @@
-const db = require('monk')('mikestd:mikestd1q2w3e4r@mars.mikelab.net:27017/blueplanet_project', { authSource: 'admin' })
+const db = require('monk')(process.env.MONGODB_URI, { authSource: 'admin' })
 const fs = require('fs')
 
 const items = JSON.parse(fs.readFileSync('./json/readTopics/combined/totalReadTopicsModel.json'))
