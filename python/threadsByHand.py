@@ -65,10 +65,11 @@ def cleanContent(rawContent):
     content = re.sub(r'Ý', 'Y', content) #14 replace extended chars y
     content = re.sub(r'ñ|Ñ', 'n', content) #15 replace extended chars n
     content = re.sub(r'ß', 's', content) #16 replace extended chars n
-    spechar = r'[^a-zA-Z0-9ก-๙\.\,\s]+|\.{2,}|\xa0+|\d+[\.\,][^\d]+'
+    # spechar = r'[^a-zA-Z0-9ก-๙\.\,\s]+|\.{2,}|\xa0+|\d+[\.\,][^\d]+'
+    spechar = r'[^a-zA-Zก-๙\s]+|\xa0+|ๆ' #! take numbers out
     content = re.sub(spechar, ' ', content) #17 remove special character
     #18 remove duplicate characters and spaces
-    dupGroup = re.finditer(r'\s{2,}|([ก-๙Xx])\1{2,}', content)
+    dupGroup = re.finditer(r'\s{2,}|([ก-๙a-zA-Z])\1{2,}', content)
     dupArray = [[c.start(), c.end()] for c in dupGroup]
     # print(dupArray)
     newContent = ""
@@ -88,13 +89,11 @@ def computeTF( freqDictList):
     for idx, freqDict in enumerate(freqDictList):
         tid = freqDict["topic_id"]
         print(idx, "----", tid)
-        TF_scores = []
+        TF_scores = {}
         for keydict in freqDict["words_sum"]:
             key = keydict['word']
-            TF_scores.append({
-                'score': keydict['count']/ freqDict["tokens_length"],
-                'key' : key
-            })
+            TF_scores[key] =  keydict['count']/ freqDict["tokens_length"]
+        
         TF_scores_docs.append({
             'topic_id': tid,
             'tf_scores': TF_scores
@@ -111,7 +110,7 @@ def computeIDF(freqDictList, fname='IDFScoreByWord.json'):
     IDF_scores_docs = []
     for idx, freqDict in enumerate(freqDictList):
         print(idx, "----", freqDict['topic_id'])
-        IDF_scores = []
+        IDF_scores = {}
         for keys in freqDict["words_sum"]:
             currentWord = keys['word']
             if currentWord in helperDict.keys():
@@ -121,13 +120,11 @@ def computeIDF(freqDictList, fname='IDFScoreByWord.json'):
                 for tempDict in freqDictList:
                     for k in tempDict["words_sum"]:
                         if k['word'] == currentWord:
-                            count += k['count']
+                            count += 1
                 score = math.log(len(freqDictList)/count)
                 helperDict[currentWord] = score
-            IDF_scores.append({
-                'score': score,
-                'key' : currentWord
-            })
+            IDF_scores[currentWord] = score
+
         IDF_scores_docs.append({
             'topic_id': freqDict["topic_id"],
             'idf_scores': IDF_scores
@@ -146,17 +143,14 @@ def computeTFIDF(TF_scores, IDF_scores):
         for tf_topic in TF_scores:
             if idf_topic['topic_id'] == tf_topic['topic_id']:
                 print(idx, "----", idf_topic['topic_id'])
-                TFIDF_scores = []
+                TFIDF_scores = {}
                 # each key in topics
-                for tf in tf_topic['tf_scores']:
-                    for idf in idf_topic['idf_scores']:
-                        key = idf['key']
-                        if tf['key'] == key:
-                            TFIDF_scores.append({
-                                'score': idf['score'] * tf['score'],
-                                'key': key
-                            })
-                TFIDF_scores_docs.append({'topic_id':idf_topic['topic_id'], 'tfidf_scores':TFIDF_scores})
+                for tfkey, tfscore in tf_topic['tf_scores'].items():
+                    for idfkey, idfscore in idf_topic['idf_scores'].items():
+                        if tfkey == idfkey:
+                            TFIDF_scores[tfkey] = idfscore * tfscore
+                sortedDict = { k : v for k, v in sorted(TFIDF_scores.items(), key=lambda x: x[1], reverse=True)}
+                TFIDF_scores_docs.append({'topic_id':idf_topic['topic_id'], 'tfidf_scores':sortedDict})
                 break # if topic match continute to next topic
 
     return TFIDF_scores_docs
@@ -238,7 +232,7 @@ if __name__ == "__main__":
         rawContent = title + desc + ' '.join(comments)
 
         #! 2. tokenize+wordsummary
-        rawContent = re.sub(r'<[^<]+/>|\\.{1}|&[^&]+;|\n|\r\n','', rawContent) # to msg_clean
+        rawContent = re.sub(r'<[^<]+/>|<[^<]+>|\\.{1}|&[^&]+;|\n|\r\n','', rawContent) # to msg_clean
         # removeAndWriteFile('test.txt',cleanContent(rawContent),'txt')
         wordsSum, tokensLength = createWordsSummary(cleanContent(rawContent), getStopWords("./stopwords_more_th.txt"))
         # freqDictList.append({"topic_id": topicID, "words_sum": wordsSum, "tokens_length": tokensLength, "created_at":datetime.datetime.now()})
@@ -260,61 +254,93 @@ if __name__ == "__main__":
     print("----------TF_IDF-----------")
     tfidfScores = computeTFIDF(tfScores,idfScores)
     removeAndWriteFile('2-tfidfScores.json', tfidfScores)
+    
+    # for tfidfThread in tfidfScores:
+    #     tfidfDict = tfidfThread['tfidf_scores']
+    #     if len(tfidfDict) > 100:
+    #         for key, score in list(tfidfDict.items()):
+    #             # print(key, ":", score)
+    #             if score < 0.0035 or score > 0.02:
+    #                 # print("del:", key)
+    #                 del tfidfDict[key]
+    #         tfidfThread['tfidf_scores'] = { k : v for k, v in sorted(tfidfDict.items(), key=lambda x: x[1], reverse=True)}
+    # removeAndWriteFile('2-tfidfScores-valcut.json', tfidfScores)
+
+    for tfidfThread in tfidfScores:
+        tfidfDict = tfidfThread['tfidf_scores']
+        if len(tfidfDict) > 100:
+            sortedDict = { k : v for k, v in sorted(tfidfDict.items(), key=lambda x: x[1], reverse=True)}
+            # headcut = int(0.1*len(sortedDict))
+            headcut = 0
+            tailcut = len(sortedDict) - int(0.46*len(sortedDict))
+            prevVal = -1
+            for idx, key in enumerate(list(sortedDict)):
+                if prevVal == -1:
+                    prevVal = sortedDict[key]
+
+                if (idx < headcut or idx > tailcut) and sortedDict[key] != prevVal:
+                    del sortedDict[key]
+                else:
+                    prevVal = sortedDict[key]
+
+            tfidfThread['tfidf_scores'] = sortedDict
+    removeAndWriteFile('2-tfidfScores-percent.json', tfidfScores)
+
     # result = tfidf_col.insert_many(tfidfScores)
     # print("result--",result)
 
-    #! 5. Vector calculation
-    print("----------vector creation-----------")
-    dfScoresfname = "keysDFScores.json"
-    if os.path.isfile(dfScoresfname):
-        with open('./'+dfScoresfname,'r', encoding="utf8") as json_file:
-            dfScoresDict = json.load(json_file)
-    else:
-        dfScoresDict = computeDF(tfidfScores, fname=dfScoresfname)
+    # #! 5. Vector calculation
+    # print("----------vector creation-----------")
+    # dfScoresfname = "keysDFScores.json"
+    # if os.path.isfile(dfScoresfname):
+    #     with open('./'+dfScoresfname,'r', encoding="utf8") as json_file:
+    #         dfScoresDict = json.load(json_file)
+    # else:
+    #     dfScoresDict = computeDF(tfidfScores, fname=dfScoresfname)
     
-    #! 5.2 Words selection
-    themesVector = []
-    # at least 1 theme and no more than 4 per thread -> only count more than 5 per theme
-    for i, thread in enumerate(threadsList):
-        topicID = thread["TopicID"]
-        tokens = [[key['key'] for key in tfidf["tfidf_scores"]] for tfidf in tfidfScores if tfidf["topic_id"]==topicID][0]
+    # #! 5.2 Words selection
+    # themesVector = []
+    # # at least 1 theme and no more than 4 per thread -> only count more than 5 per theme
+    # for i, thread in enumerate(threadsList):
+    #     topicID = thread["TopicID"]
+    #     tokens = [[key['key'] for key in tfidf["tfidf_scores"]] for tfidf in tfidfScores if tfidf["topic_id"]==topicID][0]
         
-        minn = 0.0006
-        wordsBag = [[key['key'] for key in tfidf["tfidf_scores"] if key['score'] > minn] for tfidf in tfidfScores if tfidf["topic_id"]==topicID][0]
-        print(i,"--",topicID,"--", len(tokens), "->", len(wordsBag),"--m:", minn)
-        # print(wordsBag)
+    #     minn = 0.0006
+    #     wordsBag = [[key['key'] for key in tfidf["tfidf_scores"] if key['score'] > minn] for tfidf in tfidfScores if tfidf["topic_id"]==topicID][0]
+    #     print(i,"--",topicID,"--", len(tokens), "->", len(wordsBag),"--m:", minn)
+    #     # print(wordsBag)
         
-        threadsThemeList = thread["Theme"].replace(" ","").split(",") #string
-        for idx, theme in enumerate(threadsThemeList):
-            if not [vec for vec in themesVector if vec['type']==theme]: #create new theme
-                themesVector.append({'type':theme, 'topic_ids':[topicID], 'word_vectors':{}})
+    #     threadsThemeList = thread["Theme"].replace(" ","").split(",") #string
+    #     for idx, theme in enumerate(threadsThemeList):
+    #         if not [vec for vec in themesVector if vec['type']==theme]: #create new theme
+    #             themesVector.append({'type':theme, 'topic_ids':[topicID], 'word_vectors':{}})
             
-            for vector in themesVector: # select which theme to add
-            # print("vector theme:",vector['type'])
-                if vector['type'] == theme:
-                    vector["topic_ids"].append(topicID)
+    #         for vector in themesVector: # select which theme to add
+    #         # print("vector theme:",vector['type'])
+    #             if vector['type'] == theme:
+    #                 vector["topic_ids"].append(topicID)
                 
-                    for word in wordsBag:
-                        # print("word:",word)
-                        if word not in vector['word_vectors'].keys():
-                            # print("word not found in key")
-                            vector['word_vectors'][word] = dfScoresDict[word] if word in dfScoresDict.keys() else 0
-                        # if word has already in 'word_vectors', it don't need to do anything.
-                    break # there is only one theme vector per theme
-        # break # 1 thread
+    #                 for word in wordsBag:
+    #                     # print("word:",word)
+    #                     if word not in vector['word_vectors'].keys():
+    #                         # print("word not found in key")
+    #                         vector['word_vectors'][word] = dfScoresDict[word] if word in dfScoresDict.keys() else 0
+    #                     # if word has already in 'word_vectors', it don't need to do anything.
+    #                 break # there is only one theme vector per theme
+    #     # break # 1 thread
     
-    removeAndWriteFile('3-themesVector'+minn+'.json',themesVector,'json')
+    # removeAndWriteFile('3-themesVector'+minn+'.json',themesVector,'json')
 
-    #! 5.3 Sorted
-    for vector in themesVector:
-        print("----theme:", vector['type'])
-        print("before sorted:", len(vector["word_vectors"]))
-        vector["word_vectors"] = [{'word':k,'val': v} for k, v in sorted(vector["word_vectors"].items(), key=lambda x: x[1], reverse=True)]
-        print("after sorted:", len(vector["word_vectors"]))
-        # vector["created_at"] = datetime.datetime.now()
+    # #! 5.3 Sorted
+    # for vector in themesVector:
+    #     print("----theme:", vector['type'])
+    #     print("before sorted:", len(vector["word_vectors"]))
+    #     vector["word_vectors"] = [{'word':k,'val': v} for k, v in sorted(vector["word_vectors"].items(), key=lambda x: x[1], reverse=True)]
+    #     print("after sorted:", len(vector["word_vectors"]))
+    #     # vector["created_at"] = datetime.datetime.now()
    
-    fname = '4-sortedThemesVector.json'
-    removeAndWriteFile(fname,themesVector,'json')
+    # fname = '4-sortedThemesVector.json'
+    # removeAndWriteFile(fname,themesVector,'json')
 
     # vector_col = db["vector_theme"]
     # vector_col.drop()
