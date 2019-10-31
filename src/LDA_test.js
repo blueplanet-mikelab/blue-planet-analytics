@@ -15,7 +15,7 @@ const fetchDetail = async () => {
 
     for (i = 0; i < 50; i++) {
         let topicID = topicIDList[i].topicID
-        console.log(topicID, ' fetching')
+        console.log(i, topicID, ' fetching')
         await axios.get('http://ptdev03.mikelab.net/kratooc/' + topicID)
             .then(response => {
                 const detail = response.data._source
@@ -63,8 +63,9 @@ function calculateLDA() {
             console.log(term.term + ' (' + term.probability + '%)');
         }
 
-        console.log('sum prop of this topic: ',sumEachProp);
+        console.log('sum prop of this topic: ', sumEachProp);
+        console.log('')
     }
-    console.log('sum all prop = ' ,sum)
+    console.log('sum all prop = ', sum)
 }
 

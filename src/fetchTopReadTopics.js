@@ -136,14 +136,14 @@ function findSeason(str) {
 // findTheme from tags
 function findTheme(tags) {
     const themes = [
-        ['Advanture', 'สวนสนุก'],
+        ['Adventure', 'สวนสนุก'],
         ['Water Activities', 'ทะเล', 'สวนน้ำ', 'สวนสยาม', 'ดำน้ำ', 'น้ำตก', 'ว่ายน้ำ', 'ล่องแก่ง'],
-        ['Religion', 'ศาสนา', 'วัด'], // หน้าวัด ห้าม ห
+        ['Religion', 'ศาสนา', 'วัด','ไหว้พระ','บุญ'], // หน้าวัด ห้าม ห
         ['Mountain', 'เขา', 'ภู', 'เดินป่า'] // start with ภู
         ['Backpack'],
         ['Honeymoon', 'ฮันนีมูน'],
         ['Photography', 'ภาพถ่าย', 'ถ่ายรูป'],
-        ['Eatting', 'อาหาร', 'ร้านอาหาร', 'ขนม', 'ของหวาน'] // อาหาร แค่คำว่า match
+        ['Eating', 'อาหาร', 'ร้านอาหาร', 'ขนม', 'ของหวาน'] // อาหาร แค่คำว่า match
     ]
     console.log(themes)
 }
