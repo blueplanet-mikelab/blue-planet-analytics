@@ -155,6 +155,56 @@ def computeTFIDF(TF_scores, IDF_scores):
 
     return TFIDF_scores_docs
 
+
+# tf = (frequency of the term in the doc/total number of terms in the doc)
+# idf = ln(total number of dics/number of docs with term in it)
+def calculateFullTFIDF(freqDictList, fname='IDFScoreByWord.json'):
+    idfDict = {} # keep idf score which have already computed
+    if os.path.isfile(fname):
+        with open('./'+fname,'r', encoding="utf8") as json_file:
+            idfDict = json.load(json_file)
+
+    Scores_docs = []
+    for idx, freqDict in enumerate(freqDictList):
+        tid = freqDict["topic_id"]
+        print(idx, "----", tid)
+        scores = []
+        for keys in freqDict["words_sum"]:
+            currentWord = keys['word']
+            tf =  keys['count']/ freqDict["tokens_length"]
+            
+            if currentWord in idfDict.keys():
+                idf = idfDict[currentWord]
+            else:
+                count = 0
+                for tempDict in freqDictList:
+                    for k in tempDict["words_sum"]:
+                        if k['word'] == currentWord:
+                            count += 1
+                idf = math.log(len(freqDictList)/count)
+                idfDict[currentWord] = idf
+
+            tfidf = tf*idf
+
+            scores.append({
+                'key': currentWord,
+                'tf': tf,
+                'idf': idf,
+                'tfidf': tfidf
+            })
+
+        sorted_scores = sorted(scores,key=lambda x:x['tfidf'],reverse=True)
+        Scores_docs.append({
+            'topic_id': tid,
+            'scores': sorted_scores
+        })
+
+    # write output txt file
+    with open('./'+fname, 'w', encoding="utf8") as outfile:
+        json.dump(idfDict, outfile, ensure_ascii=False, indent=4)
+    
+    return Scores_docs
+
 def computeDF(tfidfList, fname):
     DF_scores_docs = {}
     for idx, tfidfTopic in enumerate(tfidfList):
@@ -222,18 +272,13 @@ if __name__ == "__main__":
 
         #! 1. retrieve title+destription+comment
         title = threadData['_source']['title']
-        # print("title:",title)
         desc = threadData['_source']['desc']
-        # print("desc:",desc)
         userID = threadData['_source']['uid']
         comments = [comment['desc'] for comment in threadData['_source']['comments'] if comment['uid']==userID]
-        # print("comments:")
-        # print(' '.join(comments))
         rawContent = title + desc + ' '.join(comments)
 
         #! 2. tokenize+wordsummary
         rawContent = re.sub(r'<[^<]+/>|<[^<]+>|\\.{1}|&[^&]+;|\n|\r\n','', rawContent) # to msg_clean
-        # removeAndWriteFile('test.txt',cleanContent(rawContent),'txt')
         wordsSum, tokensLength = createWordsSummary(cleanContent(rawContent), getStopWords("./stopwords_more_th.txt"))
         # freqDictList.append({"topic_id": topicID, "words_sum": wordsSum, "tokens_length": tokensLength, "created_at":datetime.datetime.now()})
         freqDictList.append({"topic_id": topicID, "words_sum": wordsSum, "tokens_length": tokensLength})
@@ -246,16 +291,10 @@ if __name__ == "__main__":
     removeAndWriteFile('1-wordsummary.json', freqDictList)
 
     #! 4. TFIDF calculation
-    # tfidf_col = db["scores_tfidf"]
-    print("----------TF-----------")
-    tfScores = computeTF(freqDictList)
-    print("----------IDF-----------")
-    idfScores = computeIDF(freqDictList)
-    print("----------TF_IDF-----------")
-    tfidfScores = computeTFIDF(tfScores,idfScores)
-    removeAndWriteFile('2-tfidfScores.json', tfidfScores)
+    threadsScores = calculateFullTFIDF(freqDictList)
+    removeAndWriteFile('2-threadsScores.json', threadsScores)
     
-    # for tfidfThread in tfidfScores:
+    # for tfidfThread in threadsScores:
     #     tfidfDict = tfidfThread['tfidf_scores']
     #     if len(tfidfDict) > 100:
     #         for key, score in list(tfidfDict.items()):
@@ -264,29 +303,28 @@ if __name__ == "__main__":
     #                 # print("del:", key)
     #                 del tfidfDict[key]
     #         tfidfThread['tfidf_scores'] = { k : v for k, v in sorted(tfidfDict.items(), key=lambda x: x[1], reverse=True)}
-    # removeAndWriteFile('2-tfidfScores-valcut.json', tfidfScores)
+    # removeAndWriteFile('2-threadsScores-valcut.json', threadsScores)
 
-    for tfidfThread in tfidfScores:
-        tfidfDict = tfidfThread['tfidf_scores']
-        if len(tfidfDict) > 100:
-            sortedDict = { k : v for k, v in sorted(tfidfDict.items(), key=lambda x: x[1], reverse=True)}
+    for thread in threadsScores:
+        tscoresList = thread['scores']
+        if len(tscoresList) > 100:
             # headcut = int(0.1*len(sortedDict))
             headcut = 0
-            tailcut = len(sortedDict) - int(0.46*len(sortedDict))
+            tailcut = len(tscoresList) - int(0.46*len(tscoresList))
             prevVal = -1
-            for idx, key in enumerate(list(sortedDict)):
+            for idx, scores in enumerate(tscoresList):
                 if prevVal == -1:
-                    prevVal = sortedDict[key]
+                    prevVal = scores['tfidf']
 
-                if (idx < headcut or idx > tailcut) and sortedDict[key] != prevVal:
-                    del sortedDict[key]
+                if (idx < headcut or idx > tailcut) and scores['tfidf'] != prevVal:
+                    tscoresList.remove(scores)
                 else:
-                    prevVal = sortedDict[key]
+                    prevVal = scores['tfidf']
 
-            tfidfThread['tfidf_scores'] = sortedDict
-    removeAndWriteFile('2-tfidfScores-percent.json', tfidfScores)
+            thread['tfidf_scores'] = tscoresList
+    removeAndWriteFile('2-threadsScores-percent.json', threadsScores)
 
-    # result = tfidf_col.insert_many(tfidfScores)
+    # result = tfidf_col.insert_many(threadsScores)
     # print("result--",result)
 
     # #! 5. Vector calculation
