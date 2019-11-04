@@ -158,7 +158,7 @@ def computeTFIDF(TF_scores, IDF_scores):
 
 # tf = (frequency of the term in the doc/total number of terms in the doc)
 # idf = ln(total number of dics/number of docs with term in it)
-def calculateFullTFIDF(freqDictList, fname='IDFScoreByWord.json'):
+def calculateFullTFIDF(freqDictList, fname='2-IDFScoreByWord.json'):
     idfDict = {} # keep idf score which have already computed
     if os.path.isfile(fname):
         with open('./'+fname,'r', encoding="utf8") as json_file:
@@ -228,23 +228,33 @@ def computeDF(tfidfList, fname):
     return DF_scores_docs
 
 def removeAndWriteFile(fname, content, ftype='json'):
-   if os.path.isfile(fname):
-      os.remove(fname)
-      print("remove",fname,"success")
+    if os.path.isfile(fname):
+        os.remove(fname)
+        print("remove",fname,"success")
 
-   if ftype == 'txt':
-      f = open(fname, "w",encoding='utf-8')
-      f.write(content)
-      print("create",fname,"success")
-      f.close() 
-   elif ftype == 'json':
-      with open('./'+fname, 'w', encoding="utf8") as outfile:
-         json.dump(content, outfile, ensure_ascii=False, indent=4)
-         print("create",fname,"success")
-   else:
-      print("invalid file type")
+    if ftype == 'txt':
+        f = open(fname, "w",encoding='utf-8')
+        f.write(content)
+        print("create",fname,"success")
+        f.close() 
+    elif ftype == 'json':
+        with open('./'+fname, 'w', encoding="utf8") as outfile:
+            json.dump(content, outfile, ensure_ascii=False, indent=4)
+            print("create",fname,"success")
+    elif ftype == 'js':
+        with open('./'+fname, 'w', encoding="utf8") as outfile:
+            outfile.write(lines)
+            print("create",fname,"success")
+    else:
+        print("invalid file type")
 
 if __name__ == "__main__":
+    client = pymongo.MongoClient("ds-db1.local",
+                                27017,
+                                username='dev',
+                                password='QJhl4IAYJU4OrgJjzYaZ',
+                                authSource='dev' )
+    db = client["dev"]
     # client = pymongo.MongoClient("hostname",
     #                             27017,
     #                             username='username',
@@ -291,8 +301,8 @@ if __name__ == "__main__":
     removeAndWriteFile('1-wordsummary.json', freqDictList)
 
     #! 4. TFIDF calculation
-    threadsScores = calculateFullTFIDF(freqDictList)
-    removeAndWriteFile('2-threadsScores.json', threadsScores)
+    threadsScores = calculateFullTFIDF(freqDictList) # consists of TF, IDF, and TFIDF scores
+    removeAndWriteFile('3-threadsScores.json', threadsScores)
     
     # for tfidfThread in threadsScores:
     #     tfidfDict = tfidfThread['tfidf_scores']
@@ -303,8 +313,9 @@ if __name__ == "__main__":
     #                 # print("del:", key)
     #                 del tfidfDict[key]
     #         tfidfThread['tfidf_scores'] = { k : v for k, v in sorted(tfidfDict.items(), key=lambda x: x[1], reverse=True)}
-    # removeAndWriteFile('2-threadsScores-valcut.json', threadsScores)
+    # removeAndWriteFile('3-threadsScores-valcut.json', threadsScores)
 
+    #! 4.2 cut off some keys using tfidf by scores
     for thread in threadsScores:
         tscoresList = thread['scores']
         if len(tscoresList) > 100:
@@ -322,67 +333,86 @@ if __name__ == "__main__":
                     prevVal = scores['tfidf']
 
             thread['tfidf_scores'] = tscoresList
-    removeAndWriteFile('2-threadsScores-percent.json', threadsScores)
+    removeAndWriteFile('3-threadsScores-percent.json', threadsScores)
 
     # result = tfidf_col.insert_many(threadsScores)
     # print("result--",result)
 
-    # #! 5. Vector calculation
+    #! 5.0 Vector calculation
     # print("----------vector creation-----------")
-    # dfScoresfname = "keysDFScores.json"
+    # dfScoresfname = "4-keysDFScores.json"
     # if os.path.isfile(dfScoresfname):
     #     with open('./'+dfScoresfname,'r', encoding="utf8") as json_file:
     #         dfScoresDict = json.load(json_file)
     # else:
-    #     dfScoresDict = computeDF(tfidfScores, fname=dfScoresfname)
+    #     dfScoresDict = computeDF(threadsScores, fname=dfScoresfname)
     
-    # #! 5.2 Words selection
-    # themesVector = []
-    # # at least 1 theme and no more than 4 per thread -> only count more than 5 per theme
-    # for i, thread in enumerate(threadsList):
-    #     topicID = thread["TopicID"]
-    #     tokens = [[key['key'] for key in tfidf["tfidf_scores"]] for tfidf in tfidfScores if tfidf["topic_id"]==topicID][0]
+    #! 5.1 Theme selection and word counting
+    themesVector = []
+    # at least 1 theme and no more than 4 per thread -> only count more than 5 per theme
+    for i, thread in enumerate(threadsList):
+        topicID = thread["TopicID"]
+        threadKeys = [[score['key'] for score in scores["scores"]] for scores in threadsScores if scores["topic_id"]==topicID][0]
         
-    #     minn = 0.0006
-    #     wordsBag = [[key['key'] for key in tfidf["tfidf_scores"] if key['score'] > minn] for tfidf in tfidfScores if tfidf["topic_id"]==topicID][0]
-    #     print(i,"--",topicID,"--", len(tokens), "->", len(wordsBag),"--m:", minn)
-    #     # print(wordsBag)
-        
-    #     threadsThemeList = thread["Theme"].replace(" ","").split(",") #string
-    #     for idx, theme in enumerate(threadsThemeList):
-    #         if not [vec for vec in themesVector if vec['type']==theme]: #create new theme
-    #             themesVector.append({'type':theme, 'topic_ids':[topicID], 'word_vectors':{}})
+        threadsThemeList = thread["Theme"].replace(" ","").split(",") #string
+        for idx, theme in enumerate(threadsThemeList):
+            if not [vec for vec in themesVector if vec['type']==theme]: #create new theme
+                themesVector.append({'type':theme, 'topic_ids':[topicID], 'words_count':{}})
             
-    #         for vector in themesVector: # select which theme to add
-    #         # print("vector theme:",vector['type'])
-    #             if vector['type'] == theme:
-    #                 vector["topic_ids"].append(topicID)
+            for vector in themesVector: # select which theme to add
+            # print("vector theme:",vector['type'])
+                if vector['type'] == theme:
+                    vector["topic_ids"].append(topicID)
                 
-    #                 for word in wordsBag:
-    #                     # print("word:",word)
-    #                     if word not in vector['word_vectors'].keys():
-    #                         # print("word not found in key")
-    #                         vector['word_vectors'][word] = dfScoresDict[word] if word in dfScoresDict.keys() else 0
-    #                     # if word has already in 'word_vectors', it don't need to do anything.
-    #                 break # there is only one theme vector per theme
+                    for word in threadKeys:
+                        vector['words_count'][word] = 1 if word not in vector['words_count'].keys() else vector['words_count'][word] + 1
+                    
+                    break # there is only one theme vector per theme
     #     # break # 1 thread
-    
-    # removeAndWriteFile('3-themesVector'+minn+'.json',themesVector,'json')
+    removeAndWriteFile('4-themesVector_count.json',themesVector,'json')
 
-    # #! 5.3 Sorted
+    #! 5.2 Calculation TF, DF, vector value
+    for vector in themesVector:
+        sortedCount = {k:v for k, v in sorted(vector["words_count"].items(), key=lambda x: x[1], reverse=True)}
+        wordsLength = len(vector["words_count"])
+        topicsLength = len(vector["topic_ids"])
+        themeName = vector['type']
+        wordsVectors = []
+        for key, count in sortedCount.items():
+            tf = float(count/wordsLength)
+            df = float(count/topicsLength)
+            wordsVectors.append({
+                'key':key,
+                'tf': tf,
+                'df': df,
+                'vector': tf+df
+            })
+        vector["words_vectors"] = wordsVectors # already sort
+    
+    removeAndWriteFile('5-themesVector_success.json',themesVector,'json')
+
+    #! 5.3 Sorted
     # for vector in themesVector:
     #     print("----theme:", vector['type'])
     #     print("before sorted:", len(vector["word_vectors"]))
-    #     vector["word_vectors"] = [{'word':k,'val': v} for k, v in sorted(vector["word_vectors"].items(), key=lambda x: x[1], reverse=True)]
+    #     
     #     print("after sorted:", len(vector["word_vectors"]))
     #     # vector["created_at"] = datetime.datetime.now()
    
     # fname = '4-sortedThemesVector.json'
     # removeAndWriteFile(fname,themesVector,'json')
 
-    # vector_col = db["vector_theme"]
-    # vector_col.drop()
-    # result = vector_col.insert_many(themesVector)
-    # print(result)
+    colName = "vector_theme_v2"
+    vector_col = db[colName]
+    vector_col.drop()
+    result = vector_col.insert_many(themesVector)
+    print(result)
+
+    lines = ""
+    for vector in themesVector:
+        lines += "db."+colName+".insert("+str(vector)+");\n".replace(" ","")
+
+    removeAndWriteFile("import_vectors_v2.js", lines, "js")
+    
 
 
