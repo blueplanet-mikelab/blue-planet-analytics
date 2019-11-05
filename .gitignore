@@ -4,3 +4,4 @@ src/test/
 src/json/readTopics/
 config/
 LDAjava.java
+__pycache__/
