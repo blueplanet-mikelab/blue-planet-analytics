@@ -8,6 +8,7 @@ import math
 import pymongo
 import os
 import datetime
+
 from utils.TFIDFCalculationUtil import calculateFullTFIDF
 from utils.fileWritingUtil import removeAndWriteFile
 
@@ -250,7 +251,7 @@ if __name__ == "__main__":
     for vector in themesVector:
         lines += "db."+colName+".insert("+str(vector)+");\n".replace(" ","")
 
-    removeAndWriteFile("import_vectors_v2.js", lines, "js")
+    removeAndWriteFile("./mongo_js/import_vectors_v2.js", lines, "js")
     
 
 
