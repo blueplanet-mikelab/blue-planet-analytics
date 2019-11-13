@@ -88,18 +88,14 @@ def cleanContent(rawContent):
 
 
 if __name__ == "__main__":
-    client = pymongo.MongoClient("ds-db1.local",
+    with open('./config/database.json') as json_data_file:
+        dbConfig = json.load(json_data_file)
+    client = pymongo.MongoClient(dbConfig["host"],
                                 27017,
-                                username='dev',
-                                password='QJhl4IAYJU4OrgJjzYaZ',
-                                authSource='dev' )
-    db = client["dev"]
-    # client = pymongo.MongoClient("hostname",
-    #                             27017,
-    #                             username='username',
-    #                             password='password',
-    #                             authSource='admin' )
-    # db = client["dbname"] #TODO database access
+                                username=dbConfig["username"],
+                                password=dbConfig["password"],
+                                authSource=dbConfig["authSource"] )
+    db = client[dbConfig["db"]]
 
     #! 0. read csv -> threadsList
     with open('./labeledThreadsbyHand.csv', 'r', encoding="utf8") as f:
