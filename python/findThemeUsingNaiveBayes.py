@@ -2,7 +2,6 @@ import csv
 import pprint
 import urllib.request, json 
 from pythainlp.tokenize import word_tokenize
-import pythainlp.corpus as pycorpus
 import re
 import math
 import pymongo
@@ -11,63 +10,21 @@ import datetime
 from math import sqrt, exp, pi
 from utils.TFIDFCalculationUtil import calculateFullTFIDF, createWordsSummary
 from utils.fileWritingUtil import removeAndWriteFile
+from utils.manageContentUtil import cleanContent, getStopWords
 
+with open('./config/url.json') as json_data_file:
+    URLCONFIG = json.load(json_data_file)
 
-# prepare stopwords list
-def getStopWords(fname, addMore=True):
-    stopwords = pycorpus.common.thai_stopwords()
-    stopwordsList = set(m.strip() for m in stopwords)
-    if addMore:
-        f = open(fname, "r", encoding='utf-8') #"./stopwords_more_th.txt"
-        stopwordsList = stopwordsList.union(set(m.strip() for m in f.readlines()))
-    return stopwordsList
-
-def cleanContent(rawContent):
-    # clean text
-    content = rawContent
-    url_rex = r'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
-    content = re.sub(url_rex,'', content) #1 remove url
-    content = re.sub(r'â|ä|à|å|á|ã', 'a', content) #2 replace extended vowels a
-    content = re.sub(r'Ä|Å|Á|Â|À|Ã', 'A', content) #3 replace extended vowels A
-    content = re.sub(r'ê|ë|è', 'e', content) #4 replace extended vowels e
-    content = re.sub(r'É|Ð|Ê|Ë|È', 'E', content) #5 replace extended vowels E
-    content = re.sub(r'ï|î|ì|í|ı', 'i', content) #6 replace extended vowels i
-    content = re.sub(r'Í|Î|Ï', 'I', content) #7 replace extended vowels I
-    content = re.sub(r'ô|ö|ò|ó|õ', 'o', content) #8 replace extended vowels o
-    content = re.sub(r'Ö|Ó|Ô|Ò|Õ', 'O', content) #9 replace extended vowels O
-    content = re.sub(r'ü|û|ù|ú', 'u', content) #10 replace extended vowels u
-    content = re.sub(r'Ü|Ú|Û|Ù', 'U', content) #11 replace extended vowels U
-    content = re.sub(r'ç', 'c', content) #12 replace extended chars c
-    content = re.sub(r'ÿ|ý', 'y', content) #13 replace extended chars y
-    content = re.sub(r'Ý', 'Y', content) #14 replace extended chars y
-    content = re.sub(r'ñ|Ñ', 'n', content) #15 replace extended chars n
-    content = re.sub(r'ß', 's', content) #16 replace extended chars n
-    # spechar = r'[^a-zA-Z0-9ก-๙\.\,\s]+|\.{2,}|\xa0+|\d+[\.\,][^\d]+'
-    spechar = r'[^a-zA-Zก-๙\s]+|\xa0+|ๆ' #! take numbers out
-    content = re.sub(spechar, ' ', content) #17 remove special character
-    #18 remove duplicate characters and spaces
-    dupGroup = re.finditer(r'\s{2,}|([ก-๙a-zA-Z])\1{2,}', content)
-    dupArray = [[c.start(), c.end()] for c in dupGroup]
-    # print(dupArray)
-    newContent = ""
-    if len(dupArray) == 0:
-        newContent = content
-    else:
-        prevIdx = 0
-        for idxDup in dupArray:
-            newContent += content[prevIdx:idxDup[0]+1]
-            prevIdx = idxDup[1]
-        newContent += content[prevIdx:]
-    return newContent
-
-    # Calculate the mean of a list of numbers
-def mean(numbers, length):
+# Calculate the mean of a list of numbers
+def calMean(numbers, length):
 	return sum(numbers)/length
  
 # Calculate the standard deviation of a list of numbers
-def stdev(numbers, avg, length):
-	variance = sum([(x-avg)**2 for x in numbers]) / (length-1)
-	return sqrt(variance)
+def calStdev(numbers, avg, length):
+    if length == 1:
+        return 0
+    variance = sum([(x-avg)**2 for x in numbers]) / (length-1)
+    return sqrt(variance)
 
 
 if __name__ == "__main__":
@@ -95,7 +52,7 @@ if __name__ == "__main__":
         topicID = thread['TopicID']
         print(idx,"--",topicID)
         
-        with urllib.request.urlopen("http://ptdev03.mikelab.net/kratooc/"+topicID) as url:
+        with urllib.request.urlopen(URLCONFIG["mike_thread"]+topicID) as url:
             threadData = json.loads(url.read().decode())
             # print(threadData)
 
@@ -109,8 +66,7 @@ if __name__ == "__main__":
         #! 1-2. tokenize+wordsummary
         rawContent = re.sub(r'<[^<]+/>|<[^<]+>|\\.{1}|&[^&]+;|\n|\r\n','', rawContent) # to msg_clean
         tokens = word_tokenize(cleanContent(rawContent), engine='attacut-sc')
-        wordsSum, tokensLength, wordSumDict = createWordsSummary(tokens, getStopWords("./stopwords_more_th.txt"))
-        # freqDictList.append({"topic_id": topicID, "words_sum": wordsSum, "tokens_length": tokensLength, "created_at":datetime.datetime.now()})
+        wordsSum, tokensLength, wordSumDict = createWordsSummary(tokens, getStopWords(addMore=True))
         freqDictList.append({"topic_id": topicID, "words_sum": wordsSum, "tokens_length": tokensLength})
 
 
@@ -152,8 +108,10 @@ if __name__ == "__main__":
     # result = tfidf_col.insert_many(threadsScores)
     # print("result--",result)
 
-    #! 5.0 Theme model using Naive Bayes 
+    #! 5.0 Theme model using Naive Bayes
+    print("----------Naive Bayes-----------")
     allThemeList = ['Mountain', 'Entertainment', 'Photography', 'Eating', 'WaterActivities', 'Religion', 'Honeymoon', 'Backpack', 'Event']
+    allWordList = []
     themeModels = {
         'Mountain':     {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
         'Entertainment':{   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
@@ -168,6 +126,7 @@ if __name__ == "__main__":
     }
     for i, thread in enumerate(threadsScores):
         topicID = thread["topic_id"]
+        print(i,"--",topicID)
         threadTheme = [t["Theme"] for t in threadsList if t["TopicID"]==topicID][0]
         threadThemeList = threadTheme.replace(" ","").split(",") #string
         
@@ -180,11 +139,26 @@ if __name__ == "__main__":
             # print(type(threadsScores['significant_words']))
             for word in thread['significant_words']:
                 key = word['key']
+                if key not in allWordList:
+                    allWordList.append(key)
                 if key not in themeModels[theme][isTheme]['words_count'].keys():
                     themeModels[theme][isTheme]['words_count'][key] = []
                 themeModels[theme][isTheme]['words_count'][key].append(word['count'])
     
-    removeAndWriteFile('5-themeModels-notyet.json', themeModels)
-            
-                    
+    removeAndWriteFile('5-themeModels-onlycount.json', themeModels)
+    removeAndWriteFile('5-allwordList.json', allWordList)
+    
+    #! 5.1 Find mean and stdev of each word in each class
+    for idx, theme in enumerate(themeModels):
+        for classTheme in themeModels[theme]:
+            print(theme,"----", classTheme)
+            length = len(themeModels[theme][classTheme]["topic_ids"])
+            for word, numbers in themeModels[theme][classTheme]["words_count"].items():
+                mean = calMean(numbers, length)
+                themeModels[theme][classTheme]["words_count"][word] = {
+                    "mean": mean,
+                    "stdev": calStdev(numbers, mean, length),
+                    "length":length
+                }
 
+    removeAndWriteFile('5-themeModels-finish.json', themeModels)

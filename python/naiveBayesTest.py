@@ -44,7 +44,7 @@ def separate_by_class(dataset):
 		if (class_value not in separated):
 			separated[class_value] = list()
 		separated[class_value].append(vector)
-		print(separated)
+	# print(separated)
 	return separated
 
 # Calculate the mean, stdev and count for each column in a dataset
@@ -104,5 +104,6 @@ print("model", model)
 # define a new record
 row = [5.7,2.9,4.2,1.3]
 # predict the label
+print("------try predict------")
 label = predict(model, row)
 print('Data=%s, Predicted: %s' % (row, label))
