@@ -99,8 +99,9 @@ def createWordsSummary(tokens, stopwordsList):
 # tf = (frequency of the term in the doc/total number of terms in the doc)
 # idf = ln(total number of dics/number of docs with term in it)
 def calculateFullTFIDF(freqDictList, fname=None):
+    print("---------calculateFullTFIDF--------")
     idfDict = {} # keep idf score which have already computed
-    if os.path.isfile(fname):
+    if fname!=None and os.path.isfile(fname):
         with open('./'+fname,'r', encoding="utf8") as json_file:
             idfDict = json.load(json_file)
 

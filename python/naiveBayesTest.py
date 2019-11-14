@@ -75,15 +75,17 @@ def calculate_class_probabilities(summaries, row):
 	probabilities = dict()
 	for class_value, class_summaries in summaries.items():
 		probabilities[class_value] = summaries[class_value][0][2]/float(total_rows)
-		print("--->",summaries[class_value][0][2],"/",float(total_rows),"=",probabilities[class_value])
+		print("-->",summaries[class_value][0][2],"/",float(total_rows),"=",probabilities[class_value])
 		for i in range(len(class_summaries)):
 			mean, stdev, _ = class_summaries[i]
 			probabilities[class_value] *= calculate_probability(row[i], mean, stdev)
+		print("----->",class_value, "<->", probabilities[class_value])
 	return probabilities
 
 # Predict the class for a given row
 def predict(summaries, row):
 	probabilities = calculate_class_probabilities(summaries, row)
+	print("probabilities:", probabilities)
 	best_label, best_prob = None, -1
 	for class_value, probability in probabilities.items():
 		if best_label is None or probability > best_prob:
