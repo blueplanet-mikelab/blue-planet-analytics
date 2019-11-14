@@ -74,12 +74,34 @@ def computeTFIDF(TF_scores, IDF_scores):
 
     return TFIDF_scores_docs
 
+def createWordsSummary(tokens, stopwordsList):
+    # stopword remove
+    stopwordsList.update(["\xa0", " "])
+    # new_tokens = [token for token in tokens if token not in stopwordsList]
+    new_tokens = []
+    for token in tokens:
+        if token not in stopwordsList and len(token) > 1:
+            new_tokens.append(token)
+        elif token == "น.":
+            new_tokens.pop() # take the time out
+
+    # word summarization (word count)
+    wordsSum = {}
+    for token in new_tokens:
+        wordsSum[token] = 1 if token not in wordsSum else wordsSum[token] + 1
+    
+    wordsSumArray = []
+    for k,v in wordsSum.items():
+        wordsSumArray.append({'word': k, 'count': v})
+
+    return wordsSumArray, len(new_tokens), wordsSum
 
 # tf = (frequency of the term in the doc/total number of terms in the doc)
 # idf = ln(total number of dics/number of docs with term in it)
-def calculateFullTFIDF(freqDictList, fname='2-IDFScoreByWord.json'):
+def calculateFullTFIDF(freqDictList, fname=None):
+    print("---------calculateFullTFIDF--------")
     idfDict = {} # keep idf score which have already computed
-    if os.path.isfile(fname):
+    if fname!=None and os.path.isfile(fname):
         with open('./'+fname,'r', encoding="utf8") as json_file:
             idfDict = json.load(json_file)
 
@@ -107,6 +129,7 @@ def calculateFullTFIDF(freqDictList, fname='2-IDFScoreByWord.json'):
 
             scores.append({
                 'key': currentWord,
+                'count': keys['count'],
                 'tf': tf,
                 'idf': idf,
                 'tfidf': tfidf
@@ -115,12 +138,14 @@ def calculateFullTFIDF(freqDictList, fname='2-IDFScoreByWord.json'):
         sorted_scores = sorted(scores,key=lambda x:x['tfidf'],reverse=True)
         Scores_docs.append({
             'topic_id': tid,
-            'scores': sorted_scores
+            'scores': sorted_scores,
+            # 'token_length': freqDict["tokens_length"]
         })
 
     # write output txt file
-    with open('./'+fname, 'w', encoding="utf8") as outfile:
-        json.dump(idfDict, outfile, ensure_ascii=False, indent=4)
+    if fname != None:
+        with open('./'+fname, 'w', encoding="utf8") as outfile:
+            json.dump(idfDict, outfile, ensure_ascii=False, indent=4)
     
     return Scores_docs
 
