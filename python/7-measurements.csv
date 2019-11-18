@@ -1,0 +1,10 @@
+Theme,Accuracy(%),Recall,Precision
+Mountain,48.0,0.5,0.24
+Entertainment,12.0,0.5,0.06
+Photography,44.0,0.5,0.22
+Eating,64.0,0.5,0.32
+WaterActivities,0.0,0.0,0.0
+Religion,32.0,0.5,0.16
+Honeymoon,4.0,0.5,0.02
+Backpack,4.0,0.5,0.02
+Event,4.0,0.5,0.02

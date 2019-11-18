@@ -1,0 +1,1 @@
+This version is word vector in global not seperate into each theme. We found out that the important words have too low score so we cannot use these score to define theme.

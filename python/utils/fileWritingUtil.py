@@ -1,5 +1,5 @@
 import os
-import json
+import json, csv
 
 def writeTXTFile(fname, content):
     f = open(fname, "w",encoding='utf-8')
@@ -14,8 +14,15 @@ def writeJSONFile(fname, content):
 
 def writeJSFile(fname, content):
     with open('./'+fname, 'w', encoding="utf8") as outfile:
-            outfile.write(content)
-            print("create",fname,"success")
+        outfile.write(content)
+        print("create",fname,"success")
+
+def writeCSVFile(fname, content):
+    with open('./'+fname, 'w', newline='') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerows(content)
+        print("create",fname,"success")
+
 
 def removeFile(fname):
     if os.path.isfile(fname):
@@ -31,5 +38,15 @@ def removeAndWriteFile(fname, content, ftype='json'):
         writeJSONFile(fname, content)
     elif ftype == 'js':
         writeJSFile(fname, content)
+    elif ftype == 'csv':
+        writeCSVFile(fname, content)
     else:
         print("invalid file type")
+
+
+def readTXTFile(fname):
+    f = open(fname, "r",encoding='utf-8')
+    content = f.read()
+    print("read",fname,"success")
+    f.close()
+    return content

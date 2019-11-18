@@ -213,11 +213,11 @@ def findTheme(content,tags):
         ['Water Activities', 'ทะเล', 'สวนน้ำ', 'สวนสยาม', 'ดำน้ำ', 'เล่นน้ำตก', 'ว่ายน้ำ', 'ล่องแก่ง'],
         ['Religion', 'ศาสนา', 'วัด',"สิ่งศักดิ์สิทธิ์","พระ","เณร"], # หน้าวัด ห้าม ห
         ['Mountain', 'เขา', 'ภู', 'เดินป่า',"camping","แคมป์","น้ำตก"], # start with ภู
-        ['Backpack'], #ดูจาก tags
-        ['Honeymoon', 'ฮันนีมูน',"โรแมนติก"],
+        ['Backpack', 'แบกเป้', ' แบกกระเป๋า'], #ดูจาก tags
+        ['Honeymoon', 'ฮันนีมูน',"โรแมนติก","คู่รัก","สวีท","เดท"],
         ['Photography', 'ภาพถ่าย', 'ถ่ายรูป','วิว','ถ่าย'],
-        ['Eatting', 'อาหาร', 'ร้านอาหาร', 'ขนม', 'ของหวาน',"ร้านกาแฟ", "อร่อย", 'ชา', 'เครื่องดื่ม','ของกิน','รสชาติ'], # อาหาร แค่คำว่า match
-        ['Event', 'งานวัด', 'งานกาชาด']
+        ['Eatting', 'อาหาร', 'ร้านอาหาร', 'ขนม', 'ของหวาน',"ร้านกาแฟ", "อร่อย", 'ชา', 'เครื่องดื่ม','ของกิน','รสชาติ', 'คาเฟ่'], # อาหาร แค่คำว่า match
+        ['Event', 'งานวัด', 'งานกาชาด', 'เทศกาล', 'เฟสติวัล']
     ]
 
     text = content + ''.join(tags)
@@ -392,13 +392,15 @@ def createPreprocessData(topic, comments, countryList):
     }
 
 if __name__ == "__main__":
-    client = pymongo.MongoClient("ds-db1.local",
+    with open('./config/database.json') as json_data_file:
+        dbConfig = json.load(json_data_file)
+    dsdb = dbConfig["pantip-ds"]
+    client = pymongo.MongoClient(dsdb["host"],
                                 27017,
-                                username='dev',
-                                password='QJhl4IAYJU4OrgJjzYaZ',
-                                authSource='dev' )
-
-    db = client["dev"]
+                                username=dsdb["username"],
+                                password=dsdb["password"],
+                                authSource=dsdb["authSource"] )
+    db = client[dsdb["db"]]
     # print("collections list",db.list_collection_names())
 
     # get country list to classify country and find top country

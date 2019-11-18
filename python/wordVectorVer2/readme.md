@@ -1,0 +1,1 @@
+In this version, the word vector is calculated into each theme seperation. And using the word vector is TF score of each theme word but the unsignificant words have higher score than the significant words of each theme. So, we try out another way which as Naive Bayes. 
