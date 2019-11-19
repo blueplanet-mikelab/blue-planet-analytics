@@ -115,7 +115,7 @@ def training(trainDataset):
         #! 1-2. tokenize+wordsummary
         rawContent = re.sub(r'<[^<]+/>|<[^<]+>|\\.{1}|&[^&]+;|\n|\r\n','', rawContent) # to msg_clean
         tokens = word_tokenize(cleanContent(rawContent), engine='attacut-sc')
-        wordsSum, tokensLength, wordSumDict = createWordsSummary(tokens, getStopWords(addMore=True))
+        wordsSum, tokensLength, _ = createWordsSummary(tokens, getStopWords(addMore=True))
         freqDictList.append({"topic_id": topicID, "words_sum": wordsSum, "tokens_length": tokensLength})
 
 

@@ -1,8 +1,7 @@
 import re
 import pythainlp.corpus as pycorpus
 
-# prepare for tokenize
-def cleanContent(rawContent):
+def firstClean(rawContent):
     content = rawContent
     content = re.sub(r'<[^<]+/>|<[^<]+>|\\.{1}|&[^&]+;|\n|\r\n','', content) #0 to msg_clean
     url_rex = r'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
@@ -22,6 +21,11 @@ def cleanContent(rawContent):
     content = re.sub(r'Ý', 'Y', content) #14 replace extended chars y
     content = re.sub(r'ñ|Ñ', 'n', content) #15 replace extended chars n
     content = re.sub(r'ß', 's', content) #16 replace extended chars n
+    return content
+
+# prepare for tokenize
+def cleanContent(rawContent):
+    content = firstClean(rawContent)
     # spechar = r'[^a-zA-Z0-9ก-๙\.\,\s]+|\.{2,}|\xa0+|\d+[\.\,][^\d]+'
     spechar = r'[^a-zA-Zก-๙\s]+|\xa0+|ๆ' #! take numbers out
     content = re.sub(spechar, ' ', content) #17 remove special character
