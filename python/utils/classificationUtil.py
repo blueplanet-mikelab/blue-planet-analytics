@@ -1,4 +1,8 @@
-import re
+import re, json
+
+# get country list to classify country and find top country
+with open('./travel_guide_average_071119.json','r', encoding="utf8") as travel_file:
+    TRAVELGUIDELIST = json.load(travel_file) 
 
 """
 - ไทย: ในประเทศ, all thai provinces//done
@@ -81,6 +85,7 @@ def findMonth(content):
     return monthCount
 
 """
+# "budget": findBudget("คนละ 1000 คนละ 2,000 คนละ 3xxx คนละ 4+++ คนละ 5,xxx คนละ 6,+++ คนละ7พัน คนละพัน คนละเก้าพัน"),
 TODO find budget using money words
 @params msg_clean the first topic's owner message
         comments list of all comments by topic's owner
@@ -176,9 +181,7 @@ def findBudgetByPattern(content):
     return budget
 
 
-    """
-
-
+"""
 find theme from keywords (first only using test searching) 
 TODO add more keywords
 TODO using tags
@@ -225,3 +228,23 @@ def findThemeByKeyword(content,tags):
     # pprint(monthCount)
 
     return themes
+
+
+"""
+@params 
+    countries is list of sorted country
+    days is numbers of travelling days
+"""
+def calculateBudget(countries, days):
+    cost = [travel_guide for travel_guide in TRAVELGUIDELIST["country_code"]==countries[0]["country"]]
+    if len(cost) == 0:
+        return -1  
+    else:
+        flightOutbound = cost["flight_price"]["outbound_6months_avg"]
+        flightReturn = cost["flight_price"]["return_6months_avg"]
+        hotelPrice = cost["hotel_price"]["year_avg"] * days
+        inexpensiveMeal = 2 * cost["daily_cost"]["inexpensive_meal"]
+        midRangeMeal = cost["daily_cost"]["mid_range_meal"]
+        transportation = 4 * cost["daily_cost"]["one_way_transportation"]
+        daysCost = days * (inexpensiveMeal + midRangeMeal + transportation)
+        return flightOutbound + flightReturn + hotelPrice + daysCost

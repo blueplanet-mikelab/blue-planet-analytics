@@ -50,3 +50,7 @@ def readTXTFile(fname):
     print("read",fname,"success")
     f.close()
     return content
+
+def readJSONFile(fname):
+    with open(fname,'r', encoding="utf8") as json_file:
+        return json.load(json_file) 

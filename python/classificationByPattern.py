@@ -7,18 +7,14 @@ import json, urllib.request
 import math
 
 from utils.manageContentUtil import firstClean
-from utils.classificationUtil import findMonth, findCountries
+from utils.classificationUtil import findMonth, findCountries, calculateBudget
 
 with open('./config/url.json') as json_data_file:
     URLCONFIG = json.load(json_data_file)
 
 # get country list to classify country and find top country
 with open('./countriesListSorted.json','r', encoding="utf8") as json_file:
-    COUNTRYLIST = json.load(json_file)
-
-# get country list to classify country and find top country
-with open('./travel_guide_average_071119.json','r', encoding="utf8") as travel_file:
-    TRAVELGUIDELIST = json.load(travel_file)    
+    COUNTRYLIST = json.load(json_file)   
 
 class Duration:
     NOT_DEFINE = "Not Define" #type 0
@@ -74,7 +70,7 @@ def findDuration(content):
     # ]
     # TODO
 
-    duration = { "type": 0, "label": Duration.NOT_DEFINE }
+    duration = { "days": 0, "label": Duration.NOT_DEFINE }
     numAfter = 0
     numBefore = 0
 
@@ -148,19 +144,6 @@ def calculatePopularity(totalView,totalVote,totalComment,createdTime):
     return (totalView+totalVote+totalComment) / diffDays
 
 """
-@params dailyCost dict
-"""
-def calculateBudget(cost, days):
-    flightOutbound = cost["flight_price"]["outbound_6months_avg"]
-    flightReturn = cost["flight_price"]["return_6months_avg"]
-    hotelPrice = cost["hotel_price"]["year_avg"] * days
-    inexpensiveMeal = 2 * cost["daily_cost"]["inexpensive_meal"]
-    midRangeMeal = cost["daily_cost"]["mid_range_meal"]
-    transportation = 4 * cost["daily_cost"]["one_way_transportation"]
-    daysCost = days * (inexpensiveMeal + midRangeMeal + transportation)
-    return flightOutbound + flightReturn + hotelPrice + daysCost
-
-"""
 #TODO
 @params content with HTML tags to find ing tag
 """
@@ -187,8 +170,7 @@ def createPreprocessData(threadData):
     countries = findCountries(threadData["tags"], COUNTRYLIST, content) # array of countries
     duration = findDuration(content)
     days = duration["days"]
-    cost = [travel_guide for travel_guide in TRAVELGUIDELIST["country_code"]==countries[0]["country"]]
-    budget = -1 if len(cost) == 0 else calculateBudget(cost[0], days)
+    budget = calculateBudget(countries, days)
     month = findMonth(content) # array of month with count
     totalView = 100000 #TODO
     totalPoint = threadData["point"]
