@@ -1,5 +1,5 @@
 import pymongo, json
-import os
+import os,re
 print(os.getcwd())
 import sys
 sys.path.append('../utils/')
@@ -17,14 +17,15 @@ if __name__ == "__main__":
     db = client[dsdb["db"]]
     colList = db.list_collection_names()
 
-    targetCols = ["travel_guide_average_071119","travel_guide_daily_cost_071119","travel_guide_flight_071119", "travel_guide_hotel_071119","travel_guide_visa_071119"]
+    targetCols = ["classified_thread_251119", "travel_guide_average_071119"]
     for colName in targetCols:
         if colName in colList:
             currentCol = db[colName]
             print("retrieve labeled threads ...")
             currentDocs = currentCol.find({})
             lines = ""
+            # datetimeRex = r'datetime.datetime\((\d+),\s+(\d+),\s+(\d+),\s+(\d+),\s+(\d+)[,\s\d]*\)'
             for doc in currentDocs:
-                lines += "db."+colName+".insert("+str(doc)+");\n".replace(" ","")
+                lines += "db."+colName+".insert("+str(doc)+");\n".replace(" ","").replace(r'datetime\.datetime','new Date').replace('None','null')
 
         removeAndWriteFile("import_"+colName+".js", lines, "js")
