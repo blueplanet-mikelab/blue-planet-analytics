@@ -52,7 +52,8 @@ if __name__ == "__main__":
         rawContent = title + desc + ' '.join(comments)
 
         #! 2. tokenize+wordsummary
-        wordsSum, tokensLength, wordSumDict = createWordsSummary(cleanContent(rawContent), getStopWords(addMore=True))
+        tokens = word_tokenize(cleanContent(rawContent), engine='attacut-sc')
+        wordsSum, tokensLength, wordSumDict = createWordsSummary(tokens, getStopWords(addMore=True))
         # freqDictList.append({"topic_id": topicID, "words_sum": wordsSum, "tokens_length": tokensLength, "created_at":datetime.datetime.now()})
         freqDictList.append({"topic_id": topicID, "words_sum": wordsSum, "tokens_length": tokensLength})
 
