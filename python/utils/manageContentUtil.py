@@ -1,5 +1,6 @@
 import re
 import pythainlp.corpus as pycorpus
+from pythainlp.tokenize import word_tokenize
 
 def firstClean(rawContent):
     content = rawContent
@@ -53,3 +54,32 @@ def getStopWords(addMore, fname="./utils/stopwords_more_th.txt"):
         f = open(fname, "r", encoding='utf-8')
         stopwordsList = stopwordsList.union(set(m.strip() for m in f.readlines()))
     return stopwordsList
+
+def tokenization(content, stopwordsList, removeStopWord=True):
+    tokens = word_tokenize(content, engine='attacut-sc')
+    
+    # new_tokens = [token for token in tokens if token not in stopwordsList]
+    new_tokens = []
+    for token in tokens:
+        if removeStopWord:
+            if token not in stopwordsList and len(token) > 1:
+                new_tokens.append(token.lower())
+            elif token == "น.":
+                new_tokens.pop() # take the time out
+        else:
+            if token != ' ' and len(token) > 1:
+                new_tokens.append(token.lower())
+    return new_tokens
+
+
+def createWordsSummary(tokens):
+    # word summarization (word count)
+    wordsSum = {}
+    for token in tokens:
+        wordsSum[token] = 1 if token not in wordsSum else wordsSum[token] + 1
+    
+    wordsSumArray = []
+    for k,v in wordsSum.items():
+        wordsSumArray.append({'word': k, 'count': v})
+
+    return wordsSumArray, len(tokens), wordsSum

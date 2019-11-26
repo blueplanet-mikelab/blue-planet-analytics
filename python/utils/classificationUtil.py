@@ -44,15 +44,14 @@ def findCountries(tags, countryList, content):
 """
 # หน้าหลังตัวย่อภาษาอังกฤษต้องไม่ใช่ตัวภาษาอังกฤษ
 Finding a month that forum's owner travelled
-#TODO whole year in Backend
 @params msg_clean the first topic's owner message
         comments list of all comments by topic's owner
 """
 def findMonth(content):
     # print("---------Month")
-    # wholeYearKeywords = [
-    #     "365วัน","1ปี"
-    # ]
+    wholeYearKeywords = [
+        "365วัน","1ปี"
+    ]
     monthKeywords = [
         ['มกรา', 'มค\\.', 'ม\\.ค', 'Jan', 'January',"ปีใหม่","นิวเยียร์"],
         ['กุมภา', 'กพ\\.', 'ก\\.พ', 'Feb', 'February',"เดือน2"],
@@ -69,20 +68,30 @@ def findMonth(content):
     ]
 
     monthCount = []
+
+    #find whole year first
+    rex = '|'.join(wholeYearKeywords)
+    for match in re.compile(rex, re.IGNORECASE).finditer(content):
+        return [month[4] for month in monthKeywords]
+
+    #specific year
     for keyword in monthKeywords:
-        rex = '|'.join(keyword)
+        rex = '|'.join(keyword) 
         rex = r'' + rex
         matchs = []
         for match in re.compile(rex, re.IGNORECASE).finditer(content):
             i = match.start()
             word = match.group()
             if word.lower() == keyword[3].lower() and (bool(re.search(r'[a-zA-Z]',content[i-1])) or bool(re.search(r'[a-zA-Z]',content[i+1]))):
-                continue
+                continue # skip Mar(ket)
             matchs.append(word)
-
-        monthCount.append({ "month": keyword[4], "count": len(matchs) })
-    monthCount = sorted(monthCount, key = lambda i: (i['count'], i['month']), reverse=True) 
-    return monthCount
+        if len(matchs) != 0:
+            monthCount.append(keyword[4])
+    if len(monthCount) != 0:
+        monthCount = sorted(monthCount, key = lambda i: (i['count'], i['month']), reverse=True) 
+        return monthCount
+    else:
+        return None
 
 """
 # "budget": findBudget("คนละ 1000 คนละ 2,000 คนละ 3xxx คนละ 4+++ คนละ 5,xxx คนละ 6,+++ คนละ7พัน คนละพัน คนละเก้าพัน"),
@@ -236,7 +245,7 @@ def findThemeByKeyword(content,tags):
     days is numbers of travelling days
 """
 def calculateBudget(countries, days):
-    cost = [travel_guide for travel_guide in TRAVELGUIDELIST["country_code"]==countries[0]["country"]]
+    cost = [travel_guide for travel_guide in TRAVELGUIDELIST if travel_guide["country_code"]==countries[0]["country"]]
     if len(cost) == 0:
         return -1  
     else:
