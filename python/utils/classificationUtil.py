@@ -1,7 +1,7 @@
 import re, json
 
 # get country list to classify country and find top country
-with open('./travel_guide_average_071119.json','r', encoding="utf8") as travel_file:
+with open('./utils/travel_guide_average_071119.json','r', encoding="utf8") as travel_file:
     TRAVELGUIDELIST = json.load(travel_file) 
 
 """
@@ -12,32 +12,44 @@ with open('./travel_guide_average_071119.json','r', encoding="utf8") as travel_f
 @params tags array of tags
         countryList from json file
 """
-def findCountries(tags, countryList, content):    
+def findCountries(tags, countryList, tokens):    
     # print("----------Country")
     foundList = []
     for tag in tags:
+        if tag.find("เขต") == 0 or tag.find("เที่ยวในประเทศ") != -1 or tag == "การท่องเที่ยวแห่งประเทศไทย":
+            foundList.append([country for country in countryList if country["country"] == "TH"][0])
+        
+        startTag = ["คนไทยใน","เที่ยว","อาหาร"]
+        for st in startTag:
+            if tag.find(st) == 0:
+                tag.replace(st,"")
+        
+        # print(tag, len(foundList))
         for country in countryList:
-            # skip if that country has already in the list
-            if True in [country['country'] in found['country'] for found in foundList]:
-                continue
-
             for thaiName in country['nameThai']:
                 # print(tag,thaiName)
                 if tag.find(thaiName) != -1 and country["country"] not in [c["country"] for c in foundList]:
                     # print("tag:",tag)
                     foundList.append(country)
-
-    # if found list is not found -> search more in content
+    
+    
+    # if found list is not found -> search more in content using tokens
     if len(foundList) == 0:
         for country in countryList:
-            for thaiName in country['nameThai']:
-                if content.find(thaiName) != -1 and country["country"] not in [c["country"] for c in foundList]:
-                    # print("content:",country["nameEnglish"])
-                    foundList.append(country)
-    
-    if any("เที่ยวต่างประเทศ" in tag for tag in tags):
-        foundList = [c for c in foundList if not (c["country"] == 'TH')]
+            if country['nameEnglish'].lower() in tokens:
+                foundList.append(country)
+                continue
 
+            for token in tokens:
+                l = [thaiName for thaiName in country['nameThai'] if token == thaiName and thaiName != "จีน"] # some word consist of จีน but doesn't mean China
+                if len(l) != 0 and country["country"] not in [c["country"] for c in foundList]:
+                    foundList.append(country)
+                    break #append once per country
+    
+        # remove Thailand if it has tag "เที่ยวต่างประเทศ"
+        if any("เที่ยวต่างประเทศ" in tag for tag in tags):
+            foundList = [c for c in foundList if not (c["country"] == 'TH')]
+    
     return foundList
 
 
@@ -87,11 +99,9 @@ def findMonth(content):
             matchs.append(word)
         if len(matchs) != 0:
             monthCount.append(keyword[4])
-    if len(monthCount) != 0:
-        monthCount = sorted(monthCount, key = lambda i: (i['count'], i['month']), reverse=True) 
-        return monthCount
-    else:
-        return None
+
+    return monthCount if len(monthCount) != 0 else None
+
 
 """
 # "budget": findBudget("คนละ 1000 คนละ 2,000 คนละ 3xxx คนละ 4+++ คนละ 5,xxx คนละ 6,+++ คนละ7พัน คนละพัน คนละเก้าพัน"),
@@ -189,6 +199,35 @@ def findBudgetByPattern(content):
             budget = c
     return budget
 
+"""
+@params 
+    countries is list of sorted country
+    days is numbers of travelling days
+"""
+def calculateBudget(countries, days):
+    # print("--------calculateBudget--------")
+    if len(countries) == 0 or days == 0:
+        return -1
+    
+    cost = [travel_guide for travel_guide in TRAVELGUIDELIST if travel_guide["country_code"].lower()==countries[0]["country"].lower()]
+    
+    if len(cost) == 0:
+        return -1  
+    else:
+        totalCost = 0
+        days = days/len(cost)
+        for ccost in cost:
+            flightOutbound = ccost["flight_price"]["outbound_6months_avg"]
+            flightReturn = ccost["flight_price"]["return_6months_avg"]
+            hotelPrice = ccost["hotel_price"]["year_avg"] * days
+            inexpensiveMeal = 2 * ccost["daily_cost"]["inexpensive_meal"]
+            midRangeMeal = ccost["daily_cost"]["mid_range_meal"]
+            transportation = 4 * ccost["daily_cost"]["one_way_transportation"]
+            daysCost = days * (inexpensiveMeal + midRangeMeal + transportation)
+            
+            totalCost += flightOutbound + flightReturn + hotelPrice + daysCost
+        return totalCost
+
 
 """
 find theme from keywords (first only using test searching) 
@@ -198,17 +237,17 @@ TODO next use image analytic
 @params msg_clean the first topic's owner message
         comments list of all comments by topic's owner
 """
-def findThemeByKeyword(content,tags):
+def findThemeByKeyWord(content,tags):
     themeKeywords = [
-        ['Entertainment', 'สวนสนุก', 'สวนสัตว์'],
-        ['Water Activities', 'ทะเล', 'สวนน้ำ', 'สวนสยาม', 'ดำน้ำ', 'เล่นน้ำตก', 'ว่ายน้ำ', 'ล่องแก่ง'],
-        ['Religion', 'ศาสนา', 'วัด',"สิ่งศักดิ์สิทธิ์","พระ","เณร"], # หน้าวัด ห้าม ห
-        ['Mountain', 'เขา', 'ภู', 'เดินป่า',"camping","แคมป์","น้ำตก"], # start with ภู
-        ['Backpack', 'แบกเป้', ' แบกกระเป๋า'], #ดูจาก tags
-        ['Honeymoon', 'ฮันนีมูน',"โรแมนติก","คู่รัก","สวีท","เดท"],
-        ['Photography', 'ภาพถ่าย', 'ถ่ายรูป','วิว','ถ่าย'],
-        ['Eatting', 'อาหาร', 'ร้านอาหาร', 'ขนม', 'ของหวาน',"ร้านกาแฟ", "อร่อย", 'ชา', 'เครื่องดื่ม','ของกิน','รสชาติ', 'คาเฟ่'], # อาหาร แค่คำว่า match
-        ['Event', 'งานวัด', 'งานกาชาด', 'เทศกาล', 'เฟสติวัล']
+        ['Mountain', 'เขา', 'ภู', 'เดินป่า',"camping","แคมป์","น้ำตก", "ทะเลสาบ","ป่าไม้",'เล่นน้ำตก','ล่องแก่ง'], # start with ภู
+        ['Sea', 'ทะเล', 'ดำน้ำ', 'ชายหาด', 'ปะการัง','โต้คลื่น'],
+        ['Religion', 'ศาสนา', 'วัด',"สิ่งศักดิ์สิทธิ์","พระ","เณร","โบสถ์"], # หน้าวัด ห้าม ห
+        ['Historical', 'โบราณสถาน', 'ประวัติศาสตร์'], #ดูจาก tags
+        ['Entertainment', 'สวนสนุก', 'สวนสัตว์','สวนน้ำ','สวนสยาม','คาสิโน','อควาเรียม'],
+        ['Festival', 'งานวัด', 'งานกาชาด','เทศกาล','จัดแสดง'],
+        ['Eatting', 'อาหาร', 'ร้านอาหาร', 'ขนม', 'ของหวาน',"ร้านกาแฟ", "อร่อย", 'ชา', 'เครื่องดื่ม','ของกิน','รสชาติ','คาเฟ่','ตลาดนัด'], # อาหาร แค่คำว่า match
+        ['NightLifeStyle', 'ตลาดนัดกลางคืน',"ตลาดกลางคืน","ร้านกลางคืน","ร้านเหล้า","เหล้า","บาร์","เบียร์"],
+        ['Photography', 'ภาพถ่าย', 'ถ่ายรูป','วิว','ถ่าย', 'ทริปถ่ายภาพ', 'ทริปถ่ายรูป', 'กล้อง','ตากล้อง'],
     ]
 
     text = content + ''.join(tags)
@@ -236,24 +275,6 @@ def findThemeByKeyword(content,tags):
     themes = sorted(themes, key = lambda i: (i['count'], i['theme']), reverse=True) 
     # pprint(monthCount)
 
-    return themes
+    return [t for t in themes[:4] if t["count"] != 0]
 
 
-"""
-@params 
-    countries is list of sorted country
-    days is numbers of travelling days
-"""
-def calculateBudget(countries, days):
-    cost = [travel_guide for travel_guide in TRAVELGUIDELIST if travel_guide["country_code"]==countries[0]["country"]]
-    if len(cost) == 0:
-        return -1  
-    else:
-        flightOutbound = cost["flight_price"]["outbound_6months_avg"]
-        flightReturn = cost["flight_price"]["return_6months_avg"]
-        hotelPrice = cost["hotel_price"]["year_avg"] * days
-        inexpensiveMeal = 2 * cost["daily_cost"]["inexpensive_meal"]
-        midRangeMeal = cost["daily_cost"]["mid_range_meal"]
-        transportation = 4 * cost["daily_cost"]["one_way_transportation"]
-        daysCost = days * (inexpensiveMeal + midRangeMeal + transportation)
-        return flightOutbound + flightReturn + hotelPrice + daysCost

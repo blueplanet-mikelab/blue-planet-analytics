@@ -6,8 +6,8 @@ from enum import Enum
 import json, urllib.request
 import math
 
-from utils.manageContentUtil import firstClean
-from utils.classificationUtil import findMonth, findCountries, calculateBudget
+from utils.manageContentUtil import firstClean, cleanContent, fullTokenizationToWordSummary
+from utils.classificationUtil import findMonth, findCountries, calculateBudget, findThemeByKeyWord, findBudgetByPattern
 
 with open('./config/url.json') as json_data_file:
     URLCONFIG = json.load(json_data_file)
@@ -47,7 +47,6 @@ thaiDigit = [
 numEng = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eigth', 'nine', 'ten', 'eleven', 'twelve', 'thirteen']
 numTH = ['หนึ่ง', 'สอง', 'สาม', 'สี่', 'ห้า', 'หก', 'เจ็ด', 'แปด', 'เก้า', 'สิบ', 'สิบเอ็ด', 'สิบสอง', 'สิบสาม']
 
-
 def chooseDuration(num):
     duration = { "days": 0, "label": Duration.NOT_DEFINE }
     if (num == 1): duration = { "days": 1, "label": Duration.ONEDAY }
@@ -63,12 +62,15 @@ def chooseDuration(num):
 TODO - เดินทางตั้งแต่ 28/3/2559 ถึง 1/4/2559
 @params content all content from topic's owner including comments
 """
-def findDuration(content):
+def findDuration(content,tags):
     # print("------------Duration")
     # keywords = [
     #     "ตลอดระยะเวลา",
     # ]
     # TODO
+
+    if "One Day Trip" in tags:
+        return { "days": 1, "label": Duration.ONEDAY }
 
     duration = { "days": 0, "label": Duration.NOT_DEFINE }
     numAfter = 0
@@ -86,20 +88,24 @@ def findDuration(content):
         i = currentIndex + foundIndex - 1
         # print(searchResult.start(), searchResult.group())
 
-        # digit before keyword
+        # include one day pass
+        num = 0
         while i >= foundIndex + currentIndex - 10 and i >= 0 :
-            s = content[i: currentIndex + foundIndex].replace(" ","")
+            if num != 0: 
+                numBefore = num if num > numBefore else numBefore
+                break
+            
             # print("s -> ",s)
-            if (i >= foundIndex - 4 and s.isdigit()): numBefore = int(s)
-            elif s in numTH: numBefore = numTH.index(s) + 1
-            elif s in numEng: numBefore = numEng.index(s) + 1
-            elif numBefore != 0: break
+            s = content[i: currentIndex + foundIndex].replace(" ","")
+            if (i >= foundIndex - 4 and s.isdigit()): num = int(s)
+            elif s in numTH: num = numTH.index(s) + 1
+            elif s in numEng: num = numEng.index(s) + 1
+            
             i -= 1
 
-        if numBefore > 0: 
-            if searchResult.group() == 'คืน': numBefore += 1 #3คืน duration must be 4-6days
+        if numBefore > 0 and (searchResult.group() == 'คืน' or searchResult.group() == 'วัน'): 
+            numBefore = numBefore + 1 if searchResult.group() == 'คืน' else numBefore  #3คืน duration must be 4-6days
             duration = chooseDuration(numBefore)
-            # print('d from num before:',duration)
             break
 
         isWanTee = searchResult.group() == 'วัน' and content[searchResult.end():searchResult.end()+3] == 'ที่' #เจอ วันที่
@@ -111,14 +117,13 @@ def findDuration(content):
                 maxx = int(max(re.findall(r'[0-9]+',s)))
                 if numAfter < maxx: numAfter = maxx
             # keep only max numAfter to declear duration
-            
 
         currentIndex += foundIndex + 3
     
     #complete find วัน|day|คืน - check Do it has to use numAfter or not, numbefore has higher priority
-    if (duration["label"] == Duration.NOT_DEFINE): #numBefore still equal 0
-        duration = chooseDuration(numAfter)
-        # print('d from num after:',duration)
+    if (duration["label"] == Duration.NOT_DEFINE): #case: numBefore+Day and numAfter
+        numMax = numBefore if numBefore > numAfter else numAfter
+        duration = chooseDuration(numMax)
 
     return duration
 
@@ -167,29 +172,38 @@ def createPreprocessData(threadData):
     spechar = r'[^a-zA-Z0-9ก-๙\.\,\s]+|\.{2,}|\xa0+|\d+[\.\,][^\d]+'
     content = re.sub(spechar, ' ', content) #17 remove special character
     
-    countries = findCountries(threadData["tags"], COUNTRYLIST, content) # array of countries
-    duration = findDuration(content)
+    
+    tags = threadData["tags"]
+    tokens, _ = fullTokenizationToWordSummary(cleanContent(rawContent), maxGroupLength=3)
+    countries = findCountries(tags, COUNTRYLIST, tokens) # array of string
+    if len(countries) == 0:
+        return None
+
+    duration = findDuration(content, tags)
     days = duration["days"]
-    budget = calculateBudget(countries, days)
+    budget = findBudgetByPattern(content)
+    if budget == -1:
+        calculateBudget(countries, days)
     month = findMonth(content) # array of month with count
+    
     totalView = 100000 #TODO
     totalPoint = threadData["point"]
     totalComment = threadData["comment_count"]
     
     return {
         "topic_id": threadData["tid"],
-        "title": threadData["title"],
-        "thumbnail": findThumbnail(threadData["desc_full"]+ ' '.join(comments)),
+        "title": title,
+        "thumbnail": findThumbnail(threadData["desc_full"]+ ' '.join(comments)), #TODO
         "countries": countries,
         "duration": duration,
         "month": month,
         "season": findSeason(month,countries),
-        "theme": ["Photography"], #TODO using Naive Bayes
+        "theme": findThemeByKeyWord(content,tags), #TODO using Naive Bayes
         "budget": budget,
-        "totalView": totalView,
-        "totalPoint": totalPoint,
-        "totalComment": totalComment,
-        "popularity": calculatePopularity(totalView,totalPoint,totalComment,threadData["created_time"]), #TODO totoalView
+        "total_view": totalView,
+        "total_point": totalPoint,
+        "total_comment": totalComment,
+        "popularity": calculatePopularity(totalView,totalPoint,totalComment,int(threadData["created_time"])), #TODO totoalView
         "created_at": threadData["created_time"]
     }
 
@@ -203,10 +217,10 @@ if __name__ == "__main__":
                                 password=dbDetail["password"] )
     db = client[dbDetail["db"]]
     # print("collections list",db.list_collection_names())
-    thread_col = db["threadCollection"]
+    thread_col = db[dbDetail["threadCollection"]]
 
     #TODO get topicID
-    topicList = []
+    topicList = [39330414]
     totalThread = len(topicList)
 
     # loop each topic
@@ -214,15 +228,19 @@ if __name__ == "__main__":
     for idx, topicID in enumerate(topicList):
         print(idx, "current topic_id:", topicID)
         
-        with urllib.request.urlopen(URLCONFIG["mike_thread"] + topicID) as url:
+        with urllib.request.urlopen(URLCONFIG["mike_thread"] + str(topicID)) as url:
             thread = json.loads(url.read().decode())
             threadData = thread["_source"]
         
         # skip visa topic
-        if 'วีซ่า' in threadData['tags']:
+        skipTags = ['วีซ่า', 'สายการบิน', 'ร้องทุกข์', 'เตือนภัย','ธนาคาร','ธุรกรรมทางการเงิน']
+        if  len([tag for tag in threadData['tags'] for skipTag in skipTags if tag.find(skipTag)!=-1]) > 0:
             continue
 
         preposTopic = createPreprocessData(threadData) # get 1 forum as a document
+        if preposTopic == None: # countries null them skip
+            continue
+        
         preposTopics.append(preposTopic)
         # print("------------------------------------------------------------")
 

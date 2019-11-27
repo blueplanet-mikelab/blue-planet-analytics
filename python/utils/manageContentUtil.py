@@ -1,6 +1,6 @@
 import re
 import pythainlp.corpus as pycorpus
-from pythainlp.tokenize import word_tokenize
+from pythainlp.tokenize import word_tokenize,  dict_trie
 
 def firstClean(rawContent):
     content = rawContent
@@ -45,31 +45,57 @@ def cleanContent(rawContent):
         newContent += content[prevIdx:]
     return newContent
 
+def fullTokenizationToWordSummary(content,maxGroupLength, addCustomDict=True):
+    custom_file, custom_trie = getCustomDictList(addCustomDict)
+    
+    firstTokens = word_tokenize(cleanContent(content), engine='attacut-sc', custom_dict=custom_trie)
+    firstTokens = [token.lower() for token in firstTokens if token != ' ' and len(token) > 1]
+    
+    _, _, wordSumDict = createWordsSummary(firstTokens)
+   
+    groupList = multipleGrouping(firstTokens, maxGroupLength, wordSumDict)
+    
+    #update new group words to file
+    groups = [group["group"] for group in groupList]
+    with open('./utils/customdict_more_th.txt', 'a', encoding='utf-8') as filehandle:
+        for group in groups:
+            if group not in custom_file:
+                filehandle.write('%s\n' % group)
+
+    stopWordList = getStopWords(addMore=True)
+    newTokens = combineTokenAndClean(firstTokens, groupList, stopWordList)
+    newWordSumDict = addGroupsToWordSum(wordSumDict, groupList, stopWordList)
+
+    return newTokens, newWordSumDict
+
 
 # prepare stopwords list
 def getStopWords(addMore, fname="./utils/stopwords_more_th.txt"):
     stopwords = pycorpus.common.thai_stopwords()
     stopwordsList = set(m.strip() for m in stopwords)
-    if addMore:
-        f = open(fname, "r", encoding='utf-8')
-        stopwordsList = stopwordsList.union(set(m.strip() for m in f.readlines()))
+    f = open(fname, "r", encoding='utf-8')
+    stopwordsList = stopwordsList.union(set(m.strip() for m in f.readlines()))
     return stopwordsList
 
-def tokenization(content, stopwordsList, removeStopWord=True):
-    tokens = word_tokenize(content, engine='attacut-sc')
-    
-    # new_tokens = [token for token in tokens if token not in stopwordsList]
-    new_tokens = []
-    for token in tokens:
-        if removeStopWord:
-            if token not in stopwordsList and len(token) > 1:
-                new_tokens.append(token.lower())
-            elif token == "น.":
-                new_tokens.pop() # take the time out
-        else:
-            if token != ' ' and len(token) > 1:
-                new_tokens.append(token.lower())
-    return new_tokens
+# prepare stopwords list
+def getCustomDictList(addMore, fname="./utils/customdict_more_th.txt"):
+    wordsDict = set(pycorpus.common.thai_words())
+    if addMore:
+        f = open(fname, "r", encoding='utf-8')
+        custom = []
+        for m in f.readlines():
+            wordsDict.add(str(m.strip()))
+            custom.append(str(m.strip()))
+    return custom, dict_trie(dict_source=wordsDict)
+
+# def removeStopWords(tokens, stopwordsList):
+#     new_tokens = []
+#     for token in tokens:
+#         if token not in stopwordsList and len(token) > 1:
+#             new_tokens.append(token.lower())
+#         elif token == "น.":
+#             new_tokens.pop() # take the time out
+#     return new_tokens
 
 
 def createWordsSummary(tokens):
@@ -83,3 +109,100 @@ def createWordsSummary(tokens):
         wordsSumArray.append({'word': k, 'count': v})
 
     return wordsSumArray, len(tokens), wordsSum
+
+
+def grouping(tokens, length, wordSumDict):
+    tokenLength = len(tokens)
+    wordGroupList = []
+    groupCount = tokenLength - 1
+    # print(tokenLength, groupCount)
+
+    for i in range(tokenLength - length + 1) :
+        words = []
+        for j in range(length):
+            w = tokens[i+j]
+            words.append((w, wordSumDict[w]))
+        wordGroup = ''.join([word[0] for word in words])
+
+        if wordGroup not in [wg["group"] for wg in wordGroupList]:
+            wordGroupList.append({
+                "group": wordGroup,
+                "count": 1,
+                "words":words
+            })
+        else:
+            cdict = [wg for wg in wordGroupList if wg["group"] == wordGroup][0]
+            cdict["count"] += 1
+
+    return wordGroupList
+
+
+def multipleGrouping(tokens,length, wordSumDict):
+    if length == 1:
+        return []
+    
+    wordGroupList = grouping(tokens,length, wordSumDict)
+    if len(wordGroupList) == 0:
+        return []
+
+    considered = []
+    for wordGroup in wordGroupList:
+        if wordGroup["count"] > 1:  
+            wordGroup["totalDiff"] = sum([w[1]-wordGroup["count"] for w in wordGroup['words']])/ wordGroup["count"]
+            considered.append(wordGroup)
+
+    # considered = sorted(considered,key=lambda x:x['count'],reverse=True)
+    # pprint.pprint(considered)
+
+    stopWords = getStopWords(addMore=True)
+    cutNum = 0.4
+    removed = [conWord for conWord in considered if len(set([w[0] for w in conWord["words"]]) - set(stopWords)) == len(conWord["words"]) and conWord["totalDiff"] <= cutNum]
+    # pprint.pprint(removed)
+
+    #remove token for next round
+    selected = [w[0] for remo in removed for w in remo["words"] ]
+    new_tokens = [token for token in tokens if token not in selected]
+    return removed + multipleGrouping(new_tokens,length-1, wordSumDict)
+
+
+def addGroupsToWordSum(oldWordSumDict, groupList, stopWordList):
+    newWordSumDict = oldWordSumDict.copy()
+    
+    # add group and remove single 
+    for group in groupList:
+        newWordSumDict[group["group"]] = group["count"]
+        selected = [word[0] for word in group["words"]]
+        for key in selected:
+            if key in newWordSumDict:
+                subCount = newWordSumDict[key] - group["count"]
+                if subCount == 0:
+                    del newWordSumDict[key]
+                else:
+                    newWordSumDict[key] = subCount
+    # remove stopwords
+    for key in list(newWordSumDict.keys()):
+        if key in stopWordList:
+            del newWordSumDict[key]
+
+    return newWordSumDict
+
+def combineTokenAndClean(tokens, groupList, stopwordsList):
+    selected = {}
+    for group in groupList:
+        selected[group["group"]] = [w[0] for w in group["words"]] 
+    oldLength = len(tokens)
+    for idx in range(oldLength):
+        if idx == len(tokens): break
+
+        # find if token in group
+        for key, val in selected.items():
+            if tokens[idx: idx+len(val)] == val:
+                # print(len(val), tokens[idx: idx+len(val)])
+                tokens[idx: idx+len(val)] = [key]
+                break
+        # check if current token is stopword or not
+        if tokens[idx] in stopwordsList or len(tokens[idx]) <= 1:
+            del tokens[idx]
+            idx -= 1
+    return tokens
+
