@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "quantum-bonus-239509",
+  "private_key_id": "29f6ebeaafc386fd8afe4632fa21d1b4b74122a4",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDKdjVIvHK3LZdG\nPBLUhuUtlPzpNqVu5lq2t00BE12PLf1hwbdtcjCAKlelUEJwzSAxm/3aIJjBKPCh\nbFHUQU8YL0DNCO9GllxrzIaOe6iwvk44dzChBEwGAW6uahWzVJa7nyZRWeGHFlFv\nOt+7aRjmWQ7jCPYP8UVDOvodHnJgvQJQSluUyrMRc1ddNTvvCBsOZqjVvACjeHX3\n30bt+MK/oBROy0rVrl3WxtNUh0lwc2FKBYQqS0az5F+xsNjkJKfe11uhH7zNWvy+\n1yEbzZARqqlAU7fvsqOvB/ga89zhkAqEP0WVOpBlkXPRH7rMpW0R/dkiBKQZ5QEW\nEgy0suZFAgMBAAECggEADb9d6guNG5CaMsVIqbXjhnHqhCMh3nMAVQ4DHyVTkfHC\nFeWmQPrYaGos9jdKB6hPZ7xLTgjZboD16Ul2ZfwC9PtdF6m5Zk42m4WcBmfxrKyu\nGYnzBfVJfJKTfimLFy38J+R24N5s9glcgWRv8Dptm9M6Hk2hDbSTlYIsnRZl7FkS\nL5coWEn4i73guyRNSeGmVrwMxXSA1pM1Xerz8AYPUpHE5f6LX0Sb3AoxAOVqfQIa\noLebjTps2xGVAIoDzSUCySB0lth4M9NCzYh8YlwWjE8TnhkbAXs93jHX4Wh+7o24\nyVqHuL+Kfp4klRQfoebYniDV7fX/mdqNXfERnqCzsQKBgQD4fAGm9RKv0k8W/WQq\npEeUOC5PMGc+D72KzSdhkUN2pzBri/4Rh4NG+KGnKbT1HqHPYiEWgZuWiNrYngtV\nuOzrdUHSd+PznQKXfCChXswhZDG3Defn6c+8APs420uS5fnyqAjIYKbKP0+tkur8\n7fHPIwfN9N5IAR6TLwOb9n3gNQKBgQDQldorzv4dMsIt1wGGD7CTAqqICA93XtEm\nv30gRC/8u/rt3omqgpdFaHwy5c7mFnvaBraWe9mgFH/yndSKUSTEAzD8Pa0cgSsF\n+WIFQMScxu45UugB50vnvvDlFkOj6ynAEdQ4EhbNQl/71flyrQYDf7TgaXToyZ+e\nk1gK7ZTP0QKBgQC0etV0X9LX06hQaXGEq1e2J2wzZlPGtwYTt9jfu/PFTcAUjVTX\nhJbsSJCZauidlUcv6vVfdHn+x5408e4HsE6c4skRRrVR73u/bZABxWn84tpdPANx\n5dhVlFzkOhvVMabvAe+HIvRiN8P2rZxyY51btvTnOfDtWarMerxjXpCk9QKBgACo\nqILA6Z6P/XsFldSlkgo01PMPC3V2EDUOH8gNTxV+RoGf1VF7jhzDArlqbmfdpFCA\n+uyowXw29FyA0R4KuZIA7JOvYi+X3Nns+rlHhhd0rWXy9Balc2DtAnfGxTnsUTpx\nE/mFXRsS3Zi/CUWqdD1oltqqmprtoBpxHrMSIwkxAoGBANcsYoOTkHBk+wopJhaz\nU3fVMRjzjJIUig38DVumDSU9hSKL6RkL/9eSRjE9pMzj+zwKj/nWyhAcTRK4mW6T\nsf8vRy1cy6Dun2ytsH6oYmgd2Qt8vKL/gQfWEkuf5tkE6vlxKs5+evJPgz8z3hO9\ndEf7WQncsHgyUnuWfZUsRErH\n-----END PRIVATE KEY-----\n",
+  "client_email": "blueplanet@quantum-bonus-239509.iam.gserviceaccount.com",
+  "client_id": "111047976430192975766",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/blueplanet%40quantum-bonus-239509.iam.gserviceaccount.com"
+}
