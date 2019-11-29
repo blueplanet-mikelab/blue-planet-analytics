@@ -114,8 +114,6 @@ def createWordsSummary(tokens):
 def grouping(tokens, length, wordSumDict):
     tokenLength = len(tokens)
     wordGroupList = []
-    groupCount = tokenLength - 1
-    # print(tokenLength, groupCount)
 
     for i in range(tokenLength - length + 1) :
         words = []

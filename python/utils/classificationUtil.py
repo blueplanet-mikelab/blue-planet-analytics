@@ -19,7 +19,7 @@ def findCountries(tags, countryList, tokens):
         if tag.find("เขต") == 0 or tag.find("เที่ยวในประเทศ") != -1 or tag == "การท่องเที่ยวแห่งประเทศไทย":
             foundList.append([country for country in countryList if country["country"] == "TH"][0])
         
-        startTag = ["คนไทยใน","เที่ยว","อาหาร"]
+        startTag = ["คนไทยใน","เที่ยว","อาหาร","ประวัติศาสตร์"]
         for st in startTag:
             if tag.find(st) == 0:
                 tag.replace(st,"")
@@ -241,7 +241,7 @@ def findThemeByKeyWord(content,tags):
     themeKeywords = [
         ['Mountain', 'เขา', 'ภู', 'เดินป่า',"camping","แคมป์","น้ำตก", "ทะเลสาบ","ป่าไม้",'เล่นน้ำตก','ล่องแก่ง'], # start with ภู
         ['Sea', 'ทะเล', 'ดำน้ำ', 'ชายหาด', 'ปะการัง','โต้คลื่น'],
-        ['Religion', 'ศาสนา', 'วัด',"สิ่งศักดิ์สิทธิ์","พระ","เณร","โบสถ์"], # หน้าวัด ห้าม ห
+        ['Religion', 'ศาสนา', 'วัด',"สิ่งศักดิ์สิทธิ์","พระ","เณร","โบสถ์","มัสยิด"], # หน้าวัด ห้าม ห
         ['Historical', 'โบราณสถาน', 'ประวัติศาสตร์'], #ดูจาก tags
         ['Entertainment', 'สวนสนุก', 'สวนสัตว์','สวนน้ำ','สวนสยาม','คาสิโน','อควาเรียม'],
         ['Festival', 'งานวัด', 'งานกาชาด','เทศกาล','จัดแสดง'],
