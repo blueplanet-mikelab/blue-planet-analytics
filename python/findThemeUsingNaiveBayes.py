@@ -1,7 +1,6 @@
 import csv
 import pprint
-import urllib.request, json 
-from pythainlp.tokenize import word_tokenize
+import urllib.request, json
 import re
 import math
 import pymongo
@@ -10,7 +9,7 @@ import datetime
 from math import sqrt, exp, pi
 from utils.TFIDFCalculationUtil import calculateFullTFIDF, createWordsSummary
 from utils.fileWritingUtil import removeAndWriteFile
-from utils.manageContentUtil import cleanContent, getStopWords
+from utils.manageContentUtil import fullTokenizationToWordSummary
 
 with open('./config/url.json') as json_data_file:
     URLCONFIG = json.load(json_data_file)
@@ -39,9 +38,9 @@ if __name__ == "__main__":
     db = client[dsdb["db"]]
 
     #! 0. read csv -> threadsList
-    with open('./labeledThreadsbyHand.csv', 'r', encoding="utf8") as f:
+    with open('./labeledThreadsbyHand_v2.csv', 'r', encoding="utf8") as f:
         threadsList = [{k: v for k, v in row.items()} for row in csv.DictReader(f, skipinitialspace=True)]
-        removeAndWriteFile('0-122threads-9themes.json', threadsList)
+        removeAndWriteFile('0-300threads.json', threadsList)
 
     print("----------Word Summary-----------")
     freqDictList = []
@@ -65,9 +64,11 @@ if __name__ == "__main__":
 
         #! 1-2. tokenize+wordsummary
         rawContent = re.sub(r'<[^<]+/>|<[^<]+>|\\.{1}|&[^&]+;|\n|\r\n','', rawContent) # to msg_clean
-        tokens = word_tokenize(cleanContent(rawContent), engine='attacut-sc')
-        wordsSum, tokensLength, wordSumDict = createWordsSummary(tokens, getStopWords(addMore=True))
-        freqDictList.append({"topic_id": topicID, "words_sum": wordsSum, "tokens_length": tokensLength})
+        tokens, wordSumDict = fullTokenizationToWordSummary(rawContent,maxGroupLength=3, addCustomDict=True)
+        # tokens = word_tokenize(cleanContent(rawContent), engine='attacut-sc')
+        # wordsSum, tokensLength, wordSumDict = createWordsSummary(tokens, getStopWords(addMore=True))
+        tokensLength = sum([count for k,count in wordSumDict.items()])
+        freqDictList.append({"topic_id": topicID, "words_sum": wordSumDict, "tokens_length": tokensLength})
 
 
     #! 1-3. push to mongo / save to json  
@@ -110,20 +111,23 @@ if __name__ == "__main__":
 
     #! 5.0 Theme model using Naive Bayes
     print("----------Naive Bayes-----------")
-    allThemeList = ['Mountain', 'Entertainment', 'Photography', 'Eating', 'WaterActivities', 'Religion', 'Honeymoon', 'Backpack', 'Event']
+    allThemeList = [
+        'Mountain', 'Waterfall', 
+        'Sea', 
+        'Religion', 
+        'Historical', 
+        'Museum', 'Zoo', 'Amusement', 'Aquariam','Casino', 'Adventure', 
+        'Festival', 'Exhibition', 
+        'Eating',
+        'NightFood', 'Pub', 'Bar', 
+        'Photography',
+        'Sightseeing'
+    ]
     allWordList = []
-    themeModels = {
-        'Mountain':     {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Entertainment':{   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Photography':  {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Eating':       {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'WaterActivities':{ 'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Religion':     {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Honeymoon':    {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Backpack':     {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Event':        {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     }
-
-    }
+    themeModels = {}
+    for theme in allThemeList:
+        themeModels[theme] = {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     }
+    
     for i, thread in enumerate(threadsScores):
         topicID = thread["topic_id"]
         print(i,"--",topicID)

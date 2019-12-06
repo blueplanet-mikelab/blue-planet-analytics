@@ -1,0 +1,305 @@
+Timestamp,By,TopicID,Type,Country,Duration,Theme,Budget (maximum รวมค่าใช้จ่ายทั้งหมด) (ใส่ -1 ถ้ากระทู้ไม่ได้บอก)
+11/24/2019 18:03:27,Ben,39193841,Review,"""มองโกเลีย"": ""Mongolia""",Not Define,"Mountain, Waterfall, Religion, Historical",-1
+11/24/2019 18:11:14,Ben,39193512,Review,"""โรมาเนีย"": ""Romania""",11 Days,"Mountain, Sea, Sightseeing",45000
+11/24/2019 18:40:49,Ben,39195685,Review,"""ไทย"": ""Thailand""",1 Day,"Mountain, Sea, Religion",-1
+11/24/2019 18:45:48,Ben,39195830,Review,"""มาเลเซีย"": ""Malaysia""",3 Days,"Religion, Sightseeing",5300
+11/24/2019 19:21:44,Ben,39197656,Review,"""ญี่ปุ่น"": ""Japan""",10 Days,Sightseeing,52438
+11/24/2019 19:33:13,Ben,39195478,Review,"""สหรัฐอเมริกา"": ""United States of America""",Not Define,Sightseeing,-1
+11/24/2019 19:35:29,Ben,39195240,Review,"""ไทย"": ""Thailand""",Not Define,Historical,50
+11/24/2019 19:37:50,Ben,39195587,Review,"""คาซัคสถาน"": ""Kazakhstan""",Not Define,"Mountain, Sea",-1
+11/24/2019 19:40:50,Ben,37430405,Review,"""ญี่ปุ่น"": ""Japan""",6 Days,"Amusement, Aquariam, Sightseeing",33000
+11/24/2019 19:45:53,Ben,39200129,Review,"""สหรัฐอเมริกา"": ""United States of America""",Not Define,Historical,-1
+11/24/2019 19:48:40,Ben,39199206,Review,"""ญี่ปุ่น"": ""Japan""",8 Days,Religion,-1
+11/24/2019 22:15:44,Ben,39201914,Review,"""มัลดีฟส์"": ""Maldives""",4 Days,Sea,-1
+11/24/2019 23:41:15,Ben,39202529,Review,"""เวียดนาม"": ""Vietnam""",5 Days,"Sea, Historical, Amusement, Sightseeing",15000
+11/24/2019 23:44:55,Ben,39202756,Review,"""ไทย"": ""Thailand""",10 Days,"Mountain, Waterfall, Religion, Sightseeing",-1
+11/24/2019 23:52:18,Ben,39204349,Review,"""เกาหลีใต้"": ""South Korea""",9 Days,"Mountain, Sea, Religion, Zoo",-1
+11/24/2019 23:57:25,Ben,39203894,Review,"""ลาว"": ""Laos""",2 Days,"Religion, Historical",-1
+11/25/2019 0:03:13,Ben,39207055,Review,"""ลาว"": ""Laos""",Not Define,"Mountain, Waterfall",-1
+11/25/2019 0:06:27,Ben,39204775,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,Photography,-1
+11/25/2019 0:09:46,Ben,39205711,Review,"""นิวซีแลนด์"": ""New Zealand""",9 Days,"Mountain, Waterfall, Sea, Adventure",-1
+11/25/2019 0:13:56,Ben,39210492,Review,"""ไทย"": ""Thailand""",Not Define,Eating,-1
+11/25/2019 13:07:19,Ben,39204480,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,"Festival, Photography",-1
+11/25/2019 13:11:49,Ben,39212077,Review,"""จีน"": ""China""",More than 12 Days,"Mountain, Photography",49000
+11/25/2019 13:15:58,Ben,39213531,Review,"""อินเดีย"": ""India""",5 Days,"Photography, Sightseeing",-1
+11/25/2019 13:18:30,Ben,39212566,Review,"""ไทย"": ""Thailand""",1 Day,"Mountain, Waterfall, Sea",-1
+11/25/2019 13:20:15,Ben,39213749,Review,"""ญี่ปุ่น"": ""Japan""",4 Days,"Sea, Religion, Aquariam, Sightseeing",-1
+11/25/2019 13:24:47,Ben,39214160,Review,"""สหรัฐอเมริกา"": ""United States of America""",3 Days,"Sea, Zoo, Photography, Adventure",-1
+11/25/2019 13:31:11,Ben,39216464,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,"Mountain, Adventure",-1
+11/25/2019 13:35:11,Ben,39216055,Review,"""สิงคโปร์"": ""Singapore""",Not Define,"Religion, Exhibition, Sightseeing",-1
+11/25/2019 13:36:54,Ben,39216496,Review,"""เยอรมนี"": ""Germany""",Not Define,"Religion, Historical, Sightseeing",-1
+11/25/2019 13:44:43,Ben,39220269,Review,"""ไทย"": ""Thailand""",2 Days,"Sea, Religion, Sightseeing",-1
+11/25/2019 13:55:01,Ben,39219411,Review,"""อินเดีย"": ""India""",Not Define,"Sea, Religion, Amusement",-1
+11/25/2019 13:58:06,Ben,39218064,Review,"""ญี่ปุ่น"": ""Japan""",7 Days,"Mountain, Sea, Zoo",-1
+11/25/2019 14:01:26,Ben,39219827,Review,"""ออสเตรเลีย"": ""Australia""",9 Days,"Sea, Zoo, Amusement, Sightseeing",-1
+11/25/2019 15:54:47,Aom,39089457,Communication,"""มองโกเลีย"": ""Mongolia""",Not Define,Eating,-1
+11/25/2019 16:01:45,Aom,39093246,Review,"""อินเดีย"": ""India""",7 Days,"Mountain, Sightseeing",41100
+11/25/2019 16:10:06,Aom,39096492,Review,"""นิวซีแลนด์"": ""New Zealand""",12 Days,"Mountain, Eating",-1
+11/25/2019 16:11:25,Aom,39096732,Review,"""ไทย"": ""Thailand""",Not Define,Religion,-1
+11/25/2019 16:14:58,Aom,39097958,Review,"""ไทย"": ""Thailand""",3 Days,"Mountain, Religion",-1
+11/25/2019 16:34:01,Aom,39097896,Review,"""เยอรมนี"": ""Germany"", ""ออสเตรีย"": ""Austria"", ""เช็กเกีย"": ""Czechia""",10 Days,"Religion, Sightseeing",-1
+11/25/2019 16:36:35,Aom,39097838,Review,"""ไทย"": ""Thailand""",2 Days,Mountain,848
+11/25/2019 16:41:11,Aom,39099184,Review,"""มาเลเซีย"": ""Malaysia""",3 Days,"Amusement, Eating",12917
+11/25/2019 16:49:37,Aom,39098379,Review,"""ไทย"": ""Thailand""",1 Day,Sightseeing,149
+11/25/2019 16:54:48,Aom,39097716,Communication,"""อินโดนีเซีย"": ""Indonesia""",6 Days,"Mountain, Sea, Photography",13000
+11/25/2019 17:02:35,Aom,39097436,Communication,"""จีน"": ""China""",9 Days,"Mountain, Eating, Sightseeing",17738.25
+11/25/2019 17:07:01,Aom,39099831,Review,"""อินโดนีเซีย"": ""Indonesia""",4 Days,"Mountain, Eating, Sightseeing",-1
+11/25/2019 17:09:52,Aom,39089049,Review,"""ญี่ปุ่น"": ""Japan""",4 Days,"Mountain, Eating",-1
+11/25/2019 17:16:10,Aom,39098861,Review,"""มาเลเซีย"": ""Malaysia""",3 Days,"Religion, Sightseeing",3100
+11/25/2019 17:18:47,Aom,39099401,Review,"""อินเดีย"": ""India""",9 Days,Mountain,26000
+11/25/2019 17:25:41,Aom,39099338,Review,"""พม่า"": ""Myanmar""",3 Days,"Mountain, Religion, Sightseeing",10500
+11/25/2019 17:29:30,Aom,39100082,Review,"""มัลดีฟส์"": ""Maldives""",3 Days,"Sea, Bar",21000
+11/25/2019 17:33:18,Aom,39100473,Review,"""ฮ่องกง"": ""Hongkong""",1 Day,Amusement,-1
+11/25/2019 17:40:12,Aom,39102021,Communication,"""นอร์เวย์"": ""Norway""",11 Days,Mountain,-1
+11/25/2019 17:43:32,Aom,39102921,Communication,"""ไทย"": ""Thailand""",1 Day,"Mountain, Waterfall",-1
+11/25/2019 17:48:45,Aom,39104992,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,"Mountain, Photography, Sightseeing",-1
+11/25/2019 17:56:44,Aom,39105603,Review,"""สหรัฐอเมริกา"": ""United States of America""",More than 12 Days,"Waterfall, Historical, Amusement, Sightseeing",-1
+11/25/2019 18:05:16,Aom,39108072,Review,"""เกาหลีใต้"": ""South Korea""",Not Define,Eating,3623.49
+11/25/2019 18:08:23,Aom,39110223,Communication,"""ไต้หวัน"": ""Taiwan""",Not Define,Sightseeing,-1
+11/25/2019 18:11:39,Aom,39110490,Review,"""ไทย"": ""Thailand""",2 Days,Sea,-1
+11/25/2019 18:17:40,Aom,39110789,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,Sightseeing,-1
+11/25/2019 18:20:51,Aom,39107702,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,Photography,-1
+11/25/2019 18:24:56,Aom,39113701,Review,"""ฟิจิ"": ""Fiji""",6 Days,Sea,-1
+11/25/2019 18:28:54,Aom,39114818,Review,"""ลาว"": ""Laos""",3 Days,"Mountain, Waterfall, Religion",-1
+11/25/2019 19:08:19,Aom,39113315,Review,"""กรีซ"": ""Greece""",8 Days,"Sea, Sightseeing",24000
+11/25/2019 19:14:12,Aom,39114634,Communication,"""อินเดีย"": ""India""",10 Days,Mountain,40000
+11/26/2019 13:26:59,Ben,39221357,Review,"""ไทย"": ""Thailand""",Not Define,Eating,-1
+11/26/2019 13:30:12,Ben,39207443,Review,"""ไต้หวัน"": ""Taiwan""",6 Days,"Waterfall, Religion, Eating, NightFood",12500
+11/26/2019 13:32:13,Ben,39222884,Review,"""ไทย"": ""Thailand""",1 Day,"Mountain, Waterfall, Religion",-1
+11/26/2019 13:36:43,Ben,39221171,Review,"""อินโดนีเซีย"": ""Indonesia""",4 Days,"Sea, Religion",-1
+11/26/2019 13:39:55,Ben,39222150,Review,"""อินโดนีเซีย"": ""Indonesia""",6 Days,"Mountain, Waterfall, Sea",-1
+11/26/2019 13:42:24,Ben,39222059,Review,"""สเปน"": ""Spain""",Not Define,"Sea, Eating",-1
+11/26/2019 13:45:11,Ben,39226058,Review,"""เวียดนาม"": ""Vietnam""",3 Days,"Religion, NightFood, Sightseeing",7861
+11/26/2019 13:48:29,Ben,39224693,Review,"""ญี่ปุ่น"": ""Japan""",6 Days,"Religion, Sightseeing",-1
+11/26/2019 13:50:23,Ben,39225807,Review,"""พม่า"": ""Myanmar""",4 Days,"Sea, Religion",4000
+11/26/2019 13:53:28,Ben,39224579,Review,"""สิงคโปร์"": ""Singapore""",Not Define,"Museum, Exhibition, Eating, Photography",-1
+11/26/2019 13:58:01,Ben,39224232,Review,"""ไทย"": ""Thailand""",2 Days,Mountain,-1
+11/26/2019 13:59:41,Ben,39225377,Review,"""ไทย"": ""Thailand""",Not Define,Sea,-1
+11/26/2019 14:03:29,Ben,39225489,Review,"""ไทย"": ""Thailand""",Not Define,"Religion, Museum, Eating",-1
+11/26/2019 14:07:01,Ben,39227106,Review,"""บรูไน"": ""Brunei""",Not Define,"Waterfall, Sea, Religion, NightFood",-1
+11/26/2019 14:09:21,Ben,39230882,Review,"""อินโดนีเซีย"": ""Indonesia""",8 Days,"Mountain, Sea, Religion",10000
+11/26/2019 14:13:32,Ben,39230255,Review,"""สหรัฐอเมริกา"": ""United States of America""",9 Days,"Waterfall, Museum, Adventure, Sightseeing",-1
+11/26/2019 14:16:39,Ben,39233499,Review,"""เวียดนาม"": ""Vietnam""",3 Days,"Sea, Historical, NightFood, Sightseeing",3500
+11/26/2019 14:19:19,Ben,39232859,Review,"""จีน"": ""China""",Not Define,"Sea, Historical, Eating",-1
+11/26/2019 14:22:26,Ben,39232170,Review,"""สเปน"": ""Spain"", ""โปรตุเกส"": ""Portugal""",More than 12 Days,"Religion, Historical, Sightseeing",-1
+11/26/2019 14:27:46,Ben,39235282,Review,"""เวียดนาม"": ""Vietnam""",6 Days,"Mountain, Waterfall, Historical, Eating",-1
+11/26/2019 14:30:20,Ben,39235679,Review,"""สิงคโปร์"": ""Singapore""",3 Days,"Sea, Religion, Amusement, Sightseeing",5000
+11/26/2019 14:34:21,Ben,39234384,Review,"""ไทย"": ""Thailand""",3 Days,"Mountain, Waterfall",-1
+11/26/2019 14:38:49,Ben,39236510,Review,"""บอตสวานา"": ""Botswana"", ""เคนยา"": ""Kenya"", ""มาดากัสการ์"": ""Madagascar"", ""นามิเบีย"": ""Namibia"", ""แอฟริกาใต้"": ""South Africa"", ""แทนซาเนีย"": ""Tanzania"", ""ยูกันดา"": ""Uganda"", ""มาลาวี"": ""Malawi"", ""รวันดา"": ""Rwanda"", ""แซมเบีย"": ""Zambia"", ""ซิมบับเว"": ""Zimbabwe""",Not Define,Zoo,-1
+11/26/2019 14:40:49,Ben,39238543,Review,"""ไทย"": ""Thailand""",8 Days,"Mountain, Waterfall, Sea, Religion",-1
+11/26/2019 14:53:55,Ben,39232398,News,"""ไทย"": ""Thailand""",Not Define,Sea,-1
+11/26/2019 14:57:37,Ben,39237671,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,"Mountain, Religion, Eating, Photography",-1
+11/26/2019 15:02:21,Ben,39239156,Review,"""ลาว"": ""Laos""",4 Days,"Mountain, Waterfall, Religion, NightFood",-1
+11/26/2019 15:05:04,Ben,39239059,Review,"""ไทย"": ""Thailand""",Not Define,"Mountain, Waterfall, Religion",3284
+11/26/2019 15:08:55,Ben,39237580,Review,"""เวียดนาม"": ""Vietnam""",4 Days,"Waterfall, Sea, Religion, Sightseeing",6861
+11/26/2019 15:10:08,Ben,39240184,Review,"""ไทย"": ""Thailand""",Not Define,Mountain,-1
+11/26/2019 15:12:38,Ben,39236518,Review,"""ไทย"": ""Thailand""",Not Define,"Historical, Exhibition",30
+11/26/2019 15:15:27,Ben,39240869,Review,"""ญี่ปุ่น"": ""Japan""",6 Days,"Mountain, Sea, Religion, Zoo",-1
+11/26/2019 15:18:46,Ben,39243393,Communication,"""ฟิลิปปินส์"": ""Philippines""",Not Define,Mountain,-1
+11/26/2019 15:23:34,Ben,39241985,Review,"""อินโดนีเซีย"": ""Indonesia"", ""มาเลเซีย"": ""Malaysia""",Not Define,"Mountain, Sea, Adventure, Sightseeing",20900
+11/26/2019 15:31:34,Ben,39243322,Review,"""ฝรั่งเศส"": ""France"", ""สเปน"": ""Spain"", ""อิตาลี"": ""Italy""",8 Days,"Sea, Historical, Amusement, Sightseeing",69000
+11/26/2019 15:32:59,Ben,39245139,Review,"""สิงคโปร์"": ""Singapore""",Not Define,Photography,-1
+11/26/2019 15:35:59,Ben,39246450,Review,"""นิวซีแลนด์"": ""New Zealand""",Not Define,"Mountain, Waterfall, Sea, Photography",-1
+11/26/2019 15:41:19,Ben,38285407,Review,"""ไทย"": ""Thailand""",Not Define,"Mountain, Photography",-1
+11/26/2019 15:45:10,Ben,39246586,Review,"""ไทย"": ""Thailand""",2 Days,"Mountain, Waterfall, Photography",-1
+11/26/2019 15:49:11,Ben,39246869,Review,"""ไทย"": ""Thailand""",1 Day,Mountain,5530
+11/26/2019 15:52:12,Ben,39246414,Review,"""เลบานอน"": ""Lebanon""",Not Define,"Sea, Religion, Historical, Sightseeing",-1
+11/26/2019 15:57:30,Ben,39247727,Review,"""ไทย"": ""Thailand""",6 Days,"Mountain, Religion",-1
+11/26/2019 16:00:12,Ben,36513030,Communication,"""เวียดนาม"": ""Vietnam""",Not Define,"Sea, Sightseeing",-1
+11/26/2019 16:41:19,Aom,39114634,Communication,"""อินเดีย"": ""India""",10 Days,Mountain,40000
+11/26/2019 16:59:29,Ben,38305022,Review,"""เวียดนาม"": ""Vietnam""",4 Days,"Sea, Religion, NightFood, Sightseeing",10000
+11/26/2019 17:23:10,Ben,39250511,Review,"""จอร์เจีย"": ""Georgia""",12 Days,"Mountain, Sea, Historical, Sightseeing",-1
+11/26/2019 17:25:15,Ben,39251205,Review,"""ไทย"": ""Thailand""",Not Define,Mountain,-1
+11/26/2019 17:28:32,Ben,39245937,Review,"""ญี่ปุ่น"": ""Japan""",9 Days,"Religion, Zoo, Exhibition, Photography",-1
+11/26/2019 17:32:43,Ben,39252791,Review,"""จีน"": ""China""",7 Days,"Mountain, Sea, Religion, Historical",-1
+11/26/2019 17:34:51,Ben,39252719,Review,"""รัสเซีย"": ""Russia""",12 Days,Historical,-1
+11/26/2019 17:37:08,Ben,39254692,Review,"""อินเดีย"": ""India""",Not Define,"Mountain, Sea, Religion",-1
+11/26/2019 17:40:38,Ben,39255934,Review,"""โอมาน"": ""Oman"", ""รัสเซีย"": ""Russia""",10 Days,"Religion, Historical, Museum, Sightseeing",40000
+11/26/2019 17:42:49,Ben,39255536,Review,"""ญี่ปุ่น"": ""Japan""",2 Days,Sea,-1
+11/26/2019 17:46:22,Ben,39255348,Review,"""ไทย"": ""Thailand""",4 Days,"Mountain, Religion, Eating",6800
+11/26/2019 17:48:36,Ben,39254566,Review,"""จอร์แดน"": ""Jordan""",Not Define,"Museum, Eating, Sightseeing",-1
+11/26/2019 17:54:32,Ben,39250531,Review,"""ญี่ปุ่น"": ""Japan""",5 Days,"Religion, Historical, Eating, Photography",-1
+11/26/2019 17:56:36,Ben,39258499,Review,"""ไทย"": ""Thailand""",1 Day,"Religion, Eating",-1
+11/26/2019 17:57:46,Ben,39258099,Review,"""ไทย"": ""Thailand""",1 Day,Eating,-1
+11/26/2019 17:59:34,Ben,39259154,Review,"""ไทย"": ""Thailand""",Not Define,Religion,500
+11/26/2019 18:02:07,Ben,39258698,Review,"""ญี่ปุ่น"": ""Japan""",10 Days,"Mountain, Waterfall, Sea, Religion",-1
+11/26/2019 18:08:15,Ben,39261088,Review,"""เกาหลีใต้"": ""South Korea""",Not Define,Eating,-1
+11/26/2019 18:10:25,Ben,39260770,Review,"""เวียดนาม"": ""Vietnam""",3 Days,"Amusement, Eating, Sightseeing",10000
+11/26/2019 18:12:45,Ben,39261745,Review,"""จีน"": ""China""",8 Days,Historical,-1
+11/26/2019 18:16:10,Ben,39262193,Review,"""ไทย"": ""Thailand""",Not Define,"Religion, Historical",-1
+11/26/2019 18:18:06,Ben,39260426,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,"Mountain, Sea",-1
+11/26/2019 18:29:40,Ben,39261154,Review,"""ออสเตรีย"": ""Austria""",More than 12 Days,"Religion, Museum, Amusement, Sightseeing",-1
+11/26/2019 18:39:45,Ben,39265948,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,"Sea, Religion, Eating",-1
+11/26/2019 18:42:23,Ben,39265857,Review,"""ไทย"": ""Thailand""",Not Define,Eating,-1
+11/27/2019 3:36:15,Mai,39358991,Review,"""อิตาลี"": ""Italy""",2 Days,Adventure,-1
+11/27/2019 3:42:19,Mai,39356894,Review,"""จีน"": ""China""",3 Days,"Eating, Photography","14,000"
+11/27/2019 3:46:43,Mai,39355741,Review,"""ไทย"": ""Thailand""",2 Days,"Mountain, Religion",-1
+11/27/2019 3:50:52,Mai,39355890,Review,"""ฮ่องกง"": ""Hongkong""",2 Days,"Religion, Amusement, Photography",-1
+11/27/2019 3:55:42,Mai,39354978,Review,"""สหรัฐอเมริกา"": ""United States of America""",2 Days,Mountain,-1
+11/27/2019 4:04:24,Mai,39339676,Review,"""ญี่ปุ่น"": ""Japan""",1 Day,"Religion, Historical",-1
+11/27/2019 4:09:25,Mai,39352040,Review,"""ไทย"": ""Thailand""",4 Days,"Mountain, Waterfall, Religion, Eating",-1
+11/27/2019 4:12:30,Mai,39354478,Review,"""ไทย"": ""Thailand""",Not Define,Historical,-1
+11/27/2019 4:16:37,Mai,39354501,Review,"""เยอรมนี"": ""Germany""",Not Define,"Festival, Photography",-1
+11/27/2019 4:20:32,Mai,39352644,Review,"""ฟิลิปปินส์"": ""Philippines""",6 Days,"Waterfall, Sea, Adventure",12000
+11/27/2019 15:30:44,Mai,39351056,Review,"""ไทย"": ""Thailand""",2 Days,Photography,2792
+11/27/2019 15:37:17,Mai,39348943,Review,"""สวิตเซอร์แลนด์"": ""Switzerland""",More than 12 Days,"Mountain, Historical, Photography",-1
+11/27/2019 15:47:03,Mai,39351083,Review,"""อังกฤษ"": ""England""",8 Days,"Sea, Photography",-1
+11/27/2019 16:02:10,Mai,39346834,Review,"""ตุรกี"": ""Turkey"", ""จอร์เจีย"": ""Georgia""",9 Days,"Mountain, Historical, Photography",40752
+11/27/2019 16:07:14,Mai,39348399,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,"Mountain, Adventure, Photography",-1
+11/27/2019 16:54:43,Mai,39346600,Review,"""ไทย"": ""Thailand""",Not Define,"Mountain, Photography",2320
+11/27/2019 17:02:25,Mai,39348054,Review,"""ลาว"": ""Laos""",1 Day,"Religion, Historical",-1
+11/27/2019 17:24:42,Mai,39342746,Review,"""ไต้หวัน"": ""Taiwan""",2 Days,"Mountain, Religion, Historical, Photography",-1
+11/27/2019 17:31:32,Mai,39344755,Review,"""ญี่ปุ่น"": ""Japan"", ""เกาหลีใต้"": ""South Korea""",5 Days,"Sea, Photography",-1
+11/27/2019 17:42:40,Mai,39343687,Review,"""อินเดีย"": ""India""",10 Days,"Mountain, Historical, Photography",26100
+11/27/2019 18:02:45,Mai,39344484,Review,"""พม่า"": ""Myanmar""",3 Days,"Mountain, Religion, Historical, Photography",-1
+11/27/2019 18:19:30,Mai,39344598,Review,"""อินเดีย"": ""India""",5 Days,"Mountain, Adventure, Photography",-1
+11/27/2019 18:22:19,Mai,39344137,Review,"""สหรัฐอเมริกา"": ""United States of America""",8 Days,Eating,-1
+11/27/2019 19:37:57,Aom,39114634,Communication,"""อินเดีย"": ""India""",10 Days,Mountain,40000
+11/28/2019 13:12:38,Aom,38477718,Review,"""เนปาล"": ""Nepal""",Not Define,Mountain,-1
+11/28/2019 13:14:33,Aom,38477373,Question,"""ไทย"": ""Thailand""",Not Define,Sightseeing,-1
+11/28/2019 13:20:04,Aom,38473489,Communication,"""จีน"": ""China""",6 Days,"Religion, Historical, Eating",-1
+11/28/2019 13:24:02,Aom,38473585,Review,"""สหรัฐอเมริกา"": ""United States of America""",4 Days,"Mountain, Sea, Sightseeing",-1
+11/28/2019 13:31:37,Aom,38641750,Review,"""ฟิลิปปินส์"": ""Philippines""",5 Days,"Mountain, Waterfall, Sea",28710
+11/28/2019 13:36:17,Aom,38640605,Review,"""มาเลเซีย"": ""Malaysia""",Not Define,Eating,-1
+11/28/2019 16:16:30,Aom,38641998,Communication,"""จีน"": ""China""",4 Days,"Mountain, Historical, Sightseeing",-1
+11/28/2019 16:32:45,Aom,38645990,Review,"""จีน"": ""China""",More than 12 Days,"Mountain, Photography, Sightseeing",-1
+11/28/2019 16:35:32,Aom,39116827,Review,"""ลาว"": ""Laos""",3 Days,"Mountain, Sightseeing",2500
+11/28/2019 16:46:39,Aom,39117137,Review,"""ลาว"": ""Laos""",3 Days,"Mountain, Religion, Historical",7685
+11/28/2019 16:49:25,Aom,39116684,Review,"""ฝรั่งเศส"": ""France""",Not Define,Mountain,-1
+11/28/2019 16:54:07,Aom,39116662,Review,"""ฟิจิ"": ""Fiji"", ""วานูอาตู"": ""Vanuatu""",10 Days,"Mountain, Sea, Bar, Sightseeing",62200
+11/28/2019 16:57:34,Aom,39118541,Review,"""ญี่ปุ่น"": ""Japan""",10 Days,"Mountain, Religion, Sightseeing",-1
+11/28/2019 16:59:14,Aom,39115371,Review,"""ญี่ปุ่น"": ""Japan""",4 Days,"Mountain, Religion, Eating, Sightseeing",-1
+11/28/2019 17:01:21,Aom,39120659,Review,"""สหราชอาณาจักร"": ""UK""",Not Define,"Mountain, Sightseeing",-1
+11/28/2019 17:04:34,Aom,39118745,Communication,"""ไทย"": ""Thailand""",4 Days,"Mountain, Religion, Historical",-1
+11/28/2019 17:07:16,Aom,39118871,Communication,"""มาเลเซีย"": ""Malaysia""",3 Days,"Eating, NightFood",-1
+11/28/2019 17:11:26,Aom,39119629,Review,"""มอนเตเนโกร"": ""Montenegro""",Not Define,"Mountain, Sightseeing",-1
+11/28/2019 17:14:43,Aom,39122147,Communication,"""ไทย"": ""Thailand""",2 Days,"Mountain, Waterfall, Religion, Eating",-1
+11/28/2019 17:17:04,Aom,39122779,Review,"""แซมเบีย"": ""Zambia"", ""ซิมบับเว"": ""Zimbabwe""",Not Define,Sightseeing,-1
+11/28/2019 17:19:51,Aom,39121743,Review,"""จีน"": ""China""",9 Days,"Mountain, Religion, Photography, Sightseeing",24642
+11/28/2019 17:22:56,Aom,39123213,Communication,"""อินโดนีเซีย"": ""Indonesia""",3 Days,Mountain,-1
+11/28/2019 17:28:58,Aom,39124737,Review,"""ออสเตรเลีย"": ""Australia""",7 Days,"Mountain, Sea, Sightseeing",-1
+11/28/2019 18:06:33,Mai,39338054,Review,"""ไทย"": ""Thailand""",2 Days,Mountain,ุุ6600
+11/28/2019 18:07:02,Aom,39125275,Review,"""ญี่ปุ่น"": ""Japan""",8 Days,"Mountain, Zoo",-1
+11/28/2019 18:10:35,Aom,39125930,Review,"""ไทย"": ""Thailand""",5 Days,"Mountain, Religion, Eating",-1
+11/28/2019 18:13:35,Mai,39341950,Review,"""สหรัฐอเมริกา"": ""United States of America""",Not Define,Eating,-1
+11/28/2019 18:28:02,Mai,39342010,Review,"""นิวซีแลนด์"": ""New Zealand""",8 Days,"Mountain, Photography",58000
+11/28/2019 18:37:09,Mai,39338168,Review,"""มาเลเซีย"": ""Malaysia""",4 Days,"Religion, Historical, Photography",7000
+11/28/2019 18:44:54,Aom,39125769,Review,"""อิตาลี"": ""Italy""",5 Days,"Sea, Sightseeing",-1
+11/28/2019 18:46:14,Aom,39126616,Communication,"""สเปน"": ""Spain""",Not Define,Sightseeing,-1
+11/28/2019 18:47:13,Mai,39337005,Review,"""เกาหลีใต้"": ""South Korea""",6 Days,"Historical, Eating, Photography",-1
+11/28/2019 18:49:40,Aom,39124697,Communication,"""อิตาลี"": ""Italy""",2 Days,Mountain,-1
+11/28/2019 18:51:23,Mai,39339006,Review,"""ญี่ปุ่น"": ""Japan""",1 Day,"Historical, Eating, Photography",-1
+11/28/2019 18:55:29,Aom,39128702,Communication,"""จีน"": ""China""",3 Days,"Mountain, Religion, Historical, Eating",12972
+11/28/2019 18:58:44,Mai,39338378,Review,"""กรีซ"": ""Greece""",4 Days,"Historical, Photography",40000
+11/28/2019 18:59:00,Aom,39128281,Review,"""ไทย"": ""Thailand""",5 Days,"Mountain, Waterfall, Sightseeing",4748
+11/28/2019 19:00:58,Aom,39128772,Review,"""เวียดนาม"": ""Vietnam""",4 Days,"Mountain, Historical, Sightseeing",-1
+11/28/2019 19:03:13,Aom,39128781,Review,"""ลาว"": ""Laos""",4 Days,"Mountain, Waterfall, Religion, Eating",-1
+11/28/2019 19:05:19,Mai,39336309,Review,"""ไทย"": ""Thailand""",3 Days,"Mountain, Religion, Historical, Eating",-1
+11/28/2019 19:06:01,Aom,39125178,Review,"""ญี่ปุ่น"": ""Japan""",5 Days,"Religion, Historical, Museum, Sightseeing",35000
+11/28/2019 19:14:43,Aom,39130786,Review,"""ไทย"": ""Thailand""",2 Days,"Religion, Eating, Photography, Sightseeing",901
+11/28/2019 19:17:30,Aom,39130443,Review,"""ออสเตรเลีย"": ""Australia""",1 Day,Sightseeing,1835
+11/28/2019 19:19:11,Aom,39132125,Communication,"""อิตาลี"": ""Italy""",1 Day,Sightseeing,700
+11/28/2019 19:21:18,Mai,39336433,Review,"""เวียดนาม"": ""Vietnam""",5 Days,"Mountain, Historical, Adventure, Eating, Photography",8500
+11/28/2019 19:21:59,Aom,39127810,Review,"""ไต้หวัน"": ""Taiwan""",3 Days,"Religion, Eating, Sightseeing",-1
+11/28/2019 19:23:09,Aom,39132759,Review,"""ไทย"": ""Thailand""",Not Define,Eating,-1
+11/28/2019 19:24:07,Aom,39134701,Review,"""ไทย"": ""Thailand""",Not Define,Mountain,-1
+11/28/2019 19:25:22,Mai,39333838,Review,"""ไทย"": ""Thailand""",3 Days,"Mountain, Religion, Photography",-1
+11/28/2019 19:26:12,Aom,36892622,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,"Eating, Sightseeing",0
+11/28/2019 19:29:13,Aom,39138635,Review,"""ไทย"": ""Thailand""",3 Days,"Mountain, Religion, Museum, Sightseeing",-1
+11/28/2019 19:30:42,Mai,39334991,Review,"""อังกฤษ"": ""England""",1 Day,"Mountain, Museum, Exhibition, Photography",-1
+11/28/2019 19:31:43,Aom,39138061,Review,"""ไทย"": ""Thailand""",3 Days,"Mountain, Religion, Historical, Sightseeing",-1
+11/28/2019 19:32:13,Mai,39336123,Review,"""ไทย"": ""Thailand""",2 Days,"Mountain, Waterfall, Religion",-1
+11/28/2019 19:33:04,Aom,39136998,Review,"""เวียดนาม"": ""Vietnam""",4 Days,"Mountain, Eating, NightFood, Sightseeing",5479
+11/28/2019 19:35:07,Aom,39140574,Review,"""ญี่ปุ่น"": ""Japan""",7 Days,"Mountain, Zoo, Eating, Sightseeing",25000
+11/28/2019 19:37:20,Mai,39335055,Review,"""สหรัฐอเมริกา"": ""United States of America""",Not Define,"Mountain, Adventure, Photography",-1
+11/28/2019 19:38:31,Aom,39139385,Review,"""ตุรกี"": ""Turkey""",10 Days,"Historical, Eating, Photography, Sightseeing",-1
+11/28/2019 19:40:15,Aom,39143464,Review,"""ญี่ปุ่น"": ""Japan""",2 Days,"Eating, Sightseeing",-1
+11/28/2019 19:44:59,Aom,39142603,Communication,"""มอนเตเนโกร"": ""Montenegro""",Not Define,"Mountain, Religion, Sightseeing",-1
+11/28/2019 19:47:34,Aom,39142866,Review,"""แอฟริกาใต้"": ""South Africa""",Not Define,"Mountain, Exhibition, Eating",-1
+11/28/2019 19:48:20,Aom,39141575,Review,"""ไทย"": ""Thailand""",Not Define,Eating,-1
+11/28/2019 19:49:23,Aom,39142973,Review,"""ไทย"": ""Thailand""",2 Days,Mountain,1280
+11/29/2019 1:42:44,Mai,39327244,Review,"""เกาหลีใต้"": ""South Korea""",4 Days,"Mountain, Religion, Museum, Aquariam",-1
+11/29/2019 1:53:04,Mai,39327751,Review,"""อินเดีย"": ""India""",7 Days,"Religion, Historical, Eating, Sightseeing",46700
+11/29/2019 2:05:49,Mai,39326482,Review,"""ไทย"": ""Thailand""",2 Days,"Religion, Eating, Sightseeing",4000
+11/29/2019 2:09:36,Mai,39325205,Review,"""ไทย"": ""Thailand""",10 Days,"Mountain, Sea, Adventure, Sightseeing",8000
+11/29/2019 2:18:32,Mai,39327640,Review,"""ไทย"": ""Thailand""",3 Days,"Mountain, Adventure",-1
+11/29/2019 2:19:01,Mai,39318260,Review,"""ไทย"": ""Thailand""",3 Days,"Mountain, Religion",-1
+11/29/2019 2:20:32,Mai,39320593,Review,"""ไทย"": ""Thailand""",1 Day,Eating,-1
+11/29/2019 2:23:24,Mai,39327038,Review,"""ออสเตรเลีย"": ""Australia""",5 Days,"Sea, Museum, Sightseeing",-1
+11/29/2019 2:24:30,Mai,39319061,Review,"""อินโดนีเซีย"": ""Indonesia""",7 Days,"Mountain, Photography",-1
+11/29/2019 2:29:05,Mai,39318635,Review,"""ไทย"": ""Thailand""",2 Days,"Religion, Historical, Zoo, Sightseeing",-1
+11/29/2019 2:29:07,Mai,39231778,Review,"""เกาหลีใต้"": ""South Korea"", ""เนเธอร์แลนด์"": ""the Netherlands""",4 Days,"Religion, Aquariam, Eating, Sightseeing",-1
+11/29/2019 2:33:11,Mai,39320311,Review,"""ไทย"": ""Thailand""",2 Days,"Mountain, Photography",3000
+11/29/2019 2:37:48,Mai,39320488,Review,"""เวียดนาม"": ""Vietnam""",2 Days,"Historical, Sightseeing",5000
+11/29/2019 2:49:27,Mai,39320630,Review,"""ไทย"": ""Thailand""",3 Days,"Sea, Zoo, Eating",-1
+11/29/2019 2:53:57,Mai,39324439,Review,"""ไทย"": ""Thailand""",1 Day,"Religion, Museum, Photography, Sightseeing",-1
+11/29/2019 3:00:17,Mai,39322093,Review,"""เยอรมนี"": ""Germany""",More than 12 Days,"Mountain, Historical, Photography, Sightseeing",-1
+11/29/2019 3:04:49,Mai,39324155,Review,"""จีน"": ""China""",8 Days,"Mountain, Religion, Historical, Photography",26000
+11/29/2019 16:10:57,Aom,39145464,Review,"""ไต้หวัน"": ""Taiwan""",4 Days,"Mountain, Waterfall, Eating, NightFood",9443
+11/29/2019 16:13:02,Aom,39146473,Communication,"""อิตาลี"": ""Italy""",3 Days,"Historical, Eating",-1
+11/29/2019 16:14:45,Aom,39147181,Communication,"""ไต้หวัน"": ""Taiwan""",Not Define,Eating,-1
+11/29/2019 16:16:14,Aom,39147609,Communication,"""ญี่ปุ่น"": ""Japan""",Not Define,"Sea, Historical, Eating",-1
+11/29/2019 16:19:39,Aom,39148790,Review,"""เนเธอร์แลนด์"": ""the Netherlands""",More than 12 Days,"Museum, Eating, Sightseeing",-1
+11/29/2019 17:22:30,Aom,39149900,Review,"""ญี่ปุ่น"": ""Japan""",12 Days,Sightseeing,-1
+11/29/2019 18:41:02,Aom,39148440,Review,"""อินโดนีเซีย"": ""Indonesia""",4 Days,"Mountain, Waterfall",-1
+11/29/2019 18:42:56,Aom,39152348,Review,"""ไทย"": ""Thailand""",1 Day,"Sea, Religion",-1
+11/29/2019 18:44:30,Aom,39148835,Review,"""พม่า"": ""Myanmar""",4 Days,"Religion, Eating",9800
+11/29/2019 18:52:09,Aom,39147836,Communication,"""โรมาเนีย"": ""Romania""",7 Days,"Historical, Eating, Sightseeing",5000
+11/29/2019 18:53:31,Aom,39144908,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,"Mountain, Sightseeing",-1
+11/29/2019 19:00:52,Aom,39150310,Review,"""ศรีลังกา"": ""Sri Lanka""",6 Days,"Waterfall, Sea, Religion, Sightseeing",14000
+11/29/2019 19:05:37,Aom,39151542,Communication,"""ญี่ปุ่น"": ""Japan""",4 Days,Mountain,-1
+11/29/2019 19:08:40,Aom,39154904,Communication,"""ไทย"": ""Thailand""",Not Define,"Mountain, Religion, Eating",-1
+11/29/2019 19:09:31,Aom,39154191,Communication,"""ไทย"": ""Thailand""",Not Define,Eating,-1
+11/29/2019 19:11:50,Aom,39151298,Review,"""ญี่ปุ่น"": ""Japan""",6 Days,"Mountain, Sightseeing",-1
+11/29/2019 19:14:29,Aom,39153087,Review,"""ไทย"": ""Thailand""",Not Define,Mountain,-1
+11/29/2019 19:17:34,Aom,39153465,Review,"""มาเลเซีย"": ""Malaysia""",4 Days,"Religion, NightFood, Sightseeing",-1
+11/29/2019 19:21:47,Aom,39153074,Review,"""ฝรั่งเศส"": ""France"", ""อิตาลี"": ""Italy"", ""โปรตุเกส"": ""Portugal""",More than 12 Days,"Historical, Sightseeing",100000
+11/29/2019 19:25:01,Aom,39154852,Review,"""ไทย"": ""Thailand""",2 Days,"Mountain, Sea, Sightseeing",-1
+11/29/2019 19:28:34,Aom,39153056,Communication,"""เม็กซิโก"": ""Mexico""",More than 12 Days,"Religion, Sightseeing",-1
+11/30/2019 23:47:21,Mai,39317086,Review,"""ไอซ์แลนด์"": ""Iceland""",9 Days,"Mountain, Waterfall, Photography",90416
+11/30/2019 23:50:46,Mai,39317098,Review,"""ญี่ปุ่น"": ""Japan""",1 Day,"Waterfall, Religion",-1
+11/30/2019 23:54:20,Mai,39317687,Review,"""สิงคโปร์"": ""Singapore""",3 Days,"Amusement, Photography, Sightseeing",8000
+12/1/2019 0:01:03,Mai,39316807,Review,"""เอสโตเนีย"": ""Estonia""",More than 12 Days,"Historical, Photography",-1
+12/1/2019 0:03:18,Mai,39314325,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,Religion,500
+12/1/2019 0:05:36,Mai,39313331,Review,"""ไทย"": ""Thailand""",1 Day,Eating,40
+12/1/2019 0:08:53,Mai,39312753,Review,"""ไทย"": ""Thailand""",1 Day,"Mountain, Photography",-1
+12/1/2019 0:21:12,Mai,39311735,Review,"""ปากีสถาน"": ""Pakistan""",11 Days,"Mountain, Historical, Adventure, Photography",-1
+12/1/2019 1:28:17,Mai,39313435,Review,"""สหรัฐอเมริกา"": ""United States of America""",Not Define,"Mountain, Photography",-1
+12/1/2019 0:47:48,Mai,39310255,Review,"""ญี่ปุ่น"": ""Japan""",3 Days,"Religion, Photography",-1
+12/1/2019 0:49:48,Mai,39307632,Review,"""ไทย"": ""Thailand""",Not Define,Eating,50
+12/1/2019 0:51:59,Mai,39309417,Review,"""เยอรมนี"": ""Germany""",Not Define,Eating,-1
+12/1/2019 0:57:07,Mai,39307829,Review,"""ไทย"": ""Thailand""",Not Define,Religion,-1
+12/1/2019 1:03:36,Mai,39306609,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,"Mountain, Festival, Photography, Sightseeing",-1
+12/1/2019 1:08:39,Mai,39306333,Review,"""เวียดนาม"": ""Vietnam""",4 Days,"Photography, Sightseeing",-1
+12/1/2019 1:17:38,Mai,39305768,Review,"""เนปาล"": ""Nepal""",4 Days,"Religion, Historical",15000
+12/1/2019 1:27:36,Mai,39305847,Review,"""อินเดีย"": ""India""",6 Days,"Mountain, Eating, Photography, Sightseeing",-1
+12/2/2019 16:44:03,Mai,39303730,Review,"""ไทย"": ""Thailand""",1 Day,Eating,1440
+12/2/2019 16:47:29,Mai,39304178,Review,"""ไทย"": ""Thailand""",Not Define,"Mountain, Historical, Photography, Sightseeing",-1
+12/2/2019 17:03:18,Mai,39303905,Review,"""ไทย"": ""Thailand""",3 Days,"Mountain, Religion",1000
+12/2/2019 17:23:52,Mai,39302564,Review,"""ญี่ปุ่น"": ""Japan""",Not Define,"Mountain, Religion, Sightseeing",-1
+12/2/2019 17:56:31,Mai,39303073,Review,"""อียิปต์"": ""Egypt""",More than 12 Days,"Mountain, Historical, Photography, Sightseeing",-1
+12/2/2019 18:03:07,Mai,39299778,Review,"""ไทย"": ""Thailand""",2 Days,Mountain,1605
+12/2/2019 18:10:50,Mai,39300971,Review,"""สิงคโปร์"": ""Singapore""",2 Days,"Photography, Sightseeing",9410
+12/2/2019 18:45:49,Mai,39299587,Review,"""จอร์เจีย"": ""Georgia""",Not Define,"Mountain, Religion, Historical, Photography",-1
+12/2/2019 18:50:31,Mai,39301035,Review,"""ไทย"": ""Thailand""",2 Days,Mountain,2000
+12/2/2019 18:57:32,Mai,39300332,Review,"""เวียดนาม"": ""Vietnam""",5 Days,"Sea, Amusement, Eating",-1
+12/4/2019 15:01:47,Mai,39288839,Review,"""ญี่ปุ่น"": ""Japan""",4 Days,"Mountain, Religion, Amusement, Sightseeing",-1
+12/4/2019 15:04:53,Mai,39297287,Review,"""ไทย"": ""Thailand""",3 Days,Mountain,-1
+12/4/2019 15:15:01,Mai,39296386,Review,"""อังกฤษ"": ""England""",9 Days,"Festival, Sightseeing",-1
+12/4/2019 15:16:33,Mai,39297805,Review,"""ไทย"": ""Thailand""",Not Define,"Mountain, Religion",-1
+12/4/2019 15:18:52,Mai,39297755,Review,"""แคนาดา"": ""Canada""",Not Define,Sightseeing,-1
+12/4/2019 15:22:14,Mai,39298263,Review,"""จีน"": ""China""",Not Define,Mountain,-1
+12/4/2019 15:23:27,Mai,39293570,Review,"""ไทย"": ""Thailand""",1 Day,Eating,-1
+12/4/2019 15:26:52,Mai,39290450,Review,"""กัมพูชา"": ""Cambodia""",3 Days,"Historical, Pub",5500
+12/4/2019 15:31:27,Mai,39293488,Review,"""แอฟริกาใต้"": ""South Africa""",9 Days,"Mountain, Sea, Eating",-1
+12/4/2019 15:33:30,Mai,39292805,Review,"""ไทย"": ""Thailand""",3 Days,Religion,-1
+12/4/2019 15:38:34,Mai,39292270,Review,"""เยอรมนี"": ""Germany""",Not Define,"Museum, Festival",-1
+12/4/2019 15:47:01,Mai,39289057,Review,"""จีน"": ""China""",3 Days,"Historical, Sightseeing",-1
+12/4/2019 16:00:10,Mai,39291519,Review,"""อินโดนีเซีย"": ""Indonesia"", ""ไทย"": ""Thailand"", ""ญี่ปุ่น"": ""Japan""",4 Days,"Mountain, Waterfall, Photography",-1
+12/4/2019 16:03:13,Mai,39289538,Review,"""เนเธอร์แลนด์"": ""the Netherlands""",1 Day,Sightseeing,-1
+12/4/2019 16:05:57,Mai,39288898,Review,"""ไทย"": ""Thailand""",3 Days,"Mountain, Waterfall",1848
+12/4/2019 16:10:03,Mai,39285209,Review,"""ญี่ปุ่น"": ""Japan""",3 Days,"Religion, Historical, Aquariam, Eating",4066
+12/4/2019 16:13:42,Mai,39284404,Review,"""ไต้หวัน"": ""Taiwan""",4 Days,"Religion, Eating, Sightseeing",-1
+12/4/2019 16:15:29,Mai,39284979,Review,"""เวียดนาม"": ""Vietnam""",Not Define,Amusement,-1
+12/4/2019 16:18:27,Mai,39285952,Review,"""แอฟริกาใต้"": ""South Africa""",9 Days,"Mountain, Sea, Historical, Museum",54537
+12/4/2019 16:21:27,Mai,39282782,Review,"""ไทย"": ""Thailand""",3 Days,Mountain,-1
