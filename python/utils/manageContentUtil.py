@@ -190,7 +190,8 @@ def combineTokenAndClean(tokens, groupList, stopwordsList):
         selected[group["group"]] = [w[0] for w in group["words"]] 
     oldLength = len(tokens)
     for idx in range(oldLength):
-        if idx == len(tokens): break
+        # print(len(tokens), idx, oldLength)
+        if idx >= len(tokens): break
 
         # find if token in group
         for key, val in selected.items():

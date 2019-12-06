@@ -68,7 +68,10 @@ if __name__ == "__main__":
         # tokens = word_tokenize(cleanContent(rawContent), engine='attacut-sc')
         # wordsSum, tokensLength, wordSumDict = createWordsSummary(tokens, getStopWords(addMore=True))
         tokensLength = sum([count for k,count in wordSumDict.items()])
-        freqDictList.append({"topic_id": topicID, "words_sum": wordSumDict, "tokens_length": tokensLength})
+        wordsSumArray = []
+        for k,v in wordSumDict.items():
+            wordsSumArray.append({'word': k, 'count': v})
+        freqDictList.append({"topic_id": topicID, "words_sum": wordsSumArray, "tokens_length": tokensLength})
 
 
     #! 1-3. push to mongo / save to json  

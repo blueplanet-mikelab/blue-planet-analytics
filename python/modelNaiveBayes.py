@@ -1,7 +1,6 @@
 import csv
 import pprint
-import urllib.request, json 
-from pythainlp.tokenize import word_tokenize
+import urllib.request, json
 import re
 import math
 import pymongo
@@ -10,11 +9,25 @@ import datetime
 from math import sqrt, exp, pi
 from utils.TFIDFCalculationUtil import calculateFullTFIDF, createWordsSummary
 from utils.fileWritingUtil import removeAndWriteFile
-from utils.manageContentUtil import cleanContent, getStopWords
+from utils.manageContentUtil import fullTokenizationToWordSummary
 from utils.measurementsUtil import accuracy, confusionMatrix, recallScore, precisionScore
 
 with open('./config/url.json') as json_data_file:
     URLCONFIG = json.load(json_data_file)
+
+allThemeList = {
+        'Mountain':['Mountain'], 'Waterfall':['Waterfall'], 
+        'Sea':['Sea'], 
+        'Religion':['Religion'], 
+        'Historical':['Historical'], 
+        'Entertainment':['Museum','Zoo','Amusement','Aquariam','Casino','Adventure'], 
+        'Festival':['Festival','Exhibition'], 
+        'Eating':['Eating'],
+        'NightLifeStyle':['NightFood', 'Pub', 'Bar'], 
+        'Photography':['Photography'],
+        'Sightseeing':['Sightseeing']
+}
+
 
 # Calculate the mean of a list of numbers
 def calMean(numbers, length):
@@ -114,9 +127,14 @@ def training(trainDataset):
 
         #! 1-2. tokenize+wordsummary
         rawContent = re.sub(r'<[^<]+/>|<[^<]+>|\\.{1}|&[^&]+;|\n|\r\n','', rawContent) # to msg_clean
-        tokens = word_tokenize(cleanContent(rawContent), engine='attacut-sc')
-        wordsSum, tokensLength, _ = createWordsSummary(tokens, getStopWords(addMore=True))
-        freqDictList.append({"topic_id": topicID, "words_sum": wordsSum, "tokens_length": tokensLength})
+        tokens, wordSumDict = fullTokenizationToWordSummary(rawContent,maxGroupLength=3, addCustomDict=True)
+        # tokens = word_tokenize(cleanContent(rawContent), engine='attacut-sc')
+        # wordsSum, tokensLength, wordSumDict = createWordsSummary(tokens, getStopWords(addMore=True))
+        tokensLength = sum([count for k,count in wordSumDict.items()])
+        wordsSumArray = []
+        for k,v in wordSumDict.items():
+            wordsSumArray.append({'word': k, 'count': v})
+        freqDictList.append({"topic_id": topicID, "words_sum": wordsSumArray, "tokens_length": tokensLength})
 
 
     #! 1-3. push to mongo / save to json  
@@ -159,20 +177,10 @@ def training(trainDataset):
 
     #! 5.0 Theme model using Naive Bayes
     print("----------Naive Bayes-----------")
-    allThemeList = ['Mountain', 'Entertainment', 'Photography', 'Eating', 'WaterActivities', 'Religion', 'Honeymoon', 'Backpack', 'Event']
     allWordList = []
-    themeModels = {
-        'Mountain':     {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Entertainment':{   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Photography':  {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Eating':       {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'WaterActivities':{ 'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Religion':     {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Honeymoon':    {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Backpack':     {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     },
-        'Event':        {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     }
-
-    }
+    themeModels = {}
+    for theme in allThemeList:
+        themeModels[theme] = {   'yes':{'topic_ids':[], 'words_count':{}},   'no':{'topic_ids':[], 'words_count':{}}     }
     for i, thread in enumerate(threadsScores):
         topicID = thread["topic_id"]
         print(i,"--",topicID)
@@ -180,7 +188,8 @@ def training(trainDataset):
         threadThemeList = threadTheme.replace(" ","").split(",") #string
         
         for idx, theme in enumerate(allThemeList):
-            isTheme = 'yes' if theme in threadThemeList else 'no'
+            minorTheme = allThemeList[theme]
+            isTheme = 'yes' if any([mt in threadThemeList for mt in minorTheme]) else 'no'
             #add topic id
             themeModels[theme][isTheme]['topic_ids'].append(topicID)
             #add word
@@ -226,12 +235,12 @@ if __name__ == "__main__":
     db = client[dsdb["db"]]
 
     #! 0. read csv -> threadsList
-    with open('./labeledThreadsbyHand.csv', 'r', encoding="utf8") as f:
+    with open('./labeledThreadsbyHand_v2.csv', 'r', encoding="utf8") as f:
         threadsList = [{k: v for k, v in row.items()} for row in csv.DictReader(f, skipinitialspace=True)]
-        removeAndWriteFile('0-122threads-9themes.json', threadsList)
+        removeAndWriteFile('0-300threads.json', threadsList)
 
     threadsCount = len(threadsList)
-    split = int(threadsCount * 0.8)
+    split = int(threadsCount * 0.95)
     trainDataset = threadsList[:split]
     testDataset = threadsList[split:]
     print("trainDataset:", len(trainDataset), "| testDataset:", len(testDataset))
@@ -263,24 +272,23 @@ if __name__ == "__main__":
         rawContent = title + desc + ' '.join(comments)
 
         #! 2-3. tokenize+wordsummary
-        wordsSum, tokensLength, wordSumDict = createWordsSummary(cleanContent(rawContent), getStopWords(addMore=True))
+        tokens, wordSumDict = fullTokenizationToWordSummary(rawContent,maxGroupLength=3, addCustomDict=True)
+        tokensLength = sum([count for k,count in wordSumDict.items()])
+        wordsSumArray = []
+        for k,v in wordSumDict.items():
+            wordsSumArray.append({'word': k, 'count': v})
+
+        # wordsSum, tokensLength, wordSumDict = createWordsSummary(cleanContent(rawContent), getStopWords(addMore=True))
         # freqDictList.append({"topic_id": topicID, "words_sum": wordsSum, "tokens_length": tokensLength, "created_at":datetime.datetime.now()})
-        freqDictList.append({"topic_id": topicID, "words_sum": wordsSum, "tokens_length": tokensLength})
+        freqDictList.append({"topic_id": topicID, "words_sum": wordsSumArray, "tokens_length": tokensLength})
 
     threadScores = calculateFullTFIDF(freqDictList)
 
     #! 3 prediction and prepare data to measure
-    values = {
-        'Mountain':       {"actual":[], "predict":[], 'topicOrder':[]},
-        'Entertainment':  {"actual":[], "predict":[], 'topicOrder':[]},
-        'Photography':    {"actual":[], "predict":[], 'topicOrder':[]},
-        'Eating':         {"actual":[], "predict":[], 'topicOrder':[]},
-        'WaterActivities':{"actual":[], "predict":[], 'topicOrder':[]},
-        'Religion':       {"actual":[], "predict":[], 'topicOrder':[]},
-        'Honeymoon':      {"actual":[], "predict":[], 'topicOrder':[]},
-        'Backpack':       {"actual":[], "predict":[], 'topicOrder':[]},
-        'Event':          {"actual":[], "predict":[], 'topicOrder':[]}
-    }
+    values = {}
+    for theme in allThemeList:
+        values[theme] = {"actual":[], "predict":[], 'topicOrder':[]}
+
     for threadScore in threadScores:
         currentTopicID = threadScore["topic_id"]
         print("------",currentTopicID, "-----------")
@@ -332,7 +340,7 @@ if __name__ == "__main__":
         print(currentTopicID, "Themes:",predictedThemes)
     
     removeAndWriteFile('6-values-test.json', values)
-    removeAndWriteFile('6-threadScores-test.json', themeModels)
+    removeAndWriteFile('6-threadScores-test.json', threadScore)
 
     #! 4 measurements
     for theme, valDict in values.items():
