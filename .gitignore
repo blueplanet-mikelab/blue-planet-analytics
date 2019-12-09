@@ -11,3 +11,5 @@ python/image_pro/hot-dog-not-hot-dog/
 python/image_pro/resnet50/
 python/image_pro/urban-and-rural-photos/
 python/image_pro/vgg16/
+backend/config.json
+backend/node_modules/
