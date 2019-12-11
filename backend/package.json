@@ -3,5 +3,8 @@
     "express": "^4.17.1",
     "monk": "^7.1.1",
     "nodemon": "^2.0.1"
+  },
+  "scripts": {
+    "server": "nodemon app.js"
   }
 }

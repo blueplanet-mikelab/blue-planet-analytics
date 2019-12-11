@@ -1,0 +1,125 @@
+[{
+        "$project": {
+            "topic_id": 1,
+            "title": 1,
+            "thumbnail": 1,
+            "countries": 1,
+            "duration": 1,
+            "month": 1,
+            "theme": 1,
+            "budget": 1,
+            "totalView": 1,
+            "totalVote": 1,
+            "totalComment": 1,
+            "popularity": 1,
+            "created_at": 1,
+            "c_filter": {
+                "$filter": {
+                    "input": "$countries",
+                    "as": "country",
+                    "cond": {
+                        "$or": [{
+                                "$eq": ["$$country.nameEnglish", "Thailand"]
+                            }, {
+                                "$eq": ["$$country.nameEnglish", "Taiwan"]
+                            }
+                        ]
+                    }
+                }
+            },
+            "d_filter": {
+                "$or": [{
+                        "$and": [{
+                                "$gte": ["$duration.days", 1]
+                            }, {
+                                "$lte": ["$duration.days", 3]
+                            }
+                        ]
+                    }, {
+                        "$and": [{
+                                "$gt": ["$duration.days", 12]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "m_filter": {
+                "$filter": {
+                    "input": "$month",
+                    "as": "mon",
+                    "cond": {
+                        "$or": [{
+                                "$eq": ["$$mon", "August"]
+                            }, {
+                                "$eq": ["$$mon", "October"]
+                            }
+                        ]
+                    }
+                }
+            },
+            "t_filter": {
+                "$filter": {
+                    "input": "$theme",
+                    "as": "theme",
+                    "cond": {
+                        "$or": [{
+                                "$eq": ["$$theme.theme", "Mountain"]
+                            }, {
+                                "$eq": ["$$theme.theme", "Historical"]
+                            }, {
+                                "$eq": ["$$theme.theme", "Sightseeing"]
+                            }
+                        ]
+                    }
+                }
+            },
+            "b_filter": {
+                "$or": [{
+                        "$and": [{
+                                "$gte": ["$budget", 0]
+                            }, {
+                                "$lte": ["$budget", 10000]
+                            }
+                        ]
+                    }, {
+                        "$eq": ["$budget", -1]
+                    }
+                ]
+            }
+        }
+    }, {
+        "$match": {
+            "c_filter": {
+                "$ne": []
+            },
+            "d_filter": {
+                "$eq": true
+            },
+            "m_filter": {
+                "$ne": []
+            },
+            "t_filter": {
+                "$nin": [[], false]
+            },
+            "b_filter": {
+                "$eq": true
+            }
+        }
+    }, {
+        "$sort": {
+            "created_at": -1
+        }
+    }, {
+        "$project": {
+            "c_filter": 0,
+            "d_filter": 0,
+            "m_filter": 0,
+            "t_filter": 0,
+            "b_filter": 0
+        }
+    }, {
+        "$skip": 10
+    }, {
+        "$limit": 10
+    }
+]

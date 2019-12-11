@@ -1,10 +1,9 @@
 const express = require('express')
+const fs = require('fs');
 const app = express()
 const port = 8000
 const monk = require('monk')
-const config = require('./config.json')
-const configDB = config.pantip-ds
-const dburl = `${configDB.username}:${configDB.password}@${configDB.host}:27017/${configDB.db}`;
+const dburl = 'dev:QJhl4IAYJU4OrgJjzYaZ@ds-db1.local:27017/dev';
 const db = monk(dburl,{authSource:'dev'});
 const bodyParser = require('body-parser');
 db.then(() => { console.log('Connected successfully to mongo')})
@@ -22,7 +21,7 @@ function selectSorting(sortby){
 app.use(bodyParser.json());
 
 app.get('/', function(req,res){
-    res.send("Hello World*****")
+    res.send("access the server: yes!")
 })
 
 app.get('/forumlist/all/:sortby/:page', function(req, res){
@@ -48,28 +47,30 @@ app.get('/forumlist/all/:sortby/:page', function(req, res){
 
 });
 
-app.post('/forumlist/conditions', function(req, res){
+app.post('/forumlist/filter', function(req, res){
     console.log(req.body)
     result_per_page = 10
 
-    var type = req.body.type
+    // var type = req.body.type
     var countries = req.body.countries; //array of string ["Thailand","Singapore"]
     var c_filter = []
     if(countries != null){
         countries.forEach(country => {
-            c_filter.push( { "$eq": [ "$$country.nameEnglish", toString(country) ] } )
+            console.log("country:",country)
+            c_filter.push( { "$eq": [ "$$country.nameEnglish", country ] } )
         })
     }
 
     var duration = req.body.duration; //array of string ["1-3Days", "4-6Days", "7-9Days","10-12Days","Morethan12Days"]
     d_filter = []
+    console.log("duration:",duration)
     if(duration != null){
-        duration.array.forEach(label => {
-            parts = label.replace(/\s+/, "").match(/(than|\d+)-*(\d+)Days/)
+        duration.forEach(label => {
+            parts = label.replace(/\s+/g, "").match(/(than|\d+)-*(\d+)Days/)
             if(parts[1]=="than"){
                 d_filter.push( { "$and": [ {"$gt":["$duration.days", 12]} ] } )
             }else{
-                d_filter.push( { "$and": [ {"$gte":["$duration.days", parts[1]]},{"$lte":["$duration.days", parts[2]]} ] } )
+                d_filter.push( { "$and": [ {"$gte":["$duration.days", parseInt( parts[1])]},{"$lte":["$duration.days", parseInt(parts[2])] } ] } )
             }
         });
     }else{ //suggest
@@ -77,21 +78,39 @@ app.post('/forumlist/conditions', function(req, res){
     }
 
     var month = req.body.month; //array of string ["January", "September"]
-    m_filter = [] //TODO if month==null retrurn all
-    month.forEach(mon => {
-        m_filter.push( { "$eq": [ "$$mon", mon ] } )
-    })
+    m_filter = [] 
+    if(month == null){
+        m_filter.push(true) //if month==null retrurn all
+    }else{
+        month.forEach(mon => {
+            m_filter.push( { "$eq": [ "$$mon", mon ] } )
+        })
+    }
 
     var themes = req.body.theme; //array of string ["Mountain","Sea"]
-    t_filter = [] //TODO if theme==null not filter theme if theme == etc select theme:[]
-    themes.forEach(theme => {
-        t_filter.push( { $eq: [ "$$theme.theme", theme ] } )
-    })
-    var budget_min = parseInt(req.body.budgetMin);
-    var budget_max = parseInt(req.body.budgetMax);
-    var result_page = parseInt(req.body.resultPage);
-    var sortby = toString(req.body.sortby);
-    pipeline = [
+    if(themes == null){
+        t_filter = true // if theme==null not filter theme, 
+    }else if(themes == "etc"){
+        t_filter = { $eq: ["$theme",[]] } // if theme==etc select theme:[]
+    }else{
+        cond = []
+        themes.forEach(theme => {
+            cond.push( { $eq: [ "$$theme.theme", theme ] } )
+        })
+        t_filter = {
+            $filter:{
+                input: "$theme",
+                as: "theme",
+                cond:{ $or: cond }
+            }
+        }
+    }
+    var budget_min = req.body.budget_min;
+    var budget_max = req.body.budget_max;
+    var result_page = req.body.result_page;
+    var sortby = req.body.sortby;
+    console.log(budget_min, budget_max, result_page, sortby)
+    var pipeline = [
         {
             $project: {
                 "topic_id" : 1,
@@ -122,13 +141,7 @@ app.post('/forumlist/conditions', function(req, res){
                         cond:{ $or: m_filter }
                     }
                 }, 
-                "t_filter" : {
-                    $filter:{
-                        input: "$theme",
-                        as: "theme",
-                        cond:{ $or: t_filter }
-                    }
-                },
+                "t_filter" : t_filter,
                 "b_filter" : { $or: [
                             { $and: [ {$gte:["$budget", budget_min ]}, {$lte:["$budget", budget_max ]} ] },
                             { $eq: ["$budget", -1] }
@@ -136,13 +149,23 @@ app.post('/forumlist/conditions', function(req, res){
             }
         },
         {
-            $match: { $and: [
-                {"c_filter": {$ne: []}},
-                {"d_filter": {$eq: true}},
-                {"m_filter": {$ne: []}},
-                {"t_filter": {$ne: []}},
-                {"b_filter": {$eq: true}}
-            ]}
+            $match: {
+                "c_filter": {
+                    "$ne": []
+                },
+                "d_filter": {
+                    "$eq": true
+                },
+                "m_filter": {
+                    "$ne": []
+                },
+                "t_filter": {
+                    "$nin": [[], false]
+                },
+                "b_filter": {
+                    "$eq": true
+                }
+            }
         },{ 
             $sort : selectSorting(sortby) 
         },
@@ -163,6 +186,10 @@ app.post('/forumlist/conditions', function(req, res){
         // console.log(doc)
         res.send(doc);
     })
+    // fs.writeFile('D:/AOM_Document/blue-planet-pantip-analysis/threads-classification/demo/pipeline.json', JSON.stringify(pipeline), 'utf8', (error) => { 
+    //     if(err){
+    //         throw err;
+    // }});
     
 });
 
