@@ -16,16 +16,22 @@ if __name__ == "__main__":
                                 authSource=dsdb["authSource"] )
     db = client[dsdb["db"]]
     colList = db.list_collection_names()
-
-    targetCols = ["classified_thread_251119", "travel_guide_average_071119"]
+    path = './import/'
+    filenames = [ re.sub(r'import_|.js',"",fname) for fname in os.listdir(path)]
+    filenames.append('review_comments')
+    filenames.append('bi_forum_per_hour')
+    # print(filenames)
+    targetCols = [ col for col in colList if col not in filenames] # not in folder
+    print(targetCols)
     for colName in targetCols:
         if colName in colList:
             currentCol = db[colName]
-            print("retrieve labeled threads ...")
-            currentDocs = currentCol.find({})
+            print(colName, ":retrieve labeled threads ...")
+            currentDocs = currentCol.find({}, no_cursor_timeout=True)
+            print(colName, ": finish retrieving")
             lines = ""
             # datetimeRex = r'datetime.datetime\((\d+),\s+(\d+),\s+(\d+),\s+(\d+),\s+(\d+)[,\s\d]*\)'
             for doc in currentDocs:
                 lines += "db."+colName+".insert("+str(doc)+");\n".replace(" ","").replace(r'datetime\.datetime','new Date').replace('None','null')
 
-        removeAndWriteFile("import_"+colName+".js", lines, "js")
+        removeAndWriteFile("./import/import_"+colName+".js", lines, "js")

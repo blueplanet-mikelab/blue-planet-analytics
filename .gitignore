@@ -6,6 +6,7 @@ config/
 LDAjava.java
 __pycache__/
 pantip_trend/
+python/mongo_js/
 python/image_pro/dogs-gone-sideways/
 python/image_pro/hot-dog-not-hot-dog/
 python/image_pro/resnet50/
