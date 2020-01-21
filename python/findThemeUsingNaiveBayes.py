@@ -14,6 +14,8 @@ from utils.manageContentUtil import fullTokenizationToWordSummary
 with open('./config/url.json') as json_data_file:
     URLCONFIG = json.load(json_data_file)
 
+dir_path = './naiveBayes-maxminscale'
+
 # Calculate the mean of a list of numbers
 def calMean(numbers, length):
 	return sum(numbers)/length
@@ -40,7 +42,7 @@ if __name__ == "__main__":
     #! 0. read csv -> threadsList
     with open('./labeledThreadsbyHand_v2.csv', 'r', encoding="utf8") as f:
         threadsList = [{k: v for k, v in row.items()} for row in csv.DictReader(f, skipinitialspace=True)]
-        removeAndWriteFile('0-300threads.json', threadsList)
+        removeAndWriteFile(dir_path+'0-300threads.json', threadsList)
 
     print("----------Word Summary-----------")
     freqDictList = []
@@ -78,12 +80,12 @@ if __name__ == "__main__":
     # wordsum_col = db["word_summary"]
     # result = wordsum_col.insert_many(freqDictList)
     # print("result--",result)
-    removeAndWriteFile('1-wordsummary.json', freqDictList)
+    removeAndWriteFile(dir_path+'1-wordsummary.json', freqDictList)
 
     #! 2. calculate IDF
-    threadsScores = calculateFullTFIDF(freqDictList, '2-IDFScoreByWord.json') # consists of TF, IDF, and TFIDF scores
+    threadsScores = calculateFullTFIDF(freqDictList, dir_path+'2-IDFScoreByWord.json') # consists of TF, IDF, and TFIDF scores
     #! 3. TFIDF calculation
-    removeAndWriteFile('3-threadsScores.json', threadsScores)
+    removeAndWriteFile(dir_path+'3-threadsScores.json', threadsScores)
     
     # scores to cut
     # if score < 0.0035 or score > 0.02:
@@ -107,7 +109,7 @@ if __name__ == "__main__":
                     prevVal = scores['tfidf']
 
         thread['significant_words'] = tscoresList
-    removeAndWriteFile('4-cutThreadsScores.json', threadsScores)
+    removeAndWriteFile(dir_path+'4-cutThreadsScores.json', threadsScores)
 
     # result = tfidf_col.insert_many(threadsScores)
     # print("result--",result)
@@ -152,8 +154,8 @@ if __name__ == "__main__":
                     themeModels[theme][isTheme]['words_count'][key] = []
                 themeModels[theme][isTheme]['words_count'][key].append(word['count'])
     
-    removeAndWriteFile('5-themeModels-onlycount.json', themeModels)
-    removeAndWriteFile('5-allwordList.json', allWordList)
+    removeAndWriteFile(dir_path+'5-themeModels-onlycount.json', themeModels)
+    removeAndWriteFile(dir_path+'5-allwordList.json', allWordList)
     
     #! 5.1 Find mean and stdev of each word in each class
     for idx, theme in enumerate(themeModels):
@@ -168,4 +170,4 @@ if __name__ == "__main__":
                     "length":length
                 }
 
-    removeAndWriteFile('5-themeModels-finish.json', themeModels)
+    removeAndWriteFile(dir_path+'5-themeModels-finish.json', themeModels)
