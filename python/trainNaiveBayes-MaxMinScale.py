@@ -17,7 +17,7 @@ from utils.measurementsUtil import accuracy, confusionMatrix, recallScore, preci
 with open('./config/url.json') as json_data_file:
     URLCONFIG = json.load(json_data_file)
 
-dir_path = './naiveBayes-maxminscale/'
+dir_path = 'naiveBayes-maxminscale-onetheme/'
 
 with open('./config/database.json') as json_data_file:
     DBCONFIG = json.load(json_data_file)
@@ -118,15 +118,25 @@ def dataPreparationToCreateModel():
 
     #! 5. Theme Counting as model input
     print("----------Naive Bayes-----------")
+    # allThemeList = {
+    #     'Mountain':['Mountain'], 'Waterfall':['Waterfall'], 
+    #     'Sea':['Sea'], 
+    #     'Religion':['Religion'], 
+    #     'Historical':['Historical'], 
+    #     'Entertainment':['Museum','Zoo','Amusement','Aquariam','Casino','Adventure'], 
+    #     'Festival':['Festival','Exhibition'], 
+    #     'Eating':['Eating'],
+    #     'NightLifeStyle':['NightFood', 'Pub', 'Bar'], 
+    #     'Photography':['Photography'],
+    #     'Sightseeing':['Sightseeing']
+    # }
     allThemeList = {
-        'Mountain':['Mountain'], 'Waterfall':['Waterfall'], 
+        'Mountain':['Mountain','Waterfall'], 
         'Sea':['Sea'], 
         'Religion':['Religion'], 
         'Historical':['Historical'], 
-        'Entertainment':['Museum','Zoo','Amusement','Aquariam','Casino','Adventure'], 
-        'Festival':['Festival','Exhibition'], 
-        'Eating':['Eating'],
-        'NightLifeStyle':['NightFood', 'Pub', 'Bar'], 
+        'Entertainment':['Museum','Zoo','Amusement','Aquariam','Casino','Adventure','Festival','Exhibition'], 
+        'Eating':['Eating','NightFood', 'Pub', 'Bar'], 
         'Photography':['Photography'],
         'Sightseeing':['Sightseeing']
     }
@@ -140,6 +150,8 @@ def dataPreparationToCreateModel():
     for i, thread in enumerate(threadsScores):
         topicID = thread["topic_id"]
         currentThreadTheme = threadTheme[topicID] #['Mountain','Sea']
+        if len(currentThreadTheme) > 1:
+            continue
         print(i,"--",topicID, currentThreadTheme)
 
         for idx, theme in enumerate(allThemeList):
@@ -235,27 +247,27 @@ def prediction(X,Y,X_test,Y_test, distribution, created=None):
     print("-----creating", distribution, "model")
     clf.fit(X, Y)
     print("-----start",distribution,"prediction")
-    predictVal = clf.predict(X_test)
-    clf_acc = accuracy(Y_test, predictVal)
-    clf_recall = recallScore(Y_test, predictVal)
-    clf_precision = precisionScore(Y_test, predictVal)
+    predictVal = clf.predict_proba(X_test)
+    # clf_acc = accuracy(Y_test, predictVal)
+    # clf_recall = recallScore(Y_test, predictVal)
+    # clf_precision = precisionScore(Y_test, predictVal)
     # clf_confusion_matrix = confusionMatrix(Y_test, predictVal)
     
     return {
             "distribution": distribution_name,
             "predict_val": predictVal.tolist(),
             "actual_val": Y_test,
-            'accuracy': clf_acc,
-            'recall_score': clf_recall,
-            'precision_score': clf_precision,
+            # 'accuracy': clf_acc,
+            # 'recall_score': clf_recall,
+            # 'precision_score': clf_precision,
             # 'confusion_matrix': clf_confusion_matrix
             'created_time': created
         }
 
 
 if __name__ == "__main__":
-    # dataPreparationToCreateModel()
-    # formatData()
+    dataPreparationToCreateModel()
+    formatData()
 
     print('importing X and Y')
     with open(dir_path+'6-X-data-formatting.json') as json_data_file:
@@ -267,9 +279,11 @@ if __name__ == "__main__":
         print('finish import Y')
 
     csvData = "Distribution, Accuracy, Recall, Precision\n"
-    ranint = random.sample(range(303), 30)
-    X_test = [X[i] for i in ranint]
-    Y_test = [Y[j] for j in ranint]
+    # ranint = random.sample(range(303), 30)
+    # X_test = [X[i] for i in ranint]
+    # Y_test = [Y[j] for j in ranint]
+    X_test = X.copy()
+    Y_test = Y.copy()
     result_col = db["naive_bayes_result"]
 
     for i in range(3):
@@ -278,17 +292,17 @@ if __name__ == "__main__":
 
         GUS_result = prediction(X,Y,X_test,Y_test,distribution='GUS', created=created_time)
         modelResult.append(GUS_result)
-        csvData += "{},{},{},{}".format(GUS_result['distribution'],GUS_result['accuracy'],GUS_result['recall_score'],GUS_result['precision_score'])
+        # csvData += "{},{},{},{}".format(GUS_result['distribution'],GUS_result['accuracy'],GUS_result['recall_score'],GUS_result['precision_score'])
         
         MNB_result = prediction(X,Y,X_test,Y_test,distribution='MNB', created=created_time)
         modelResult.append(MNB_result)
-        csvData += "{},{},{},{}".format(MNB_result['distribution'],MNB_result['accuracy'],MNB_result['recall_score'],MNB_result['precision_score'])
+        # csvData += "{},{},{},{}".format(MNB_result['distribution'],MNB_result['accuracy'],MNB_result['recall_score'],MNB_result['precision_score'])
         
         CNB_result = prediction(X,Y,X_test,Y_test,distribution='CNB', created=created_time)
         modelResult.append(CNB_result)
-        csvData += "{},{},{},{}".format(CNB_result['distribution'],CNB_result['accuracy'],CNB_result['recall_score'],CNB_result['precision_score'])
+        # csvData += "{},{},{},{}".format(CNB_result['distribution'],CNB_result['accuracy'],CNB_result['recall_score'],CNB_result['precision_score'])
         
-        # removeAndWriteFile(dir_path+'7-prediction-result.json', modelResult)
+        removeAndWriteFile(dir_path+'7-prediction-result.json', modelResult)
         # removeAndWriteFile(dir_path+'7-prediction-comparison.csv', csvData, 'csv')
         
         # To mongo
