@@ -261,13 +261,13 @@ def prediction(X,Y,X_test,Y_test, distribution, created=None):
             # 'recall_score': clf_recall,
             # 'precision_score': clf_precision,
             # 'confusion_matrix': clf_confusion_matrix
-            'created_time': created
+            # 'created_time': created
         }
 
 
 if __name__ == "__main__":
-    dataPreparationToCreateModel()
-    formatData()
+    # dataPreparationToCreateModel()
+    # formatData()
 
     print('importing X and Y')
     with open(dir_path+'6-X-data-formatting.json') as json_data_file:
@@ -282,11 +282,19 @@ if __name__ == "__main__":
     # ranint = random.sample(range(303), 30)
     # X_test = [X[i] for i in ranint]
     # Y_test = [Y[j] for j in ranint]
-    X_test = X.copy()
-    Y_test = Y.copy()
+
+    with open('naiveBayes-maxminscale/6-X-data-formatting.json') as json_data_file:
+        X_test = json.load(json_data_file) 
+        print('finish import X_test')
+
+    with open('naiveBayes-maxminscale/6-Y-data-formatting.json') as json_data_file:
+        Y_test = json.load(json_data_file) 
+        print('finish import Y_test')
+    # X_test = X.copy()
+    # Y_test = Y.copy()
     result_col = db["naive_bayes_result"]
 
-    for i in range(3):
+    for i in range(1):
         modelResult = []
         created_time = datetime.datetime.now()
 
@@ -302,10 +310,10 @@ if __name__ == "__main__":
         modelResult.append(CNB_result)
         # csvData += "{},{},{},{}".format(CNB_result['distribution'],CNB_result['accuracy'],CNB_result['recall_score'],CNB_result['precision_score'])
         
-        removeAndWriteFile(dir_path+'7-prediction-result.json', modelResult)
+        removeAndWriteFile(dir_path+'7-prediction-result-test.json', modelResult)
         # removeAndWriteFile(dir_path+'7-prediction-comparison.csv', csvData, 'csv')
         
         # To mongo
-        print(i,"----->insert")
-        insert_result = result_col.insert_many(modelResult)
-        print(insert_result)
+        # print(i,"----->insert")
+        # insert_result = result_col.insert_many(modelResult)
+        # print(insert_result)
