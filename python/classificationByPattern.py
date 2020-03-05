@@ -12,10 +12,6 @@ from utils.classificationUtil import findMonth, findCountries, calculateBudget, 
 with open('./config/url.json') as json_data_file:
     URLCONFIG = json.load(json_data_file)
 
-# get country list to classify country and find top country
-with open('./countriesListSorted.json','r', encoding="utf8") as json_file:
-    COUNTRYLIST = json.load(json_file)   
-
 class Duration:
     NOT_DEFINE = "Not Define" #type 0
     ONEDAY      = "1 Day" #type 1
@@ -168,17 +164,18 @@ def createPreprocessData(threadData):
     userID = threadData['uid']
     comments = [comment['desc'] for comment in threadData['comments'] if comment['uid']==userID]
     rawContent = title + desc + ' '.join(comments)
+    
+    tags = threadData["tags"]
+    titleTokens, _ = fullTokenizationToWordSummary(cleanContent(title), maxGroupLength=3)
+    descTokens, _ = fullTokenizationToWordSummary(cleanContent(desc + ' '.join(comments)), maxGroupLength=3)
+    countries = findCountries(tags, titleTokens, descTokens) # array of string
+    if len(countries) == 0:
+        return None
+
     content = firstClean(rawContent)
     spechar = r'[^a-zA-Z0-9ก-๙\.\,\s]+|\.{2,}|\xa0+|\d+[\.\,][^\d]+'
     content = re.sub(spechar, ' ', content) #17 remove special character
     
-    
-    tags = threadData["tags"]
-    tokens, _ = fullTokenizationToWordSummary(cleanContent(rawContent), maxGroupLength=3)
-    countries = findCountries(tags, COUNTRYLIST, tokens) # array of string
-    if len(countries) == 0:
-        return None
-
     duration = findDuration(content, tags)
     days = duration["days"]
     budget = findBudgetByPattern(content)
@@ -233,7 +230,7 @@ if __name__ == "__main__":
             threadData = thread["_source"]
         
         # skip visa topic
-        skipTags = ['วีซ่า', 'สายการบิน', 'ร้องทุกข์', 'เตือนภัย','ธนาคาร','ธุรกรรมทางการเงิน']
+        skipTags = ['วีซ่า', 'สายการบิน', 'ร้องทุกข์', 'เตือนภัย','ธนาคาร','ธุรกรรมทางการเงิน','เครื่องแต่งกาย', "รถโดยสาร", "โรงแรมรีสอร์ท", "ค่ายเพลง", "สนามบิน"]
         if  len([tag for tag in threadData['tags'] for skipTag in skipTags if tag.find(skipTag)!=-1]) > 0:
             continue
 

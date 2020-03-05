@@ -1,23 +1,29 @@
-import re, json
+import re, json, os
+this_file_abs_path = os.path.abspath(os.path.dirname(__file__))
+travel_guide_path = os.path.join(this_file_abs_path, 'travel_guide_average_071119.json' )
+country_list_path = os.path.join(this_file_abs_path, 'countriesListSorted.json' )
 
 # get country list to classify country and find top country
-with open('./utils/travel_guide_average_071119.json','r', encoding="utf8") as travel_file:
+with open(travel_guide_path,'r', encoding="utf8") as travel_file:
     TRAVELGUIDELIST = json.load(travel_file) 
+
+with open(country_list_path,'r', encoding="utf8") as json_file:
+    COUNTRYLIST = json.load(json_file)  
+
+print('ประเทศเกาหลีเหนือ'.find("เกาหลีเหนือ")) 
 
 """
 - ไทย: ในประเทศ, all thai provinces//done
 - ญป: โอซาก้า เกียวโต คันไซ
 - อเมริกา: นิวยอร์ก
 เอาเมืองใส่ตอนหาในแท๊กด้วย แต่ก็ต้องระวัง push ประเทศซ้ำ
-@params tags array of tags
-        countryList from json file
 """
-def findCountries(tags, countryList, tokens):    
+def findCountries(tags, titleTokens, descTokens):    
     # print("----------Country")
     foundList = []
     for tag in tags:
-        if tag.find("เขต") == 0 or tag.find("เที่ยวในประเทศ") != -1 or tag == "การท่องเที่ยวแห่งประเทศไทย":
-            foundList.append([country for country in countryList if country["country"] == "TH"][0])
+        if (tag.find("เขต") == 0 or tag.find("เที่ยวในประเทศ") != -1 or tag == "การท่องเที่ยวแห่งประเทศไทย") and "TH" not in [c["country"] for c in foundList]:
+            foundList.append([country for country in COUNTRYLIST if country["country"] == "TH"][0])
         
         startTag = ["คนไทยใน","เที่ยว","อาหาร","ประวัติศาสตร์"]
         for st in startTag:
@@ -25,30 +31,49 @@ def findCountries(tags, countryList, tokens):
                 tag.replace(st,"")
         
         # print(tag, len(foundList))
-        for country in countryList:
+        for country in COUNTRYLIST:
             for thaiName in country['nameThai']:
-                # print(tag,thaiName)
+                # print(tag,thaiName, tag.find(thaiName))
                 if tag.find(thaiName) != -1 and country["country"] not in [c["country"] for c in foundList]:
                     # print("tag:",tag)
-                    foundList.append(country)
+                    if thaiName == 'เกาหลี' and tag.find("เกาหลีเหนือ") != -1: #exception
+                        continue
+                    else:
+                        foundList.append(country)
+                        break
+    # print(len(foundList))
+    # print(foundList)
     
     
-    # if found list is not found -> search more in content using tokens
+    #1 if found list is not found -> search more in content using TITLE
     if len(foundList) == 0:
-        for country in countryList:
-            if country['nameEnglish'].lower() in tokens:
+        for country in COUNTRYLIST:
+            if country['nameEnglish'].lower() in titleTokens:
                 foundList.append(country)
                 continue
 
-            for token in tokens:
+            for token in titleTokens:
                 l = [thaiName for thaiName in country['nameThai'] if token == thaiName and thaiName != "จีน"] # some word consist of จีน but doesn't mean China
                 if len(l) != 0 and country["country"] not in [c["country"] for c in foundList]:
                     foundList.append(country)
                     break #append once per country
     
-        # remove Thailand if it has tag "เที่ยวต่างประเทศ"
-        if any("เที่ยวต่างประเทศ" in tag for tag in tags):
-            foundList = [c for c in foundList if not (c["country"] == 'TH')]
+    #2 if found list is not found -> search more in content using DESCRIPTION and COMMENTS
+    if len(foundList) == 0:
+        for country in COUNTRYLIST:
+            if country['nameEnglish'].lower() in descTokens:
+                foundList.append(country)
+                continue
+
+            for token in descTokens:
+                l = [thaiName for thaiName in country['nameThai'] if token == thaiName and thaiName != "จีน"] # some word consist of จีน but doesn't mean China
+                if len(l) != 0 and country["country"] not in [c["country"] for c in foundList]:
+                    foundList.append(country)
+                    break #append once per country
+    
+    # remove Thailand if it has tag "เที่ยวต่างประเทศ"
+    if any("เที่ยวต่างประเทศ" in tag for tag in tags):
+        foundList = [c for c in foundList if not (c["country"] == 'TH')]
     
     return foundList
 

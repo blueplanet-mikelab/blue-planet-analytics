@@ -1,6 +1,8 @@
 import csv, json
 import re
 import ssl, urllib.request
+import sys
+sys.path.insert(0, "./utils")
 from fileWritingUtil import removeAndWriteFile
 from manageContentUtil import fullTokenizationToWordSummary
 from TFIDFCalculationUtil import calculateFullTFIDF
@@ -8,11 +10,14 @@ from TFIDFCalculationUtil import calculateFullTFIDF
 # with writing 1-4 file
 def dataPreparationToThreadsScores(dir_path, URL):
     #! 0. read csv -> threadsList
+    print('----------Import data from mike-----------')
     with open('./labeledThreadsbyHand_v2.csv', 'r', encoding="utf8") as f:
         threadsList = [{k: v for k, v in row.items()} for row in csv.DictReader(f, skipinitialspace=True)]
         threadTheme = {t["TopicID"]:t["Theme"].replace(" ","").split(",") for t in threadsList}
         # pprint.pprint(threadTheme)
         removeAndWriteFile(dir_path+'0-300threads.json', threadsList)
+        removeAndWriteFile(dir_path+'0-threadsTheme.json', threadTheme)
+
 
     print("----------Word Summary-----------")
     freqDictList = []
@@ -77,7 +82,7 @@ def dataPreparationToThreadsScores(dir_path, URL):
         thread['significant_words'] = tscoresList
     removeAndWriteFile(dir_path+'4-cutThreadsScores.json', threadsScores)
 
-    return threadsScores
+    return threadsScores, threadTheme
 
 if __name__ == "__main__":
     dataPreparationToThreadsScores('uiltest/', 'http://ptdev03.mikelab.net/kratooc/')

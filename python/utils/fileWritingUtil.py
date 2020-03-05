@@ -1,5 +1,6 @@
 import os
 import json, csv
+from bson import json_util
 
 def writeTXTFile(fname, content):
     f = open(fname, "w",encoding='utf-8')
@@ -9,7 +10,7 @@ def writeTXTFile(fname, content):
 
 def writeJSONFile(fname, content):
     with open('./'+fname, 'w', encoding="utf8") as outfile:
-        json.dump(content, outfile, ensure_ascii=False, indent=4)
+        json.dump(content, outfile, ensure_ascii=False, indent=4, default=json_util.default)
         print("create",fname,"success")
 
 def writeJSFile(fname, content):

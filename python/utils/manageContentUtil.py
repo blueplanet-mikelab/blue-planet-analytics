@@ -1,6 +1,10 @@
-import re
+import re, os, codecs
 import pythainlp.corpus as pycorpus
 from pythainlp.tokenize import word_tokenize,  dict_trie
+this_file_abs_path = os.path.abspath(os.path.dirname(__file__))
+stopword_path = os.path.join(this_file_abs_path, 'stopwords_more_th.txt' )
+customdict_path = os.path.join(this_file_abs_path, 'customdict_more_th.txt' )
+lexitron_path = os.path.join(this_file_abs_path, 'lexitron.txt' )
 
 def firstClean(rawContent):
     content = rawContent
@@ -57,7 +61,7 @@ def fullTokenizationToWordSummary(content,maxGroupLength, addCustomDict=True):
     
     #update new group words to file
     groups = [group["group"] for group in groupList]
-    with open('./utils/customdict_more_th.txt', 'a', encoding='utf-8') as filehandle:
+    with open(customdict_path, 'a', encoding='utf-8') as filehandle:
         for group in groups:
             if group not in custom_file:
                 filehandle.write('%s\n' % group)
@@ -70,7 +74,7 @@ def fullTokenizationToWordSummary(content,maxGroupLength, addCustomDict=True):
 
 
 # prepare stopwords list
-def getStopWords(addMore, fname="./utils/stopwords_more_th.txt"):
+def getStopWords(addMore, fname=stopword_path):
     stopwords = pycorpus.common.thai_stopwords()
     stopwordsList = set(m.strip() for m in stopwords)
     f = open(fname, "r", encoding='utf-8')
@@ -78,15 +82,19 @@ def getStopWords(addMore, fname="./utils/stopwords_more_th.txt"):
     return stopwordsList
 
 # prepare stopwords list
-def getCustomDictList(addMore, fname="./utils/customdict_more_th.txt"):
-    wordsDict = set(pycorpus.common.thai_words())
+def getCustomDictList(addMore, fname=customdict_path):
+    # default_thaiwords = set(pycorpus.common.thai_words())
+    with codecs.open(lexitron_path, 'r', 'utf-8') as f:
+        lexitron = set(f.read().strip().splitlines())
     if addMore:
-        f = open(fname, "r", encoding='utf-8')
-        custom = []
-        for m in f.readlines():
-            wordsDict.add(str(m.strip()))
-            custom.append(str(m.strip()))
-    return custom, dict_trie(dict_source=wordsDict)
+        # f = open(fname, "r", encoding='utf-8')
+        # custom = []
+        # for m in f.readlines():
+        #     wordsDict.add(str(m.strip()))
+        #     custom.append(str(m.strip()))
+        with codecs.open(fname, 'r', 'utf-8') as f:
+            custom = set(f.read().strip().splitlines())
+    return custom, dict_trie(dict_source=list(lexitron.union(custom)))
 
 # def removeStopWords(tokens, stopwordsList):
 #     new_tokens = []
