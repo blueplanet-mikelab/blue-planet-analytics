@@ -25,8 +25,21 @@ with open('./config/database.json') as json_data_file:
                                 authSource=dsdb["authSource"] )
     db = client[dsdb["db"]]
 
+allThemeList = {
+    'Mountain':['Mountain'], 'Waterfall':['Waterfall'], 
+    'Sea':['Sea'], 
+    'Religion':['Religion'], 
+    'Historical':['Historical'], 
+    'Entertainment':['Museum','Zoo','Amusement','Aquariam','Casino','Adventure'], 
+    'Festival':['Festival','Exhibition'], 
+    'Eating':['Eating'],
+    'NightLifeStyle':['NightFood', 'Pub', 'Bar'], 
+    'Photography':['Photography'],
+    'Sightseeing':['Sightseeing']
+}
+
 def selectInterval(score):
-    return score >= 0 and score < 1/3, score >= 1/3 and score < 2/3, score >= 2/3 and score <= 1
+    return [score < 1/3, score >= 1/3 and score < 2/3, score >= 2/3]
     
 
 def initializeWordCount(threadsScores):
@@ -38,21 +51,9 @@ def initializeWordCount(threadsScores):
     return wordCount
 
 
-def createModel(threadsScores):
+def createScoredModel(threadsScores, threadTheme):
     #! 5. calculate maxmin scale
     print("----------Naive Bayes-----------")
-    allThemeList = {
-        'Mountain':['Mountain'], 'Waterfall':['Waterfall'], 
-        'Sea':['Sea'], 
-        'Religion':['Religion'], 
-        'Historical':['Historical'], 
-        'Entertainment':['Museum','Zoo','Amusement','Aquariam','Casino','Adventure'], 
-        'Festival':['Festival','Exhibition'], 
-        'Eating':['Eating'],
-        'NightLifeStyle':['NightFood', 'Pub', 'Bar'], 
-        'Photography':['Photography'],
-        'Sightseeing':['Sightseeing']
-    }
     minmaxScaleDict = initializeWordCount(threadsScores)
     selectedThread = []
 
@@ -74,20 +75,27 @@ def createModel(threadsScores):
         for key, val in minmaxScaleDict.items():
             countLength = len(val)
             minmaxScaleDict[key].extend(np.zeros((idx+1)-countLength).tolist())
+    
+    removeAndWriteFile(dir_path+'5-0-selected-threads.json', minmaxScaleDict)
+    removeAndWriteFile(dir_path+'5-1-count-before-maxmin.json', minmaxScaleDict)
 
     #! calculate maxmin-scale
-    for key, countVal in minmaxScaleDict:
+    for key, countVal in minmaxScaleDict.items():
         scaler = MinMaxScaler()
         scaler.fit(np.array(countVal).reshape(-1,1))
         minmaxScaleDict[key] = scaler.transform([countVal]).tolist()[0]
 
-    removeAndWriteFile(dir_path+'5-maxmin-scale.json', minmaxScaleDict)
+    removeAndWriteFile(dir_path+'5-2-maxmin-scale.json', minmaxScaleDict)
+
+
+    return minmaxScaleDict, selectedThread
     
+
+def applyInterval(selectedThread, threadTheme, minmaxScaleDict):
     #! 5 Naive Bayes model - format inpit form
     print("----------Naive Bayes model - create interval model----------")
     #! Interval
     threadIntervalList = []
-
     for idx, topicID in enumerate(selectedThread):
         threadInput = { 'topic_id': topicID }
         currentThreadTheme = threadTheme[topicID] #['Mountain','Sea']
@@ -105,7 +113,8 @@ def createModel(threadsScores):
                 threadInput['theme'] = theme
                 threadIntervalList.append(threadInput)
 
-    removeAndWriteFile(dir_path+'5-input-interval.json', threadIntervalList)
+    removeAndWriteFile(dir_path+'5-3-input-interval.json', threadIntervalList)
+    return threadIntervalList
     
     #! insert model to mongo !FIXME error because exceed limit size of 16MB
     # model_col = db["naive_bayes_maxminscale"]
@@ -116,17 +125,17 @@ def createModel(threadsScores):
     #     for key, themeDetail in themeModels.items()]
     # result = model_col.insert_many(modelToInsert)
 
-def importXY():
-    with open(dir_path+'5-input-interval.json') as json_data_file:
-        print('read data')
-        threadIntervalList = json.load(json_data_file) 
-        # [{
-        #     'topic_ids':[...],
-        #     'word_interval':[True,False,...],
-        #     'theme':"Mountain"
-        #   },...
-        # ]
-        print('finish reading data')
+def formatToXY(threadIntervalList=None):
+    print("------formatToXY------")
+    if threadIntervalList:
+        with open(dir_path+'5-3-input-interval.json') as json_data_file:
+            threadIntervalList = json.load(json_data_file) 
+            # [{
+            #     'topic_ids':[...],
+            #     'word_interval':[True,False,...],
+            #     'theme':"Mountain"
+            #   },...
+            # ]
 
     # create model
     X = []
@@ -137,6 +146,48 @@ def importXY():
     removeAndWriteFile(dir_path+'6-X.json', X)
     removeAndWriteFile(dir_path+'6-Y.json', Y)
     return X, Y
+
+def importXY(dirX,dirY):
+    print('importing X and Y')
+    with open(dirX) as json_data_file:
+        X = json.load(json_data_file) 
+        print('finish import X')
+
+    with open(dirY) as json_data_file:
+        Y = json.load(json_data_file) 
+        print('finish import Y')
+    
+    return X, Y
+
+def createXYTestSet(threadScores, threadTheme):
+    with open(dir_path+'5-1-count-before-maxmin.json') as json_data_file:
+        countToMaxMin = json.load(json_data_file)
+        # {
+        #     'word1': [1,5,10,...],
+        #     'word2': [...],
+        #     ...
+        # }
+    X_test = []
+    Y_test = []
+    threadXDict = {}
+    for thread in threadScores:
+        currentThreadInterval = []
+        threadWordList = { sw['key']:sw['count'] for sw in thread['significant_words'] }
+        for key, val in countToMaxMin.items():
+            if key in threadWordList:
+                scaler = MinMaxScaler()
+                scaler.fit(np.array(val).reshape(-1,1))
+                count = threadWordList[key]
+                sc = scaler.transform([[count]])[0][0]
+                currentThreadInterval.extend(selectInterval(sc))
+            else:
+                currentThreadInterval.extend([True,False,False])
+        threadXDict[thread['topic_id']] = X
+        X_test.append(currentThreadInterval)
+    
+    removeAndWriteFile(dir_path+'test-threadX.json', threadXDict)    
+    
+    return X_test, Y_test
 
 def prediction(X,Y,X_test,Y_test, distribution, created=None):
     if distribution=='GUS':
@@ -175,56 +226,64 @@ def prediction(X,Y,X_test,Y_test, distribution, created=None):
             'created_time': created
         }
 
-
 if __name__ == "__main__":
     dir_path = './naiveBayes-maxminscale-interval/'
     # dir_path = './naiveBayes-maxminscale-oneTheme/'
 
-    threadsScores = dataPreparationToThreadsScores(dir_path, URLCONFIG['mike_thread'])
-    createModel(threadsScores)
-    X, Y = importXY()
+    # threadsScores, threadTheme = dataPreparationToThreadsScores(dir_path, URLCONFIG['mike_thread'])
+    
+    print('------importing threadsScores and threadTheme-----')
+    with open(dir_path+'4-cutThreadsScores.json') as json_data_file:
+        threadsScores = json.load(json_data_file)
+    with open(dir_path+'0-threadsTheme.json') as json_data_file:
+        threadTheme = json.load(json_data_file)
+    
+    minmaxScaleDict, selectedThread = createScoredModel(threadsScores, threadTheme)
+    threadIntervalList = applyInterval(selectedThread, threadTheme, minmaxScaleDict)
+    X, Y = formatToXY(threadIntervalList)
+    # X, Y = importXY(dir_path+'6-X.json',dir_path+'6-Y.json'):
+    X_test, Y_test = createXYTestSet(threadsScores, threadTheme)
 
-    # print('importing X and Y')
-    # with open(dir_path+'6-X.json') as json_data_file:
-    #     X = json.load(json_data_file) 
-    #     print('finish import X')
+    print("-----start prediction")
+    clf = BernoulliNB()
+    clf.fit(X, Y)
+    predictVal = clf.predict_proba(X_test)
+    predictVal2 = clf.predict(X_test)
+    print("-----predictVal-----")
+    pprint.pprint(predictVal)
+    removeAndWriteFile(dir_path+'test-prediction-result.json', predictVal.tolist())
+    removeAndWriteFile(dir_path+'test-prediction-result2.json', predictVal2.tolist())
 
-    # with open(dir_path+'6-Y.json') as json_data_file:
-    #     Y = json.load(json_data_file) 
-    #     print('finish import Y')
 
-    csvData = "Distribution, Accuracy, Recall, Precision\n"
-    # ranint = random.sample(range(303), 30)
-    # X_test = [X[i] for i in ranint]
-    # Y_test = [Y[j] for j in ranint]
-    X_test = X.copy()
-    Y_test = Y.copy()
-    result_col = db["naive_bayes_result"]
+    # csvData = "Distribution, Accuracy, Recall, Precision\n"
 
-    for i in range(3):
-        modelResult = []
-        created_time = datetime.datetime.now()
+    # X_test = X.copy()
+    # Y_test = Y.copy()
+    # result_col = db["naive_bayes_result"]
 
-        GUS_result = prediction(X,Y,X_test,Y_test,distribution='GUS', created=created_time)
-        modelResult.append(GUS_result)
-        csvData += "{},{},{},{}".format(GUS_result['distribution'],GUS_result['accuracy'],GUS_result['recall_score'],GUS_result['precision_score'])
-        
-        MNB_result = prediction(X,Y,X_test,Y_test,distribution='MNB', created=created_time)
-        modelResult.append(MNB_result)
-        csvData += "{},{},{},{}".format(MNB_result['distribution'],MNB_result['accuracy'],MNB_result['recall_score'],MNB_result['precision_score'])
-        
-        CNB_result = prediction(X,Y,X_test,Y_test,distribution='CNB', created=created_time)
-        modelResult.append(CNB_result)
-        csvData += "{},{},{},{}".format(CNB_result['distribution'],CNB_result['accuracy'],CNB_result['recall_score'],CNB_result['precision_score'])
+    # modelResult = []
+    # created_time = datetime.datetime.now()
 
-        BERN_result = prediction(X,Y,X_test,Y_test,distribution='BERN', created=created_time)
-        modelResult.append(BERN_result)
-        csvData += "{},{},{},{}".format(BERN_result['distribution'],BERN_result['accuracy'],BERN_result['recall_score'],BERN_result['precision_score'])
-        
-        removeAndWriteFile(dir_path+'7-prediction-result.json', modelResult)
-        removeAndWriteFile(dir_path+'7-prediction-comparison.csv', csvData, 'csv')
-        
-        # To mongo
-        print(i,"----->insert")
-        insert_result = result_col.insert_many(modelResult)
-        print(insert_result)
+    # GUS_result = prediction(X,Y,X_test,Y_test,distribution='GUS', created=created_time)
+    # modelResult.append(GUS_result)
+    # # csvData += "{},{},{},{}".format(GUS_result['distribution'],GUS_result['accuracy'],GUS_result['recall_score'],GUS_result['precision_score'])
+    
+    # MNB_result = prediction(X,Y,X_test,Y_test,distribution='MNB', created=created_time)
+    # modelResult.append(MNB_result)
+    # # csvData += "{},{},{},{}".format(MNB_result['distribution'],MNB_result['accuracy'],MNB_result['recall_score'],MNB_result['precision_score'])
+    
+    # CNB_result = prediction(X,Y,X_test,Y_test,distribution='CNB', created=created_time)
+    # modelResult.append(CNB_result)
+    # # csvData += "{},{},{},{}".format(CNB_result['distribution'],CNB_result['accuracy'],CNB_result['recall_score'],CNB_result['precision_score'])
+
+    # BERN_result = prediction(X,Y,X_test,Y_test,distribution='BERN', created=created_time)
+    # modelResult.append(BERN_result)
+    # csvData += "{},{},{},{}".format(BERN_result['distribution'],BERN_result['accuracy'],BERN_result['recall_score'],BERN_result['precision_score'])
+    
+    # removeAndWriteFile(dir_path+'7-prediction-result.json', modelResult)
+    # removeAndWriteFile(dir_path+'7-prediction-comparison.csv', csvData, 'csv')
+    
+    # To mongo
+    # print("----->insert")
+    # insert_result = result_col.insert_many(modelResult)
+    # print(insert_result)

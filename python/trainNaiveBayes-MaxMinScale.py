@@ -4,7 +4,7 @@ import os, datetime, re, copy
 import math, random
 import datetime
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.naive_bayes import MultinomialNB, GaussianNB, ComplementNB
+from sklearn.naive_bayes import MultinomialNB, GaussianNB, ComplementNB, BernoulliNB
 import pymongo
 import numpy as np
 from math import sqrt, exp, pi
@@ -240,6 +240,9 @@ def prediction(X,Y,X_test,Y_test, distribution, created=None):
     elif distribution=='CNB':
         clf = ComplementNB()
         distribution_name = "ComplementNB"
+    elif distribution=='BERN':
+        clf = BernoulliNB()
+        distribution_name = "BernoulliNB"
     else:
         print("please input distribution code")
         return None
@@ -247,19 +250,20 @@ def prediction(X,Y,X_test,Y_test, distribution, created=None):
     print("-----creating", distribution, "model")
     clf.fit(X, Y)
     print("-----start",distribution,"prediction")
-    predictVal = clf.predict_proba(X_test)
-    # clf_acc = accuracy(Y_test, predictVal)
-    # clf_recall = recallScore(Y_test, predictVal)
-    # clf_precision = precisionScore(Y_test, predictVal)
+    # predictVal = clf.predict_proba(X_test)
+    predictVal = clf.predict(X_test)
+    clf_acc = accuracy(Y_test, predictVal)
+    clf_recall = recallScore(Y_test, predictVal)
+    clf_precision = precisionScore(Y_test, predictVal)
     # clf_confusion_matrix = confusionMatrix(Y_test, predictVal)
     
     return {
             "distribution": distribution_name,
             "predict_val": predictVal.tolist(),
             "actual_val": Y_test,
-            # 'accuracy': clf_acc,
-            # 'recall_score': clf_recall,
-            # 'precision_score': clf_precision,
+            'accuracy': clf_acc,
+            'recall_score': clf_recall,
+            'precision_score': clf_precision,
             # 'confusion_matrix': clf_confusion_matrix
             # 'created_time': created
         }
@@ -310,10 +314,14 @@ if __name__ == "__main__":
         modelResult.append(CNB_result)
         # csvData += "{},{},{},{}".format(CNB_result['distribution'],CNB_result['accuracy'],CNB_result['recall_score'],CNB_result['precision_score'])
         
+        BERN_result = prediction(X,Y,X_test,Y_test,distribution='BERN', created=created_time)
+        modelResult.append(BERN_result)
+        # csvData += "{},{},{},{}".format(BERN_result['distribution'],BERN_result['accuracy'],BERN_result['recall_score'],BERN_result['precision_score'])
+
         removeAndWriteFile(dir_path+'7-prediction-result-test.json', modelResult)
         # removeAndWriteFile(dir_path+'7-prediction-comparison.csv', csvData, 'csv')
         
         # To mongo
-        # print(i,"----->insert")
-        # insert_result = result_col.insert_many(modelResult)
-        # print(insert_result)
+        print(i,"----->insert")
+        insert_result = result_col.insert_many(modelResult)
+        print(insert_result)

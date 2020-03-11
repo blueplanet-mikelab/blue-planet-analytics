@@ -1,17 +1,19 @@
 import csv, json
 import re
-import ssl, urllib.request
+import ssl, urllib.request, os
 import sys
 sys.path.insert(0, "./utils")
 from fileWritingUtil import removeAndWriteFile
 from manageContentUtil import fullTokenizationToWordSummary
 from TFIDFCalculationUtil import calculateFullTFIDF
+this_file_abs_path = os.path.abspath(os.path.dirname(__file__))
+labeled_threads_path = os.path.join(this_file_abs_path, '../labeledThreadsbyHand_v2.csv' )
 
 # with writing 1-4 file
 def dataPreparationToThreadsScores(dir_path, URL):
     #! 0. read csv -> threadsList
     print('----------Import data from mike-----------')
-    with open('./labeledThreadsbyHand_v2.csv', 'r', encoding="utf8") as f:
+    with open(labeled_threads_path, 'r', encoding="utf8") as f:
         threadsList = [{k: v for k, v in row.items()} for row in csv.DictReader(f, skipinitialspace=True)]
         threadTheme = {t["TopicID"]:t["Theme"].replace(" ","").split(",") for t in threadsList}
         # pprint.pprint(threadTheme)
@@ -46,12 +48,8 @@ def dataPreparationToThreadsScores(dir_path, URL):
         for k,v in wordSumDict.items():
             wordsSumArray.append({'word': k, 'count': v})
         freqDictList.append({"topic_id": topicID, "words_sum": wordsSumArray, "tokens_length": tokensLength})
-        
-        # if idx==2:
-        #     break
 
-
-    #! 1-3. push to mongo / save to json  
+    #! 1-3. save to json  
     removeAndWriteFile(dir_path+'1-wordsummary.json', freqDictList)
 
     #! 2,3. calculate IDF and TFIDF calculation
@@ -63,26 +61,80 @@ def dataPreparationToThreadsScores(dir_path, URL):
     #     del tfidfDict[key]
 
     #! 4. cut off some keys using tfidf by scores
+    newThreadsScores = []
     for thread in threadsScores:
-        tscoresList = thread['scores']
-        if len(tscoresList) > 100: #cut words if that threads has more than 100 words
-            # headcut = int(0.1*len(sortedDict))
+        print(thread["topic_id"])
+        tscoresList = []
+        totalKeys = len(thread['scores'])
+        if totalKeys > 100: #cut words if that threads has more than 100 words
+            # headcut = int(0.1*totalKeys)
             headcut = 0
-            tailcut = len(tscoresList) - int(0.46*len(tscoresList))
+            tailcut = totalKeys - int(0.46*totalKeys) # cut at index..
             prevVal = -1
-            for idx, scores in enumerate(tscoresList):
+            # print(totalKeys, headcut, tailcut, totalKeys-tailcut)
+            for idx, scores in enumerate(thread['scores']):
                 if prevVal == -1:
                     prevVal = scores['tfidf']
 
                 if (idx < headcut or idx > tailcut) and scores['tfidf'] != prevVal:
-                    tscoresList.remove(scores)
+                    continue #remove!
+                    # print("remove", idx)
                 else:
+                    # print(idx)
+                    tscoresList.append(scores)
+                    prevVal = scores['tfidf']
+        newThreadsScores.append({
+            "topic_id": thread["topic_id"],
+            "significant_words": tscoresList
+        })
+
+    removeAndWriteFile(dir_path+'4-cutThreadsScores.json', newThreadsScores)
+
+    return newThreadsScores, threadTheme
+
+# use by naiveBayes-mmscale-interval-090320 -for-> test
+#!NOTE  params: threadsScores is changed during the function
+def cutoffKeys(dir_path, threadsScores):
+    #! 4. cut off some keys using tfidf by scores
+    newThreadsScores = []
+    for thread in threadsScores:
+        # print(thread["topic_id"])
+        tscoresList = []
+        totalKeys = len(thread['scores'])
+        if totalKeys > 100: #cut words if that threads has more than 100 words
+            # headcut = int(0.1*totalKeys)
+            headcut = 0
+            tailcut = totalKeys - int(0.46*totalKeys) # cut at index..
+            prevVal = -1
+            # print(totalKeys, headcut, tailcut, totalKeys-tailcut)
+            for idx, scores in enumerate(thread['scores']):
+                if prevVal == -1:
                     prevVal = scores['tfidf']
 
-        thread['significant_words'] = tscoresList
-    removeAndWriteFile(dir_path+'4-cutThreadsScores.json', threadsScores)
+                if (idx < headcut or idx > tailcut) and scores['tfidf'] != prevVal:
+                    continue #remove!
+                    # print("remove", idx)
+                else:
+                    # print(idx)
+                    tscoresList.append(scores)
+                    prevVal = scores['tfidf']
+        newThreadsScores.append({
+            "topic_id": thread["topic_id"],
+            "significant_words": tscoresList
+        })
 
-    return threadsScores, threadTheme
+    removeAndWriteFile(dir_path+'4-cutThreadsScores.json', newThreadsScores)
+    return newThreadsScores
 
-if __name__ == "__main__":
-    dataPreparationToThreadsScores('uiltest/', 'http://ptdev03.mikelab.net/kratooc/')
+def computeJaccardSimilarityScore(x, y):
+    """
+    Jaccard Similarity J (A,B) = | Intersection (A,B) | /
+                                    | Union (A,B) |
+    """
+    intersection_cardinality = len(set(x).intersection(set(y)))
+    union_cardinality = len(set(x).union(set(y)))
+    return intersection_cardinality / float(union_cardinality)
+
+
+# if __name__ == "__main__":
+#     dataPreparationToThreadsScores('uiltest/', 'http://ptdev03.mikelab.net/kratooc/')
