@@ -38,6 +38,9 @@ PIPELINE = [
     # ,{ '$count': "passing_scores" }
 ]
 
+#!TODO add pipeline
+COUNTRYRANK_PIPELINE = []
+
 def mongodb_connect():
     start_connection = time.time()
     try:
@@ -46,6 +49,10 @@ def mongodb_connect():
                                     password=dsdb["password"],
                                     authSource=dsdb["authSource"],
                                     serverSelectionTimeoutMS = 2000)
+        
+        # client = MongoClient("localhost",27017,
+        #                         authSource=dsdb["authSource"],
+        #                         serverSelectionTimeoutMS = 2000)
 
         print("connection_status:",client)
         print("server_info():")
@@ -103,6 +110,8 @@ def checkTypeOfDocument(documents):
 
         # pprint.pprint(selectedThreadList)
 
+
+
         # if len(selectedThreadList)==10:
         #     break
     
@@ -118,7 +127,8 @@ def checkTypeOfDocument(documents):
 if __name__ == "__main__":
     test = cleanContent("test")
 
-    date1DayAgo = getOneDayAgo()
+    # date1DayAgo = getOneDayAgo()
+    date1DayAgo = '20200307'
     
     col_name = 'click-{}'.format(date1DayAgo)
     print(col_name)
@@ -141,17 +151,67 @@ if __name__ == "__main__":
     print("documents len:",len(results))
     print(time.time() - start) #!
 
-    selectedThreadList = checkTypeOfDocument(results)
-    print(">>>>>selected documents len:", len(selectedThreadList))
-    pprint.pprint(selectedThreadList)
-    print(">>>>>country count:")
-    pprint.pprint([cl for cl in countryList if cl["count"]>0])
+    #! start classify country
+    # selectedThreadList = checkTypeOfDocument(results)
 
+    selectedThreadList = []
+    selectedTopicID = []
+    countDict = {}
     project_db = client[dsdb["db"]]
-    country_rank_col = project_db["country_rank_"+date1DayAgo]
-    result = country_rank_col.insert_many(countryList)
-    print("result--",result)
-    removeAndWriteFile("./"+"country_rank_"+date1DayAgo+".json", countryList)
+    selected_threads_col = project_db["selected_threads_"+date1DayAgo]
+    skip = 97100
+    for idx, doc in enumerate(results[skip:]):
+        # if idx<18200:
+        #     continue
+        topicID = doc["topic_id"]
+        print(idx+skip, "-----", topicID)
+
+        response = requests.get(URLCONFIG["mike_thread"]+topicID)
+        if(bool(response.json()['found']) and topicID not in selectedTopicID):
+            threadData = response.json()["_source"]
+            if(threadData["type"] == 4 ):
+                countries = findEachThreadCountries(threadData)
+                selectedThreadList.append({
+                    'topic_id': topicID,
+                    'country_list': countries
+                })
+
+                #!SECTION count country
+                for country in countries:
+                    countryCode = country["country"]
+                    countDict[countryCode] = 1 if countryCode not in countDict.keys() else countDict[countryCode] + 1
+
+        if (idx+1)%100==0 or (idx+1)==len(results):
+            insert_result = selected_threads_col.insert_many(selectedThreadList)
+            print("insert_result--",insert_result)
+            selectedThreadList = []
+        # pprint.pprint(selectedThreadList)
+
+        # if len(selectedThreadList)==10:
+        #     break
+    
+    # for country in countryList:
+    #     thisCount = [num for cd, num in countDict.items() if cd == country["country"]]
+    #     if len(thisCount) == 1:
+    #         country["count"] = thisCount[0]
+
+    # country_rank_col = project_db["country_rank_"+date1DayAgo]
+    # insert_result = country_rank_col.insert_many(countryList)
+    # removeAndWriteFile("./"+"country_rank_"+date1DayAgo+".json", countryList)
+
+    #! old
+    # print(">>>>>selected documents len:", len(selectedThreadList))
+    # pprint.pprint(selectedThreadList)
+    # print(">>>>>country count:")
+    # pprint.pprint([cl for cl in countryList if cl["count"]>0])
+
+    # project_db = client[dsdb["db"]]
+    # country_rank_col = project_db["country_rank_"+date1DayAgo]
+    # result = country_rank_col.insert_many(countryList)
+    # print("result--",result)
+    # removeAndWriteFile("./"+"country_rank_"+date1DayAgo+".json", countryList)
+
+
     
 
 
