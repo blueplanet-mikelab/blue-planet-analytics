@@ -147,11 +147,15 @@ def calculatePopularity(totalView,totalVote,totalComment,createdTime):
     return (totalView+totalVote+totalComment) / diffDays
 
 """
-#TODO
 @params content with HTML tags to find ing tag
 """
-def findThumbnail(rawContent):
-    return ""
+def findThumbnail(topicID):
+    response = requests.get("https://pantip.com/topic/{}".format(topicID))
+    p = re.compile(r'<img class="img-in-post" src="[^"]+')
+    m = p.search(response.text)
+    # print(m)
+    # print(m.group()[30:])
+    return m.group()[30:] if m != None else None
 
 """
 Create a preprocessing document for each topic
@@ -193,7 +197,7 @@ def createPreprocessData(threadData):
         "topic_id": threadData["tid"],
         "title": title,
         "short_desc": desc[:250],
-        "thumbnail": findThumbnail(threadData["desc_full"]+ ' '.join(comments)) if "desc_full" in threadData else None, 
+        "thumbnail": findThumbnail(threadData['tid']), 
         "countries": countries,
         "duration": duration,
         "month": month,
@@ -303,10 +307,11 @@ if __name__ == "__main__":
                 continue
         
             preposTopics.append(preposTopic)
+            pprint(preposTopic)
         else:
             continue
         # print("------------------------------------------------------------")
-        
+        break
         # push every 100 documents to database 
         if (idx+1)%100 == 0 or (idx+1)==totalThread:
             result = thread_col.insert_many(preposTopics)
