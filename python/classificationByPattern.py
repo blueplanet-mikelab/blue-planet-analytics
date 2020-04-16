@@ -1,13 +1,15 @@
 import pymongo
 from pprint import pprint
 import re
-import datetime
+from datetime import datetime, timedelta
 from enum import Enum 
-import json, urllib.request
+import json, urllib.request, requests
 import math
+import time
 
 from utils.manageContentUtil import firstClean, cleanContent, fullTokenizationToWordSummary
 from utils.classificationUtil import findMonth, findCountries, calculateBudget, findThemeByKeyWord, findBudgetByPattern
+from utils.fileWritingUtil import removeAndWriteFile
 
 with open('./config/url.json') as json_data_file:
     URLCONFIG = json.load(json_data_file)
@@ -139,7 +141,7 @@ def findSeason(month, countries):
         createdDate
 """
 def calculatePopularity(totalView,totalVote,totalComment,createdTime):
-    diff = datetime.datetime.now() - datetime.datetime.fromtimestamp(createdTime)
+    diff = datetime.now() - datetime.fromtimestamp(createdTime)
     diffDays = diff.days + diff.seconds/60/60/24
 
     return (totalView+totalVote+totalComment) / diffDays
@@ -183,14 +185,15 @@ def createPreprocessData(threadData):
         calculateBudget(countries, days)
     month = findMonth(content) # array of month with count
     
-    totalView = 100000 #TODO
+    totalView = threadData['view']
     totalPoint = threadData["point"]
     totalComment = threadData["comment_count"]
     
     return {
         "topic_id": threadData["tid"],
         "title": title,
-        "thumbnail": findThumbnail(threadData["desc_full"]+ ' '.join(comments)), #TODO
+        "short_desc": desc[:250],
+        "thumbnail": findThumbnail(threadData["desc_full"]+ ' '.join(comments)) if "desc_full" in threadData else None, 
         "countries": countries,
         "duration": duration,
         "month": month,
@@ -200,8 +203,9 @@ def createPreprocessData(threadData):
         "total_view": totalView,
         "total_point": totalPoint,
         "total_comment": totalComment,
-        "popularity": calculatePopularity(totalView,totalPoint,totalComment,int(threadData["created_time"])), #TODO totoalView
-        "created_at": threadData["created_time"]
+        "popularity": calculatePopularity(totalView,totalPoint,totalComment,int(threadData["created_time"])),
+        "created_at": threadData["created_time"],
+        "doc_created_at": datetime.now()
     }
 
 if __name__ == "__main__":
@@ -214,38 +218,102 @@ if __name__ == "__main__":
                                 password=dbDetail["password"] )
     db = client[dbDetail["db"]]
     # print("collections list",db.list_collection_names())
-    thread_col = db[dbDetail["threadCollection"]]
+    thread_col = db[dbDetail["threadcollection"]]
+    # print('thread_col:',dbDetail["threadcollection"])
 
-    #TODO get topicID
-    topicList = [39330414]
+    print("getting topicID start...", datetime.now())
+    start = time.time() #!
+
+    #!get topicID
+    db_click = client[dbDetail['click_db']]
+    date1DayAgo = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
+    col_name = 'click-{}'.format(date1DayAgo)
+    click_col = db_click[col_name]
+    PIPELINE = [
+        { '$match': {
+            "rooms":{'$in':["BP"] },
+            "event":{'$in':["start"]},
+            "tags": {'$nin':['วีซ่า', 'สายการบิน', 'ร้องทุกข์', 'เตือนภัย','ธนาคาร','ธุรกรรมทางการเงิน','เครื่องแต่งกาย', 'รถโดยสาร', 'โรงแรมรีสอร์ท', 'ค่ายเพลง', 'สนามบิน']}
+        }},
+        { '$addFields':{
+            "topicIDNull": { '$ifNull': [ "$topic_id", False ] }
+        }},
+        { '$match': {
+            "topicIDNull":{'$ne': False},
+        }},
+        { '$group': {
+            '_id': "$topic_id",
+            'view': {'$sum': 1}
+        }}
+        ,{ '$sort' : { 'view' : -1 } }
+        # ,{ '$count': "passing_scores" }
+    ]
+    topicList = list(click_col.aggregate(PIPELINE))
     totalThread = len(topicList)
+    print('topic list length:',totalThread)
+    # viewCount = {}
 
-    # loop each topic
+    print('get topicID use:',time.time() - start) #!
+    
+    print("prepare view weekly start...", datetime.now())
+    start = time.time() #!
+    #!prepare view weekly
+    weeklyView = {}
+    for i in range(2,8):
+        dateStr = datetime.strftime(datetime.now() - timedelta(i), '%Y%m%d')
+        print(dateStr)
+        col = db_click['click-{}'.format(dateStr)]
+        vieww = list(col.aggregate(PIPELINE))
+        viewwDict = { topic['_id']:topic['view'] for topic in vieww }
+        weeklyView[dateStr] = viewwDict
+        # print(weeklyView[dateStr])
+        # print('----------------------------')
+        # print(viewwDict)
+        # print(dateStr, vieww, weeklyView)
+    print('prepare view weekly use:',time.time() - start) #!
+
+    print("looping thread start...", datetime.now())
+    start = time.time() #!
+    #!loop each topic
     preposTopics = []
-    for idx, topicID in enumerate(topicList):
+    for idx, topic in enumerate(topicList):
+        topicID = topic['_id']
         print(idx, "current topic_id:", topicID)
         
-        with urllib.request.urlopen(URLCONFIG["mike_thread"] + str(topicID)) as url:
-            thread = json.loads(url.read().decode())
-            threadData = thread["_source"]
+        response = requests.get(URLCONFIG["mike_thread"]+topicID)
+        if(bool(response.json()['found'])):
+            threadData = response.json()["_source"]
         
-        # skip visa topic
-        skipTags = ['วีซ่า', 'สายการบิน', 'ร้องทุกข์', 'เตือนภัย','ธนาคาร','ธุรกรรมทางการเงิน','เครื่องแต่งกาย', "รถโดยสาร", "โรงแรมรีสอร์ท", "ค่ายเพลง", "สนามบิน"]
-        if  len([tag for tag in threadData['tags'] for skipTag in skipTags if tag.find(skipTag)!=-1]) > 0:
-            continue
+        # skip visa topic (done in finding topicID)
+        # skipTags = ['วีซ่า', 'สายการบิน', 'ร้องทุกข์', 'เตือนภัย','ธนาคาร','ธุรกรรมทางการเงิน','เครื่องแต่งกาย', "รถโดยสาร", "โรงแรมรีสอร์ท", "ค่ายเพลง", "สนามบิน"]
+        # if  len([tag for tag in threadData['tags'] for skipTag in skipTags if tag.find(skipTag)!=-1]) > 0:
+        #     continue
+        
+        if(threadData["type"] == 4 ):
+            # viewCount[topicID] = 1 if topicID not in viewCount else viewCount[topicID] + 1
+            totalView = topic['view']
+            for day, viewDict in weeklyView.items():
+                totalView = totalView + viewDict[topicID] if topicID in viewDict else 0
+                # print(day, viewDict[topicID] if topicID in viewDict else 0, totalView)
+            
+            threadData['view'] = totalView
 
-        preposTopic = createPreprocessData(threadData) # get 1 forum as a document
-        if preposTopic == None: # countries null them skip
-            continue
+            preposTopic = createPreprocessData(threadData) # get 1 forum as a document
+            if preposTopic == None: # countries null them skip
+                continue
         
-        preposTopics.append(preposTopic)
+            preposTopics.append(preposTopic)
+        else:
+            continue
         # print("------------------------------------------------------------")
-
+        
         # push every 100 documents to database 
-        if (idx+1)%1000 == 0 or (idx+1)==totalThread:
+        if (idx+1)%100 == 0 or (idx+1)==totalThread:
             result = thread_col.insert_many(preposTopics)
             print("result--",result)
             preposTopics = []
         
         # if idx > 100:
         #     break
+    
+    print('finish looping:',time.time() - start) #!
