@@ -311,7 +311,6 @@ if __name__ == "__main__":
         else:
             continue
         # print("------------------------------------------------------------")
-        break
         # push every 100 documents to database 
         if (idx+1)%100 == 0 or (idx+1)==totalThread:
             result = thread_col.insert_many(preposTopics)
