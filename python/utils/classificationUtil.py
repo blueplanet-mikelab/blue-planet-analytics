@@ -10,7 +10,7 @@ with open(travel_guide_path,'r', encoding="utf8") as travel_file:
 with open(country_list_path,'r', encoding="utf8") as json_file:
     COUNTRYLIST = json.load(json_file)  
 
-print('ประเทศเกาหลีเหนือ'.find("เกาหลีเหนือ")) 
+# print('ประเทศเกาหลีเหนือ'.find("เกาหลีเหนือ")) 
 
 """
 - ไทย: ในประเทศ, all thai provinces//done
@@ -222,7 +222,7 @@ def findBudgetByPattern(content):
     for c in candidate:
         if c > 100 and c > budget:
             budget = c
-    return budget
+    return budget if budget != -1 else None
 
 """
 @params 
@@ -231,14 +231,16 @@ def findBudgetByPattern(content):
 """
 def calculateBudget(countries, days):
     # print("--------calculateBudget--------")
-    if len(countries) == 0 or days == 0:
-        return -1
+    if len(countries) == 0 or days == None:
+        return None
     
     cost = [travel_guide for travel_guide in TRAVELGUIDELIST if travel_guide["country_code"].lower()==countries[0]["country"].lower()]
-    
+    # print(cost)
+
     if len(cost) == 0:
-        return -1  
+        return None 
     else:
+        # print("len(cost) != 0")
         totalCost = 0
         days = days/len(cost)
         for ccost in cost:
@@ -251,6 +253,7 @@ def calculateBudget(countries, days):
             daysCost = days * (inexpensiveMeal + midRangeMeal + transportation)
             
             totalCost += flightOutbound + flightReturn + hotelPrice + daysCost
+        # print(totalCost)
         return totalCost
 
 

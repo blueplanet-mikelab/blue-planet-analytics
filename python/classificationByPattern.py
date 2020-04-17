@@ -45,11 +45,12 @@ thaiDigit = [
 numEng = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eigth', 'nine', 'ten', 'eleven', 'twelve', 'thirteen']
 numTH = ['หนึ่ง', 'สอง', 'สาม', 'สี่', 'ห้า', 'หก', 'เจ็ด', 'แปด', 'เก้า', 'สิบ', 'สิบเอ็ด', 'สิบสอง', 'สิบสาม']
 
-def chooseDuration(num):
-    duration = { "days": 0, "label": Duration.NOT_DEFINE }
-    if (num == 1): duration = { "days": 1, "label": Duration.ONEDAY }
-    elif (num > 1 and num <= 12): duration = { "days": num, "label": "{} Days".format(num) }
-    elif (num > 12): duration = { "days": num, "label": Duration.MORE }
+def chooseDuration(numDay):
+    duration = { "type": None, "days": None, "label": Duration.NOT_DEFINE }
+    d_type = math.ceil(numDay/3) if numDay >= 1 and numDay <= 12 else 5
+    if (numDay == 1): duration = { "type": d_type, "days": numDay, "label": Duration.ONEDAY }
+    elif (numDay > 1 and numDay <= 12): duration = { "type": d_type, "days": numDay, "label": "{} Days".format(numDay) }
+    elif (numDay > 12): duration = { "type": d_type, "days": numDay, "label": Duration.MORE }
     return duration
 
 """
@@ -68,15 +69,16 @@ def findDuration(content,tags):
     # TODO
 
     if "One Day Trip" in tags:
-        return { "days": 1, "label": Duration.ONEDAY }
+        days = 1
+        return math.ceil(days/3) , { "days": days, "label": Duration.ONEDAY }
 
-    duration = { "days": 0, "label": Duration.NOT_DEFINE }
+    duration = None
     numAfter = 0
     numBefore = 0
 
     foundIndex = 0
     currentIndex = 0
-    while (duration["label"] == Duration.NOT_DEFINE and foundIndex != -1 and currentIndex < len(content)):
+    while (duration == None and foundIndex != -1 and currentIndex < len(content)):
         # print(foundIndex, currentIndex)
         # print(content[currentIndex:])
         searchResult = re.search(r'วัน|day|คืน',content[currentIndex:])
@@ -107,32 +109,25 @@ def findDuration(content,tags):
             break
 
         isWanTee = searchResult.group() == 'วัน' and content[searchResult.end():searchResult.end()+3] == 'ที่' #เจอ วันที่
-        if ((searchResult.group() == 'day') or  isWanTee) and numBefore == 0: # check more of day 1, day 2, .... only 'day' word
-            i = foundIndex + 3 if not isWanTee else foundIndex + 6
+        isKeunTee = searchResult.group() == 'คืน' and content[searchResult.end():searchResult.end()+3] == 'ที่' #เจอ คืนที่
+        if ((searchResult.group() == 'day') or  isWanTee or isKeunTee) and numBefore == 0: # check more of day 1, day 2, .... only 'day' word
+            i = foundIndex + 3 if not isWanTee and not isKeunTee else foundIndex + 6
             s = content[i:i+10].replace(" ","") #check only 10 characters after 'day'
             n = re.findall(r'[0-9]+',s)
             if len(n) > 0: 
                 maxx = int(max(re.findall(r'[0-9]+',s)))
+                if isKeunTee:
+                    maxx += 1
                 if numAfter < maxx: numAfter = maxx
             # keep only max numAfter to declear duration
 
         currentIndex += foundIndex + 3
-    
     #complete find วัน|day|คืน - check Do it has to use numAfter or not, numbefore has higher priority
-    if (duration["label"] == Duration.NOT_DEFINE): #case: numBefore+Day and numAfter
+    if (duration == None): #case: numBefore+Day and numAfter
         numMax = numBefore if numBefore > numAfter else numAfter
         duration = chooseDuration(numMax)
 
-    return duration
-
-
-"""
-TODO find season from matching month and countries, add result of matching
-@params month of topic's owner travelled
-        countries of topic's owner travelled
-"""
-def findSeason(month, countries):
-    return ""
+    return duration["type"], { "days": duration["days"], "label": duration["label"] }
 
 """
 @params totalView a number of view of the forum
@@ -182,32 +177,34 @@ def createPreprocessData(threadData):
     spechar = r'[^a-zA-Z0-9ก-๙\.\,\s]+|\.{2,}|\xa0+|\d+[\.\,][^\d]+'
     content = re.sub(spechar, ' ', content) #17 remove special character
     
-    duration = findDuration(content, tags)
-    days = duration["days"]
-    budget = findBudgetByPattern(content)
-    if budget == -1:
-        calculateBudget(countries, days)
     month = findMonth(content) # array of month with count
+    
+    d_type, duration = findDuration(content,threadData["tags"])
+    days = duration["days"]
+    budget = findBudgetByPattern(content) #None or number
+    # print("budget:", budget)
+    if budget == None:
+        budget = calculateBudget(countries, days) #None or number
     
     totalView = threadData['view']
     totalPoint = threadData["point"]
     totalComment = threadData["comment_count"]
-    
+
     return {
         "topic_id": threadData["tid"],
         "title": title,
         "short_desc": desc[:250],
         "thumbnail": findThumbnail(threadData['tid']), 
         "countries": countries,
-        "duration": duration,
+        "duration_type" : d_type,
+        "duration" : duration,
         "month": month,
-        "season": findSeason(month,countries),
         "theme": findThemeByKeyWord(content,tags), #TODO using Naive Bayes
         "budget": budget,
-        "total_view": totalView,
-        "total_point": totalPoint,
-        "total_comment": totalComment,
-        "popularity": calculatePopularity(totalView,totalPoint,totalComment,int(threadData["created_time"])),
+        "view": totalView,
+        "vote": totalPoint,
+        "comment": totalComment,
+        "viewvotecom_per_day": calculatePopularity(totalView,totalPoint,totalComment,int(threadData["created_time"])),
         "created_at": threadData["created_time"],
         "doc_created_at": datetime.now()
     }
@@ -222,7 +219,7 @@ if __name__ == "__main__":
                                 password=dbDetail["password"] )
     db = client[dbDetail["db"]]
     # print("collections list",db.list_collection_names())
-    thread_col = db[dbDetail["threadcollection"]]
+    thread_col = db[str(dbDetail["threadcollection"])+"_180420"]
     # print('thread_col:',dbDetail["threadcollection"])
 
     print("getting topicID start...", datetime.now())
@@ -231,7 +228,8 @@ if __name__ == "__main__":
     #!get topicID
     db_click = client[dbDetail['click_db']]
     # date1DayAgo = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
-    date1DayAgo = 20200415
+    today = 20200418
+    date1DayAgo = today - 1
     col_name = 'click-{}'.format(str(date1DayAgo))
     click_col = db_click[col_name]
     PIPELINE = [
@@ -266,7 +264,7 @@ if __name__ == "__main__":
     weeklyView = {}
     for i in range(2,8):
         # dateStr = datetime.strftime(datetime.now() - timedelta(i), '%Y%m%d')
-        dateStr = 20200416 - i
+        dateStr = today - i
         print(dateStr)
         col = db_click['click-{}'.format(str(dateStr))]
         vieww = list(col.aggregate(PIPELINE))
@@ -283,8 +281,9 @@ if __name__ == "__main__":
     #!loop each topic
     preposTopics = []
     for idx, topic in enumerate(topicList):
-        if idx < 20999:
-            continue
+        # if idx > 100:
+        #     break
+        
         topicID = topic['_id']
         print(idx, "current topic_id:", topicID)
         
@@ -312,8 +311,7 @@ if __name__ == "__main__":
         
             preposTopics.append(preposTopic)
             # pprint(preposTopic)
-        else:
-            continue
+            print('finish')
         # print("------------------------------------------------------------")
         # push every 100 documents to database 
         if (idx+1)%100 == 0 or (idx+1)==totalThread:
