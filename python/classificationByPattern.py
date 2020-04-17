@@ -230,8 +230,9 @@ if __name__ == "__main__":
 
     #!get topicID
     db_click = client[dbDetail['click_db']]
-    date1DayAgo = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
-    col_name = 'click-{}'.format(date1DayAgo)
+    # date1DayAgo = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
+    date1DayAgo = 20200415
+    col_name = 'click-{}'.format(str(date1DayAgo))
     click_col = db_click[col_name]
     PIPELINE = [
         { '$match': {
@@ -264,9 +265,10 @@ if __name__ == "__main__":
     #!prepare view weekly
     weeklyView = {}
     for i in range(2,8):
-        dateStr = datetime.strftime(datetime.now() - timedelta(i), '%Y%m%d')
+        # dateStr = datetime.strftime(datetime.now() - timedelta(i), '%Y%m%d')
+        dateStr = 20200416 - i
         print(dateStr)
-        col = db_click['click-{}'.format(dateStr)]
+        col = db_click['click-{}'.format(str(dateStr))]
         vieww = list(col.aggregate(PIPELINE))
         viewwDict = { topic['_id']:topic['view'] for topic in vieww }
         weeklyView[dateStr] = viewwDict
@@ -281,6 +283,8 @@ if __name__ == "__main__":
     #!loop each topic
     preposTopics = []
     for idx, topic in enumerate(topicList):
+        if idx < 20999:
+            continue
         topicID = topic['_id']
         print(idx, "current topic_id:", topicID)
         
@@ -294,7 +298,7 @@ if __name__ == "__main__":
         #     continue
         
         if(threadData["type"] == 4 ):
-            # viewCount[topicID] = 1 if topicID not in viewCount else viewCount[topicID] + 1
+            print('yes')
             totalView = topic['view']
             for day, viewDict in weeklyView.items():
                 totalView = totalView + viewDict[topicID] if topicID in viewDict else 0
@@ -307,7 +311,7 @@ if __name__ == "__main__":
                 continue
         
             preposTopics.append(preposTopic)
-            pprint(preposTopic)
+            # pprint(preposTopic)
         else:
             continue
         # print("------------------------------------------------------------")
