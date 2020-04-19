@@ -156,8 +156,10 @@ def findBudgetByPattern(content):
     rex = r'' + '|'.join(digitAfterWords)
     # print(rex)
     for m in re.compile(rex).finditer(content):
-        i = m.start() + 3 #3 is the minimun length of keyword
+        i = m.start() + len(m.group()) #3 is the minimun length of keyword
         # print(m.start(),m.group())
+        if m.group() == "คนละ" and content[m.start()+4:m.start()+7]=="ที่":
+            continue
 
         number = "0"
 
@@ -220,8 +222,9 @@ def findBudgetByPattern(content):
     # next step find the maximun price as approximate budget แต่ถ้าน้อยกว่า 100 ไม่นับ
     budget = -1
     for c in candidate:
-        if c > 100 and c > budget:
+        if c < 10000000 and c > 100 and c > budget: #maximum budget is 10ล้าน
             budget = c
+    # print('budget:', budget)
     return budget if budget != -1 else None
 
 """

@@ -31,16 +31,16 @@ class Duration:
     MORE = "More than 12 Days" #type 13
 
 thaiDigit = [
-        {"thaiDigit": "หนึ่ง" , "val":1},
-        {"thaiDigit": "สอง" , "val":2},
-        {"thaiDigit": "สาม" , "val":3},
-        {"thaiDigit": "สี่" , "val":4},
-        {"thaiDigit": "ห้า" , "val":5},
-        {"thaiDigit": "หก" , "val":6},
-        {"thaiDigit": "เจ็ด" , "val":7},
-        {"thaiDigit": "แปด" , "val":8},
-        {"thaiDigit": "เก้า" , "val":9}
-    ]
+    {"thaiDigit": "หนึ่ง" , "val":1},
+    {"thaiDigit": "สอง" , "val":2},
+    {"thaiDigit": "สาม" , "val":3},
+    {"thaiDigit": "สี่" , "val":4},
+    {"thaiDigit": "ห้า" , "val":5},
+    {"thaiDigit": "หก" , "val":6},
+    {"thaiDigit": "เจ็ด" , "val":7},
+    {"thaiDigit": "แปด" , "val":8},
+    {"thaiDigit": "เก้า" , "val":9}
+]
 
 numEng = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eigth', 'nine', 'ten', 'eleven', 'twelve', 'thirteen']
 numTH = ['หนึ่ง', 'สอง', 'สาม', 'สี่', 'ห้า', 'หก', 'เจ็ด', 'แปด', 'เก้า', 'สิบ', 'สิบเอ็ด', 'สิบสอง', 'สิบสาม']
@@ -281,8 +281,8 @@ if __name__ == "__main__":
     #!loop each topic
     preposTopics = []
     for idx, topic in enumerate(topicList):
-        # if idx > 100:
-        #     break
+        if idx < 14700:
+            continue
         
         topicID = topic['_id']
         print(idx, "current topic_id:", topicID)
@@ -312,6 +312,11 @@ if __name__ == "__main__":
             preposTopics.append(preposTopic)
             # pprint(preposTopic)
             print('finish')
+            
+            # result = thread_col.insert_many(preposTopics)
+            # print("result--",result)
+            # preposTopics = []
+        
         # print("------------------------------------------------------------")
         # push every 100 documents to database 
         if (idx+1)%100 == 0 or (idx+1)==totalThread:
@@ -319,7 +324,6 @@ if __name__ == "__main__":
             print("result--",result)
             preposTopics = []
         
-        # if idx > 100:
-        #     break
+        # break
     
     print('finish looping:',time.time() - start) #!
