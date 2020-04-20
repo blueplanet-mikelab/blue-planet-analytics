@@ -20,7 +20,56 @@ def dataPreparationToThreadsScores(dir_path, URL):
         removeAndWriteFile(dir_path+'0-300threads.json', threadsList)
         removeAndWriteFile(dir_path+'0-threadsTheme.json', threadTheme)
 
+    newThreadsScores = toThreadsScores(dir_path, URL, threadsList)
 
+    return newThreadsScores, threadTheme
+
+# use by naiveBayes-mmscale-interval-090320 -for-> test
+#!NOTE  params: threadsScores is changed during the function
+def cutoffKeys(dir_path, threadsScores):
+    #! 4. cut off some keys using tfidf by scores
+    newThreadsScores = []
+    for thread in threadsScores:
+        # print(thread["topic_id"])
+        tscoresList = []
+        totalKeys = len(thread['scores'])
+        if totalKeys > 100: #cut words if that threads has more than 100 words
+            # headcut = int(0.1*totalKeys)
+            headcut = 0
+            tailcut = totalKeys - int(0.46*totalKeys) # cut at index..
+            prevVal = -1
+            # print(totalKeys, headcut, tailcut, totalKeys-tailcut)
+            for idx, scores in enumerate(thread['scores']):
+                if prevVal == -1:
+                    prevVal = scores['tfidf']
+
+                if (idx < headcut or idx > tailcut) and scores['tfidf'] != prevVal:
+                    continue #remove!
+                    # print("remove", idx)
+                else:
+                    # print(idx)
+                    tscoresList.append(scores)
+                    prevVal = scores['tfidf']
+        newThreadsScores.append({
+            "topic_id": thread["topic_id"],
+            "significant_words": tscoresList
+        })
+
+    removeAndWriteFile(dir_path+'4-cutThreadsScores.json', newThreadsScores)
+    return newThreadsScores
+
+#! TODO
+def computeJaccardSimilarityScore(x, y):
+    """
+    Jaccard Similarity J (A,B) = | Intersection (A,B) | /
+                                    | Union (A,B) |
+    """
+    intersection_cardinality = len(set(x).intersection(set(y)))
+    union_cardinality = len(set(x).union(set(y)))
+    return intersection_cardinality / float(union_cardinality)
+
+#receive list of thread
+def toThreadsScores(dir_path, URL, threadsList):
     print("----------Word Summary-----------")
     freqDictList = []
     threadsCount = len(threadsList)
@@ -61,12 +110,14 @@ def dataPreparationToThreadsScores(dir_path, URL):
     #     del tfidfDict[key]
 
     #! 4. cut off some keys using tfidf by scores
+    print("-------cut off------")
     newThreadsScores = []
     for thread in threadsScores:
         print(thread["topic_id"])
-        tscoresList = []
+        tscoresList = thread['scores']
         totalKeys = len(thread['scores'])
         if totalKeys > 100: #cut words if that threads has more than 100 words
+            tscoresList = []
             # headcut = int(0.1*totalKeys)
             headcut = 0
             tailcut = totalKeys - int(0.46*totalKeys) # cut at index..
@@ -90,50 +141,7 @@ def dataPreparationToThreadsScores(dir_path, URL):
 
     removeAndWriteFile(dir_path+'4-cutThreadsScores.json', newThreadsScores)
 
-    return newThreadsScores, threadTheme
-
-# use by naiveBayes-mmscale-interval-090320 -for-> test
-#!NOTE  params: threadsScores is changed during the function
-def cutoffKeys(dir_path, threadsScores):
-    #! 4. cut off some keys using tfidf by scores
-    newThreadsScores = []
-    for thread in threadsScores:
-        # print(thread["topic_id"])
-        tscoresList = []
-        totalKeys = len(thread['scores'])
-        if totalKeys > 100: #cut words if that threads has more than 100 words
-            # headcut = int(0.1*totalKeys)
-            headcut = 0
-            tailcut = totalKeys - int(0.46*totalKeys) # cut at index..
-            prevVal = -1
-            # print(totalKeys, headcut, tailcut, totalKeys-tailcut)
-            for idx, scores in enumerate(thread['scores']):
-                if prevVal == -1:
-                    prevVal = scores['tfidf']
-
-                if (idx < headcut or idx > tailcut) and scores['tfidf'] != prevVal:
-                    continue #remove!
-                    # print("remove", idx)
-                else:
-                    # print(idx)
-                    tscoresList.append(scores)
-                    prevVal = scores['tfidf']
-        newThreadsScores.append({
-            "topic_id": thread["topic_id"],
-            "significant_words": tscoresList
-        })
-
-    removeAndWriteFile(dir_path+'4-cutThreadsScores.json', newThreadsScores)
     return newThreadsScores
-
-def computeJaccardSimilarityScore(x, y):
-    """
-    Jaccard Similarity J (A,B) = | Intersection (A,B) | /
-                                    | Union (A,B) |
-    """
-    intersection_cardinality = len(set(x).intersection(set(y)))
-    union_cardinality = len(set(x).union(set(y)))
-    return intersection_cardinality / float(union_cardinality)
 
 
 # if __name__ == "__main__":
