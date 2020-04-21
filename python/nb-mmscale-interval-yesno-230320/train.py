@@ -149,34 +149,27 @@ def createScoredModel(threadsScores, dataType, dirTheme):
     return threadIntervalList
 
 # fit trained data to X, Y
-def formatToXY(threadIntervalList, dataType):
+def formatToXY(threadIntervalList, dataType, dir_path='./'):
     print("------formatToXY------")
+    # threadIntervalList <= 
     # [{
     #     'topic_ids':[...],
     #     'word_interval':[True,False,...],
-    #     'theme':"Mountain"
+    #     'theme':["Mountain"]
     #   },...
     # ]
 
     # create model
     X = []
     Y = []
+    
     for threadInput in threadIntervalList:
-        #TODO append theme only in the allThemeList
-        # threadInput['theme'] = []
-        # for idx, theme in enumerate(allThemeList):
-        #     # print("current Theme:", theme)
-        #     memberTheme = allThemeList[theme]
-        #     if any([mt in currentThreadTheme for mt in memberTheme]):
-        #         # print("append:",theme)
-        #         threadInput['theme'].append(theme)
-
-        Y.append(threadInput['theme'] if dataType != 'train' else threadInput['theme'][0]) # tain=>keep string, test=>keep array of string
         X.append(threadInput['word_interval'])
+        # Theme: tain=>keep theme string, test=>keep in list of theme
+        Y.append(threadInput['theme'][0] if dataType == "train" else selectMajorTheme(threadInput['theme'])) 
 
-    if dataType == 'train':
-        removeAndWriteFile('6-X.json', X)
-        removeAndWriteFile('6-Y.json', Y)
+    removeAndWriteFile(dir_path+'6-X_'+dataType+'.json', X)
+    removeAndWriteFile(dir_path+'6-Y_'+dataType+'.json', Y)
     return X, Y
 
 # import X, Y from file
@@ -238,22 +231,16 @@ def prediction(X,Y,X_test,Y_test, distribution, created=None):
             'created_time': created
         }
 
-class InvalidTheme(Exception):
-   """raised when the theme is invalid in the system"""
-   pass
 
 def selectMajorTheme(themeList):
-    for theme in themeList:
-        try:
-            if themeList in allThemeList.keys():
-                return themeList
+    majorTheme = themeList.copy()
+    for idx, theme in enumerate(themeList):
+        if theme not in allThemeList.keys():
             for major, memberList in allThemeList.items():
                 if themeList in memberList:
-                    return major
-            raise InvalidTheme
-        except InvalidTheme:
-            print(theme, ": theme is not valid")
-            sys.exit(1)
+                    majorTheme[idx] = major
+                    break
+    return majorTheme
 
 
 if __name__ == "__main__":
@@ -288,57 +275,59 @@ if __name__ == "__main__":
         topicIdListbyTheme = json.load(onetheme_file)
 
     #! 2 loop of each one theme
-    oneThemeIntervalDict = {}
-    for theme, tidlist in topicIdListbyTheme.items():
-        cdir = theme+"-idf/"
-        Path("./"+cdir).mkdir(exist_ok=True)
-        oneThemeList = []
-        for thread in threadsList: 
-            if thread["TopicID"] in tidlist:
-                oneThemeList.append(thread)
+    # oneThemeIntervalDict = {}
+    # for theme, tidlist in topicIdListbyTheme.items():
+    #     cdir = theme+"-idf/"
+    #     Path("./"+cdir).mkdir(exist_ok=True)
+    #     oneThemeList = []
+    #     for thread in threadsList: 
+    #         if thread["TopicID"] in tidlist:
+    #             oneThemeList.append(thread)
         
-        oneThemeThreadScores = toThreadsScores('./'+cdir, URLCONFIG['mike_thread'], oneThemeList, cutOffBy='idf')
+    #     oneThemeThreadScores = toThreadsScores('./'+cdir, URLCONFIG['mike_thread'], oneThemeList, cutOffBy='idf')
         
-        #add theme in to thread
-        for threadscore in oneThemeThreadScores:
-            threadscore["theme"] = threadTheme[threadscore["topic_id"]]
+    #     #add theme in to thread
+    #     for threadscore in oneThemeThreadScores:
+    #         threadscore["theme"] = threadTheme[threadscore["topic_id"]]
 
-        oneThemeInterval = createScoredModel(oneThemeThreadScores, dataType='train', dirTheme=cdir)
-        oneThemeIntervalDict[theme] = oneThemeInterval
-        removeAndWriteFile(cdir+'5-3-eachTheme_interval.json', oneThemeInterval)
+    #     oneThemeInterval = createScoredModel(oneThemeThreadScores, dataType='train', dirTheme=cdir)
+    #     oneThemeIntervalDict[theme] = oneThemeInterval
+    #     removeAndWriteFile(cdir+'5-3-eachTheme_interval.json', oneThemeInterval)
         
-    removeAndWriteFile('5-3-idf-allOneTheme-interval.json', oneThemeIntervalDict)
+    # removeAndWriteFile('5-3-idf-allOneTheme-interval.json', oneThemeIntervalDict)
     
     #! 2 alternative
-    # with open('./5-3-oneTheme-interval.json') as model_file:
-    #     oneThemeIntervalList = json.load(model_file)
+    with open('./5-3-idf-allOneTheme-interval.json') as model_file:
+        oneThemeIntervalDict = json.load(model_file)
 
-    #! 3
-    # X, Y = formatToXY(oneThemeIntervalList, dataType='train')
-    # X_test, Y_test = createXYTestSet(threadsScores, threadTheme)
-    #! 3 alternative
-    # X, Y = importXY('6-X.json','6-Y.json')
-    # X_test, Y_test = importXY('6-X_test.json','6-Y_test.json')
+    #! 3-4-5 NB+prob+Jaccard of each theme model
+    for theme, threadIntervalList in oneThemeIntervalDict.items():
+        #! 3 Fit X, Y, X_test, Y_test
+        X, Y = formatToXY(threadIntervalList, dataType='train', dir_path=theme+'-idf/')
+        # X_test, Y_test = createXYTestSet(threadsScores, threadTheme) #TODO
+        #! 3 alternative
+        # X, Y = importXY('6-X.json','6-Y.json')
+        # X_test, Y_test = importXY('6-X_test.json','6-Y_test.json')
 
-    #!4 prediction using BernoulliNB
-    # print("-----start prediction")
-    # clf = BernoulliNB()
-    # clf.fit(X, Y)
-    # predictValProba = clf.predict_proba(X_test).tolist()
-    # predictVal = clf.predict(X_test).tolist()
-    # print("-----predictVal-----")
-    # # pprint.pprint(predictValProba)
-    # removeAndWriteFile('7-prediction-probaResult.json', predictValProba)
-    # removeAndWriteFile('7-prediction-result.json', predictVal)
-    
-    # labels = clf.classes_
-    # print("Labels:",labels)
-    # predictResultFromProba = []
-    # for proba in predictValProba:
-    #     result = [labels[idx] for idx, num in enumerate(proba) if num > 0] #! all that > 0
-    #     predictResultFromProba.append(result)
+        #!4 prediction using BernoulliNB with proba only
+        # print("-----start prediction")
+        # clf = BernoulliNB()
+        # clf.fit(X, Y)
+        # predictValProba = clf.predict_proba(X_test).tolist()
+        # predictVal = clf.predict(X_test).tolist()
+        # print("-----predictVal-----")
+        # # pprint.pprint(predictValProba)
+        # removeAndWriteFile('7-prediction-probaResult.json', predictValProba)
+        # removeAndWriteFile('7-prediction-result.json', predictVal)
+        
+        # labels = clf.classes_
+        # print("Labels:",labels)
+        # predictResultFromProba = []
+        # for proba in predictValProba:
+        #     result = [labels[idx] for idx, num in enumerate(proba) if num > 0] #! all that > 0
+        #     predictResultFromProba.append(result)
 
-    # removeAndWriteFile('7-prediction-result-fromProba.json', predictResultFromProba)
+        # removeAndWriteFile('7-prediction-result-fromProba.json', predictResultFromProba)
 
     #!5 TODO Jaccard
     # jaccardScores = []
