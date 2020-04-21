@@ -290,14 +290,14 @@ if __name__ == "__main__":
     #! 2 loop of each one theme
     oneThemeIntervalDict = {}
     for theme, tidlist in topicIdListbyTheme.items():
-        cdir = theme+"/"
+        cdir = theme+"-idf/"
         Path("./"+cdir).mkdir(exist_ok=True)
         oneThemeList = []
         for thread in threadsList: 
             if thread["TopicID"] in tidlist:
                 oneThemeList.append(thread)
         
-        oneThemeThreadScores = toThreadsScores('./'+cdir, URLCONFIG['mike_thread'], oneThemeList)
+        oneThemeThreadScores = toThreadsScores('./'+cdir, URLCONFIG['mike_thread'], oneThemeList, cutOffBy='idf')
         
         #add theme in to thread
         for threadscore in oneThemeThreadScores:
@@ -307,7 +307,7 @@ if __name__ == "__main__":
         oneThemeIntervalDict[theme] = oneThemeInterval
         removeAndWriteFile(cdir+'5-3-eachTheme_interval.json', oneThemeInterval)
         
-    removeAndWriteFile('5-3-allOneTheme-interval.json', oneThemeIntervalDict)
+    removeAndWriteFile('5-3-idf-allOneTheme-interval.json', oneThemeIntervalDict)
     
     #! 2 alternative
     # with open('./5-3-oneTheme-interval.json') as model_file:

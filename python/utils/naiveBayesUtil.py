@@ -26,33 +26,43 @@ def dataPreparationToThreadsScores(dir_path, URL):
 
 # use by naiveBayes-mmscale-interval-090320 -for-> test
 #!NOTE  params: threadsScores is changed during the function
-def cutoffKeys(dir_path, threadsScores):
+def cutoffKeys(dir_path, threadsScores, cutOffBy):
+    print("-------cut off------")
     #! 4. cut off some keys using tfidf by scores
     newThreadsScores = []
     for thread in threadsScores:
         # print(thread["topic_id"])
-        tscoresList = []
         totalKeys = len(thread['scores'])
-        if totalKeys > 100: #cut words if that threads has more than 100 words
+        
+        if totalKeys <= 100: 
+            significatList = thread['scores']
+        else: #cut words if that threads has more than 100 words
+            if cutOffBy == 'idf': #keep lower scores
+                sortedScores = sorted(thread['scores'],key=lambda x:x['idf'])
+            else: #use tfidf keep higher scores
+                sortedScores = thread['scores']
+            
+            significatList = []
             # headcut = int(0.1*totalKeys)
             headcut = 0
             tailcut = totalKeys - int(0.46*totalKeys) # cut at index..
             prevVal = -1
             # print(totalKeys, headcut, tailcut, totalKeys-tailcut)
-            for idx, scores in enumerate(thread['scores']):
+            for idx, scores in enumerate(sortedScores):
                 if prevVal == -1:
-                    prevVal = scores['tfidf']
+                    prevVal = scores[cutOffBy]
 
-                if (idx < headcut or idx > tailcut) and scores['tfidf'] != prevVal:
+                if (idx < headcut or idx > tailcut) and scores[cutOffBy] != prevVal:
                     continue #remove!
                     # print("remove", idx)
                 else:
                     # print(idx)
-                    tscoresList.append(scores)
-                    prevVal = scores['tfidf']
+                    significatList.append(scores)
+                    prevVal = scores[cutOffBy]
+
         newThreadsScores.append({
             "topic_id": thread["topic_id"],
-            "significant_words": tscoresList
+            "significant_words": significatList
         })
 
     removeAndWriteFile(dir_path+'4-cutThreadsScores.json', newThreadsScores)
@@ -69,7 +79,7 @@ def computeJaccardSimilarityScore(x, y):
     return intersection_cardinality / float(union_cardinality)
 
 #receive list of thread
-def toThreadsScores(dir_path, URL, threadsList):
+def toThreadsScores(dir_path, URL, threadsList, cutOffBy='tfidf'):
     print("----------Word Summary-----------")
     freqDictList = []
     threadsCount = len(threadsList)
@@ -104,42 +114,9 @@ def toThreadsScores(dir_path, URL, threadsList):
     #! 2,3. calculate IDF and TFIDF calculation
     threadsScores = calculateFullTFIDF(freqDictList, dir_path+'2-IDFScoreByWord.json') # consists of TF, IDF, and TFIDF scores
     removeAndWriteFile(dir_path+'3-threadsScores.json', threadsScores)
-    
-    # scores to cut
-    # if score < 0.0035 or score > 0.02:
-    #     del tfidfDict[key]
 
     #! 4. cut off some keys using tfidf by scores
-    print("-------cut off------")
-    newThreadsScores = []
-    for thread in threadsScores:
-        print(thread["topic_id"])
-        tscoresList = thread['scores']
-        totalKeys = len(thread['scores'])
-        if totalKeys > 100: #cut words if that threads has more than 100 words
-            tscoresList = []
-            # headcut = int(0.1*totalKeys)
-            headcut = 0
-            tailcut = totalKeys - int(0.46*totalKeys) # cut at index..
-            prevVal = -1
-            # print(totalKeys, headcut, tailcut, totalKeys-tailcut)
-            for idx, scores in enumerate(thread['scores']):
-                if prevVal == -1:
-                    prevVal = scores['tfidf']
-
-                if (idx < headcut or idx > tailcut) and scores['tfidf'] != prevVal:
-                    continue #remove!
-                    # print("remove", idx)
-                else:
-                    # print(idx)
-                    tscoresList.append(scores)
-                    prevVal = scores['tfidf']
-        newThreadsScores.append({
-            "topic_id": thread["topic_id"],
-            "significant_words": tscoresList
-        })
-
-    removeAndWriteFile(dir_path+'4-cutThreadsScores.json', newThreadsScores)
+    newThreadsScores = cutoffKeys(dir_path, threadsScores, cutOffBy)
 
     return newThreadsScores
 
