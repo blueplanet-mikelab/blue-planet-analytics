@@ -210,6 +210,8 @@ def createPreprocessData(threadData):
     }
 
 if __name__ == "__main__":
+    today = 20200423
+
     with open('./config/database.json') as json_data_file:
         DBCONFIG = json.load(json_data_file)
     dbDetail = DBCONFIG["mikelab"]
@@ -219,7 +221,7 @@ if __name__ == "__main__":
                                 password=dbDetail["password"] )
     db = client[dbDetail["db"]]
     # print("collections list",db.list_collection_names())
-    thread_col = db[str(dbDetail["threadcollection"])+"_180420"]
+    thread_col = db[str(dbDetail["threadcollection"])+"_{}".format(today)]
     # print('thread_col:',dbDetail["threadcollection"])
 
     print("getting topicID start...", datetime.now())
@@ -228,7 +230,6 @@ if __name__ == "__main__":
     #!get topicID
     db_click = client[dbDetail['click_db']]
     # date1DayAgo = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
-    today = 20200418
     date1DayAgo = today - 1
     col_name = 'click-{}'.format(str(date1DayAgo))
     click_col = db_click[col_name]
@@ -281,7 +282,7 @@ if __name__ == "__main__":
     #!loop each topic
     preposTopics = []
     for idx, topic in enumerate(topicList):
-        if idx < 14700:
+        if idx < 3200:
             continue
         
         topicID = topic['_id']
@@ -312,12 +313,13 @@ if __name__ == "__main__":
             preposTopics.append(preposTopic)
             # pprint(preposTopic)
             print('finish')
-            
+            # break
             # result = thread_col.insert_many(preposTopics)
             # print("result--",result)
             # preposTopics = []
         
         # print("------------------------------------------------------------")
+        
         # push every 100 documents to database 
         if (idx+1)%100 == 0 or (idx+1)==totalThread:
             result = thread_col.insert_many(preposTopics)
