@@ -210,7 +210,7 @@ def createPreprocessData(threadData):
     }
 
 if __name__ == "__main__":
-    today = 20200423
+    today = 20200425
 
     with open('./config/database.json') as json_data_file:
         DBCONFIG = json.load(json_data_file)
@@ -282,8 +282,8 @@ if __name__ == "__main__":
     #!loop each topic
     preposTopics = []
     for idx, topic in enumerate(topicList):
-        if idx < 3200:
-            continue
+        # if idx < 3200:
+        #     continue
         
         topicID = topic['_id']
         print(idx, "current topic_id:", topicID)
