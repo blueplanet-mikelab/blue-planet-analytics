@@ -3,7 +3,7 @@ from pprint import pprint
 import re
 from datetime import datetime, timedelta
 from enum import Enum 
-import json, urllib.request, requests
+import json, requests
 import math
 import time
 
@@ -211,6 +211,7 @@ def createPreprocessData(threadData):
 
 if __name__ == "__main__":
     today = 20200425
+    print("Today to query:", today)
 
     with open('./config/database.json') as json_data_file:
         DBCONFIG = json.load(json_data_file)
@@ -282,8 +283,8 @@ if __name__ == "__main__":
     #!loop each topic
     preposTopics = []
     for idx, topic in enumerate(topicList):
-        # if idx < 3200:
-        #     continue
+        if idx < 12700:
+            continue
         
         topicID = topic['_id']
         print(idx, "current topic_id:", topicID)
