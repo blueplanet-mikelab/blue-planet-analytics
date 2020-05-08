@@ -65,19 +65,19 @@ def applyInterval(threadsScores, minmaxScaleDict, dataType, dirTheme):
             countInterval[topicID][trueIndex] += 1
         
         threadInput['word_interval'] = threadInterval
+        threadInput['theme'] = currentThreadTheme
 
-        
-        #!! add theme
-        if len(currentThreadTheme) == 1: #one theme
-            threadInput['theme'] = currentThreadTheme
-        else:
-            threadInput['theme'] = []
-            for idx, theme in enumerate(allThemeList):
-                # print("current Theme:", theme)
-                memberTheme = allThemeList[theme]
-                if any([mt in currentThreadTheme for mt in memberTheme]):
-                    # print("append:",theme)
-                    threadInput['theme'].append(theme)
+        # add theme
+        # if len(currentThreadTheme) == 1: #one theme
+        #     threadInput['theme'] = currentThreadTheme
+        # else:
+        #     threadInput['theme'] = []
+        #     for idx, theme in enumerate(allThemeList):
+        #         # print("current Theme:", theme)
+        #         memberTheme = allThemeList[theme]
+        #         if any([mt in currentThreadTheme for mt in memberTheme]):
+        #             # print("append:",theme)
+        #             threadInput['theme'].append(theme)
         
         threadIntervalList.append(threadInput)
 
@@ -104,16 +104,16 @@ def initializeWordCount(threadsScores):
                 wordCount[word['key']] = []
     return wordCount
 
-def createScoredModel(threadsScores, dataType, dirTheme):
+def createScoredModel(threadsScores, minmaxScaleDict, dataType, dirTheme):
     #! 5. calculate maxmin scale
     print("----------Naive Bayes-----------")
-    if 'train' in dataType: #oneTheme
-        minmaxScaleDict = initializeWordCount(threadsScores)
-    else: #test
-        with open('./5-0-train-oneTheme-words.json') as oneThemeWords_file:
-            oneThemeWords = json.load(oneThemeWords_file)
-            minmaxScaleDict = {key: list() for key in oneThemeWords}
-            # print(minmaxScaleDict)
+    # if 'train' in dataType: #oneTheme
+    #     minmaxScaleDict = initializeWordCount(threadsScores)
+    # else: #test
+    #     with open('./5-0-train-oneTheme-words.json') as oneThemeWords_file:
+    #         oneThemeWords = json.load(oneThemeWords_file)
+    #         minmaxScaleDict = {key: list() for key in oneThemeWords}
+    #         # print(minmaxScaleDict)
 
     for idx, thread in enumerate(threadsScores):
         topicID = thread["topic_id"]
@@ -149,7 +149,7 @@ def createScoredModel(threadsScores, dataType, dirTheme):
     return threadIntervalList
 
 # fit trained data to X, Y
-def formatToXY(threadIntervalList, dataType, dir_path='./'):
+def formatToXY(threadIntervalList, dataType, dir_path):
     print("------formatToXY------")
     # threadIntervalList <= 
     # [{
@@ -174,7 +174,7 @@ def formatToXY(threadIntervalList, dataType, dir_path='./'):
 
 # import X, Y from file
 def importXY(dirX,dirY):
-    print('importing', dirX, 'and', dirY)
+    # print('importing', dirX, 'and', dirY)
     with open(dirX) as json_data_file:
         X = json.load(json_data_file) 
         print('finish import', dirX)
@@ -185,12 +185,13 @@ def importXY(dirX,dirY):
     
     return X, Y
 
-def createXYTestSet(threadScores, threadTheme):   
-    allThreadIntervalList = createScoredModel(threadScores, threadTheme, dataType='test')
-    X_test, Y_test = formatToXY(allThreadIntervalList, dataType='test')
-
-    removeAndWriteFile('6-X_test.json', X_test)
-    removeAndWriteFile('6-Y_test.json', Y_test)
+def createXYTestSet(cdir, testData_threadScores, threadTheme):
+    print("----createXYTestSet-----")
+    with open(cdir+'5-0-train-oneTheme-words.json') as modelWords_file:
+        modelWords = json.load(modelWords_file)
+        minmaxScaleDict = {key: list() for key in modelWords}
+    testIntervalList = createScoredModel(testData_threadScores, minmaxScaleDict, dirTheme=cdir, dataType='test')
+    X_test, Y_test = formatToXY(testIntervalList, dataType='test', dir_path=cdir)
     
     return X_test, Y_test
 
@@ -274,7 +275,7 @@ if __name__ == "__main__":
     with open('0-topicID_oneTheme.json') as onetheme_file:
         topicIdListbyTheme = json.load(onetheme_file)
 
-    #! 2 loop of each one theme
+    #! 2 Create threadScores -> loop of each one theme
     # oneThemeIntervalDict = {}
     # for theme, tidlist in topicIdListbyTheme.items():
     #     cdir = theme+"-idf/"
@@ -289,34 +290,58 @@ if __name__ == "__main__":
     #     #add theme in to thread
     #     for threadscore in oneThemeThreadScores:
     #         threadscore["theme"] = threadTheme[threadscore["topic_id"]]
-
-    #     oneThemeInterval = createScoredModel(oneThemeThreadScores, dataType='train', dirTheme=cdir)
+    #     
+    #     minmaxScaleDict = initializeWordCount(oneThemeThreadScores)
+    #     oneThemeInterval = createScoredModel(oneThemeThreadScores, minmaxScaleDict, dataType='train', dirTheme=cdir)
     #     oneThemeIntervalDict[theme] = oneThemeInterval
     #     removeAndWriteFile(cdir+'5-3-eachTheme_interval.json', oneThemeInterval)
         
     # removeAndWriteFile('5-3-idf-allOneTheme-interval.json', oneThemeIntervalDict)
     
     #! 2 alternative
+    #! select IDF
     with open('./5-3-idf-allOneTheme-interval.json') as model_file:
         oneThemeIntervalDict = json.load(model_file)
 
     #! 3-4-5 NB+prob+Jaccard of each theme model
+    print("-----Create testData_threadScores-----")
+    
+    #! 3-0 create threadScore without cut-off 
+    # Path("./test_data_tfidf").mkdir(exist_ok=True)
+    # testData_threadScores = toThreadsScores("test_data_tfidf/", URLCONFIG['mike_thread'], threadsList, cutOffBy=None)   
+    #! 3-0 alternative
+    with open('./test_data_tfidf/4-uncutThreadsScores.json') as model_file:
+        testData_threadScores = json.load(model_file)
+    
+    # add theme
+    for threadscore in testData_threadScores:
+        threadscore["theme"] = threadTheme[threadscore["topic_id"]]
+    
+    # Prodiction using NB model of each theme
     for theme, threadIntervalList in oneThemeIntervalDict.items():
-        #! 3 Fit X, Y, X_test, Y_test
-        X, Y = formatToXY(threadIntervalList, dataType='train', dir_path=theme+'-idf/')
-        # X_test, Y_test = createXYTestSet(threadsScores, threadTheme) #TODO
+        cdir = theme+"-idf/"
+        #! 3 Fit X, Y, Create X_test, Y_test
+        # X, Y = formatToXY(threadIntervalList, dataType='train', dir_path=theme+'-idf/')
+        # X_test, Y_test = createXYTestSet(cdir, testData_threadScores, threadTheme) #TODO
+        
         #! 3 alternative
-        # X, Y = importXY('6-X.json','6-Y.json')
-        # X_test, Y_test = importXY('6-X_test.json','6-Y_test.json')
+        print(theme, "import success---------------")
+        X, Y = importXY(cdir+'6-X_train.json',cdir+'6-Y_train.json')
+        X_test, Y_test = importXY(cdir+'6-X_test.json',cdir+'6-Y_test.json') #TODO
 
         #!4 prediction using BernoulliNB with proba only
-        # print("-----start prediction")
-        # clf = BernoulliNB()
-        # clf.fit(X, Y)
+        print("-----start prediction")
+        clf = BernoulliNB()
+        clf.fit(X, Y)
         # predictValProba = clf.predict_proba(X_test).tolist()
-        # predictVal = clf.predict(X_test).tolist()
+        predictValProba = clf.predict_proba(X_test).tolist()
+        predictVal = clf.predict(X_test).tolist()
         # print("-----predictVal-----")
-        # # pprint.pprint(predictValProba)
+        pprint.pprint(predictValProba)
+        print("=====================")
+        pprint.pprint(predictVal)
+
+        break
         # removeAndWriteFile('7-prediction-probaResult.json', predictValProba)
         # removeAndWriteFile('7-prediction-result.json', predictVal)
         

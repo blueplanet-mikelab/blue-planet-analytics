@@ -116,9 +116,16 @@ def toThreadsScores(dir_path, URL, threadsList, cutOffBy='tfidf'):
     removeAndWriteFile(dir_path+'3-threadsScores.json', threadsScores)
 
     #! 4. cut off some keys using tfidf by scores
-    newThreadsScores = cutoffKeys(dir_path, threadsScores, cutOffBy)
+    if cutOffBy==None:
+        for t in threadsScores:
+            t['significant_words'] = t.pop('scores')
+        
+        removeAndWriteFile(dir_path+'4-uncutThreadsScores.json', threadsScores)
+        return threadsScores
+    else:
+        newThreadsScores = cutoffKeys(dir_path, threadsScores, cutOffBy)
+        return newThreadsScores
 
-    return newThreadsScores
 
 
 # if __name__ == "__main__":
