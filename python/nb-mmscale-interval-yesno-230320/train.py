@@ -45,7 +45,7 @@ allThemeList = {
 def selectInterval(score):
     return [score == 0, score > 0 and score < 1/3, score >= 1/3 and score < 2/3, score >= 2/3]
 
-def applyInterval(threadsScores, minmaxScaleDict, dataType, dirTheme):
+def applyInterval(threadsScores, minmaxScaleDict, dataType, dirPath):
     #! 5 Naive Bayes model - format inpit form
     print("----------Naive Bayes model - create interval model----------")
     #! Interval
@@ -66,33 +66,12 @@ def applyInterval(threadsScores, minmaxScaleDict, dataType, dirTheme):
         
         threadInput['word_interval'] = threadInterval
         threadInput['theme'] = currentThreadTheme
-
-        # add theme
-        # if len(currentThreadTheme) == 1: #one theme
-        #     threadInput['theme'] = currentThreadTheme
-        # else:
-        #     threadInput['theme'] = []
-        #     for idx, theme in enumerate(allThemeList):
-        #         # print("current Theme:", theme)
-        #         memberTheme = allThemeList[theme]
-        #         if any([mt in currentThreadTheme for mt in memberTheme]):
-        #             # print("append:",theme)
-        #             threadInput['theme'].append(theme)
         
         threadIntervalList.append(threadInput)
 
-    removeAndWriteFile(dirTheme+'5-3-'+dataType+'-oneTheme-interval.json', threadIntervalList)
-    removeAndWriteFile(dirTheme+'5-4-'+dataType+'-count-interval.json', countInterval)
+    removeAndWriteFile(dirPath+'5-3-'+dataType+'-oneTheme-interval.json', threadIntervalList)
+    removeAndWriteFile(dirPath+'5-4-'+dataType+'-count-interval.json', countInterval)
     return threadIntervalList
-    
-    #! insert model to mongo !FIXME error because exceed limit size of 16MB
-    # model_col = db["naive_bayes_maxminscale"]
-    # modelToInsert = [ 
-    #     {'_id':key, 
-    #     'topic_ids':themeDetail['topic_ids'], 
-    #     'words_count':themeDetail['words_maxminscale']} 
-    #     for key, themeDetail in themeModels.items()]
-    # result = model_col.insert_many(modelToInsert)
 
 # create list of words of all documents
 def initializeWordCount(threadsScores):
@@ -104,17 +83,9 @@ def initializeWordCount(threadsScores):
                 wordCount[word['key']] = []
     return wordCount
 
-def createScoredModel(threadsScores, minmaxScaleDict, dataType, dirTheme):
+def createScoredModel(threadsScores, minmaxScaleDict, dataType, dirPath):
     #! 5. calculate maxmin scale
     print("----------Naive Bayes-----------")
-    # if 'train' in dataType: #oneTheme
-    #     minmaxScaleDict = initializeWordCount(threadsScores)
-    # else: #test
-    #     with open('./5-0-train-oneTheme-words.json') as oneThemeWords_file:
-    #         oneThemeWords = json.load(oneThemeWords_file)
-    #         minmaxScaleDict = {key: list() for key in oneThemeWords}
-    #         # print(minmaxScaleDict)
-
     for idx, thread in enumerate(threadsScores):
         topicID = thread["topic_id"]
         print(idx,"<->",topicID)
@@ -132,7 +103,7 @@ def createScoredModel(threadsScores, minmaxScaleDict, dataType, dirTheme):
             # print(idx, key, countLength, (idx+1)-countLength)
             minmaxScaleDict[key].extend(np.zeros((idx+1)-countLength).tolist())
 
-    removeAndWriteFile(dirTheme+'5-1-'+dataType+'-count-before-maxmin.json', minmaxScaleDict)
+    removeAndWriteFile(dirPath+'5-1-'+dataType+'-count-before-maxmin.json', minmaxScaleDict)
 
     #! calculate maxmin-scale
     for key, countVal in minmaxScaleDict.items():
@@ -140,16 +111,16 @@ def createScoredModel(threadsScores, minmaxScaleDict, dataType, dirTheme):
         scaler.fit(np.array(countVal).reshape(-1,1))
         minmaxScaleDict[key] = scaler.transform([countVal]).tolist()[0] #value of maxmin-scale of each word
     
-    removeAndWriteFile(dirTheme+'5-2-'+dataType+'-maxmin-scale.json', minmaxScaleDict)
+    removeAndWriteFile(dirPath+'5-2-'+dataType+'-maxmin-scale.json', minmaxScaleDict)
     if 'train' in dataType:
-        removeAndWriteFile(dirTheme+'5-0-'+dataType+'-oneTheme-words.json', list(minmaxScaleDict.keys()))
+        removeAndWriteFile(dirPath+'5-0-'+dataType+'-oneTheme-words.json', list(minmaxScaleDict.keys()))
 
-    threadIntervalList = applyInterval(threadsScores, minmaxScaleDict, dataType, dirTheme)
+    threadIntervalList = applyInterval(threadsScores, minmaxScaleDict, dataType, dirPath)
 
     return threadIntervalList
 
 # fit trained data to X, Y
-def formatToXY(threadIntervalList, dataType, dir_path):
+def formatToXY(threadIntervalList, dataType, dirPath):
     print("------formatToXY------")
     # threadIntervalList <= 
     # [{
@@ -162,14 +133,22 @@ def formatToXY(threadIntervalList, dataType, dir_path):
     # create model
     X = []
     Y = []
+    p = re.compile('[a-zA-Z]+')
+    currentTheme = str(p.match(dirPath).group())
+    print("fit XY current theme:",currentTheme)
     
     for threadInput in threadIntervalList:
         X.append(threadInput['word_interval'])
         # Theme: tain=>keep theme string, test=>keep in list of theme
-        Y.append(threadInput['theme'][0] if dataType == "train" else selectMajorTheme(threadInput['theme'])) 
+        if dataType == "train" and threadInput['theme'][0] == currentTheme: #only 1 theme
+            Y.append('Yes')
+        elif dataType == "train" and threadInput['theme'][0] != currentTheme: #only 1 theme
+            Y.append('No')
+        else:
+            Y.append(selectMajorTheme(threadInput['theme']))
 
-    removeAndWriteFile(dir_path+'6-X_'+dataType+'.json', X)
-    removeAndWriteFile(dir_path+'6-Y_'+dataType+'.json', Y)
+    removeAndWriteFile(dirPath+'6-X_'+dataType+'.json', X)
+    removeAndWriteFile(dirPath+'6-Y_'+dataType+'.json', Y)
     return X, Y
 
 # import X, Y from file
@@ -187,11 +166,11 @@ def importXY(dirX,dirY):
 
 def createXYTestSet(cdir, testData_threadScores, threadTheme):
     print("----createXYTestSet-----")
-    with open(cdir+'5-0-train-oneTheme-words.json') as modelWords_file:
+    with open(cdir+'merge-5-0-train-oneTheme-words.json') as modelWords_file:
         modelWords = json.load(modelWords_file)
         minmaxScaleDict = {key: list() for key in modelWords}
-    testIntervalList = createScoredModel(testData_threadScores, minmaxScaleDict, dirTheme=cdir, dataType='test')
-    X_test, Y_test = formatToXY(testIntervalList, dataType='test', dir_path=cdir)
+    testIntervalList = createScoredModel(testData_threadScores, minmaxScaleDict, dirPath=cdir, dataType='test')
+    X_test, Y_test = formatToXY(testIntervalList, dataType='test', dirPath=cdir)
     
     return X_test, Y_test
 
@@ -276,100 +255,126 @@ if __name__ == "__main__":
         topicIdListbyTheme = json.load(onetheme_file)
 
     #! 2 Create threadScores -> loop of each one theme
+    # print("----create model-----")
     # oneThemeIntervalDict = {}
     # for theme, tidlist in topicIdListbyTheme.items():
-    #     cdir = theme+"-idf/"
+    #     cdir = theme+"-idf-new/"
     #     Path("./"+cdir).mkdir(exist_ok=True)
-    #     oneThemeList = []
-    #     for thread in threadsList: 
-    #         if thread["TopicID"] in tidlist:
-    #             oneThemeList.append(thread)
-        
+    #     print(theme,"------",cdir)
+
+    #     #! 2-1 current theme - YES
+    #     oneThemeList = [thread for thread in threadsList if thread["TopicID"] in tidlist]
     #     oneThemeThreadScores = toThreadsScores('./'+cdir, URLCONFIG['mike_thread'], oneThemeList, cutOffBy='idf')
         
-    #     #add theme in to thread
+    #     # add theme in to thread
     #     for threadscore in oneThemeThreadScores:
     #         threadscore["theme"] = threadTheme[threadscore["topic_id"]]
-    #     
-    #     minmaxScaleDict = initializeWordCount(oneThemeThreadScores)
-    #     oneThemeInterval = createScoredModel(oneThemeThreadScores, minmaxScaleDict, dataType='train', dirTheme=cdir)
-    #     oneThemeIntervalDict[theme] = oneThemeInterval
-    #     removeAndWriteFile(cdir+'5-3-eachTheme_interval.json', oneThemeInterval)
         
-    # removeAndWriteFile('5-3-idf-allOneTheme-interval.json', oneThemeIntervalDict)
+    #     #! 2-2 other theme - NO
+    #     otherThemeTopicID = [ ]
+    #     for tm, tidlist in topicIdListbyTheme.items():
+    #         if tm != theme:
+    #             otherThemeTopicID.extend(tidlist)
+    #     otherThemeList = [thread for thread in threadsList if thread["TopicID"] in otherThemeTopicID]
+    #     # print(otherThemeList)
+    #     otherdir = './'+cdir+'other-'
+    #     otherThemeThreadScores = toThreadsScores(otherdir, URLCONFIG['mike_thread'], otherThemeList, cutOffBy=None)
+
+    #     # add theme in to thread
+    #     for threadscore in otherThemeThreadScores:
+    #         threadscore["theme"] = threadTheme[threadscore["topic_id"]]
+        
+    #     #! 2-2 merge Yes and No
+    #     minmaxScaleDict = initializeWordCount(oneThemeThreadScores)
+    #     mergedThreadScores = oneThemeThreadScores + otherThemeThreadScores
+    #     threadInterval = createScoredModel(mergedThreadScores, minmaxScaleDict, dataType='train', dirPath=cdir+'merge-')
+        
+    #     #! finish
+    #     oneThemeIntervalDict[theme] = threadInterval
+    #     removeAndWriteFile(cdir+'5-5-merge_interval.json', threadInterval)
+
+    # removeAndWriteFile('merge-5-5-allOneTheme-interval.json', oneThemeIntervalDict)
     
     #! 2 alternative
     #! select IDF
-    with open('./5-3-idf-allOneTheme-interval.json') as model_file:
+    with open('./merge-5-5-allOneTheme-interval.json') as model_file:
         oneThemeIntervalDict = json.load(model_file)
 
-    #! 3-4-5 NB+prob+Jaccard of each theme model
-    print("-----Create testData_threadScores-----")
-    
-    #! 3-0 create threadScore without cut-off 
+    #! 3-4 NB+prob
+    #! 3-0 create threadScore of all threads without cut-off 
+    # print("-----Create testData_threadScores-----")
     # Path("./test_data_tfidf").mkdir(exist_ok=True)
     # testData_threadScores = toThreadsScores("test_data_tfidf/", URLCONFIG['mike_thread'], threadsList, cutOffBy=None)   
     #! 3-0 alternative
     with open('./test_data_tfidf/4-uncutThreadsScores.json') as model_file:
         testData_threadScores = json.load(model_file)
     
-    # add theme
+    predictResult = {}
+    topicIdList = []
+    # add theme, initial resultdict, topicid order list
     for threadscore in testData_threadScores:
         threadscore["theme"] = threadTheme[threadscore["topic_id"]]
+        predictResult[str(threadscore["topic_id"])] = []
+        topicIdList.append(str(threadscore["topic_id"]))
     
     # Prodiction using NB model of each theme
     for theme, threadIntervalList in oneThemeIntervalDict.items():
-        cdir = theme+"-idf/"
+        cdir = theme+"-idf-new/"
         #! 3 Fit X, Y, Create X_test, Y_test
-        # X, Y = formatToXY(threadIntervalList, dataType='train', dir_path=theme+'-idf/')
-        # X_test, Y_test = createXYTestSet(cdir, testData_threadScores, threadTheme) #TODO
+        # print("-----Fit X, Y, Create X_test, Y_test-----")
+        # X, Y = formatToXY(threadIntervalList, dataType='train', dirPath=cdir)
+        # X_test, Y_test = createXYTestSet(cdir, testData_threadScores, threadTheme)
         
         #! 3 alternative
         print(theme, "import success---------------")
         X, Y = importXY(cdir+'6-X_train.json',cdir+'6-Y_train.json')
-        X_test, Y_test = importXY(cdir+'6-X_test.json',cdir+'6-Y_test.json') #TODO
+        X_test, Y_test = importXY(cdir+'6-X_test.json',cdir+'6-Y_test.json')
 
         #!4 prediction using BernoulliNB with proba only
         print("-----start prediction")
         clf = BernoulliNB()
         clf.fit(X, Y)
-        # predictValProba = clf.predict_proba(X_test).tolist()
         predictValProba = clf.predict_proba(X_test).tolist()
         predictVal = clf.predict(X_test).tolist()
         # print("-----predictVal-----")
-        pprint.pprint(predictValProba)
-        print("=====================")
-        pprint.pprint(predictVal)
+        # pprint.pprint(predictValProba)
+        # print("=====================")
+        # pprint.pprint(predictVal)
+        countDict = {}
+        for val in predictVal:
+            countDict[val] = 1 if val not in countDict else countDict[val] + 1
+        pprint.pprint(countDict)
 
-        break
-        # removeAndWriteFile('7-prediction-probaResult.json', predictValProba)
-        # removeAndWriteFile('7-prediction-result.json', predictVal)
+        removeAndWriteFile(cdir+'7-predic-proba-2.json', predictValProba)
+        removeAndWriteFile(cdir+'7-predic-val-2.json', predictVal)
         
-        # labels = clf.classes_
-        # print("Labels:",labels)
-        # predictResultFromProba = []
-        # for proba in predictValProba:
-        #     result = [labels[idx] for idx, num in enumerate(proba) if num > 0] #! all that > 0
-        #     predictResultFromProba.append(result)
+        for idx, topicId in enumerate(topicIdList):
+            if predictVal[idx] == 'Yes':
+                predictResult[topicId].append(theme)
+            # elif predictVal[idx] == 'No' -> done nothing
 
-        # removeAndWriteFile('7-prediction-result-fromProba.json', predictResultFromProba)
+    removeAndWriteFile('8-complete-predict-result-2.json', predictResult)
 
-    #!5 TODO Jaccard
-    # jaccardScores = []
-    # for i in range(len(Y_test)):
-    #     jaccardScores.append(computeJaccardSimilarityScore[i], Y_test[i])
 
-    # removeAndWriteFile('8-jaccard-fromProba-Y_test.json', predictResultFromProba)
+    #!5 Jaccard
+    jaccardScores = {}
+    with open('8-complete-predict-result-2.json') as predictResult_file:
+        predictResult = json.load(predictResult_file)
+    for tid, predictedThemeList in predictResult.items():
+        actualTheme = selectMajorTheme(threadTheme[tid])
+        jaccard = computeJaccardSimilarityScore(predictedThemeList, actualTheme)
+        jaccardScores[tid] = {
+            "actual_theme": actualTheme,
+            "predict_theme": predictedThemeList,
+            "jaccard_score": jaccard
+        }
 
-    # correct = 0
-    # for idx, predict in enumerate(predictVal):
-    #     if predict in Y_test[idx]:
-    #         correct += 1
+    removeAndWriteFile('9-jaccard-scores-2.json', jaccardScores)
 
-    # print(correct)
-    # print(len(Y_test), len(predictVal))
-    # print(correct / len(Y_test) * 100)
-
+    # find accuracy
+    jcscores = [val["jaccard_score"] for tid, val in jaccardScores.items()]
+    avg = sum(jcscores) / len(jcscores)
+    print("Average:",avg)
     
 
     #!------------------------------------------------------
@@ -398,8 +403,8 @@ if __name__ == "__main__":
     # modelResult.append(BERN_result)
     # csvData += "{},{},{},{}".format(BERN_result['distribution'],BERN_result['accuracy'],BERN_result['recall_score'],BERN_result['precision_score'])
     
-    # removeAndWriteFile(dir_path+'7-prediction-result.json', modelResult)
-    # removeAndWriteFile(dir_path+'7-prediction-comparison.csv', csvData, 'csv')
+    # removeAndWriteFile(dirPath+'7-prediction-result.json', modelResult)
+    # removeAndWriteFile(dirPath+'7-prediction-comparison.csv', csvData, 'csv')
     
     # To mongo
     # print("----->insert")
