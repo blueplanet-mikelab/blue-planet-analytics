@@ -24,7 +24,6 @@ def classifyByPttern():
                                 password=dbDetail["password"] )
     db = client[dbDetail["db"]]
     # print("collections list",db.list_collection_names())
-    thread_col = db[str(dbDetail["threadcollection"])+"_{}".format(today)]
     # print('thread_col:',dbDetail["threadcollection"])
 
     print("getting topicID start...", datetime.now())
@@ -32,10 +31,11 @@ def classifyByPttern():
 
     #!get topicID
     db_click = client[dbDetail['click_db']]
-    date1DayAgo = datetime.strftime(datetime.now() - timedelta(2), '%Y%m%d')
-    print("Date2DayAgo to query:", date1DayAgo)
-    # date1DayAgo = today - 2
-    col_name = 'click-{}'.format(str(date1DayAgo))
+    date2DayAgo = datetime.strftime(datetime.now() - timedelta(2), '%Y%m%d')
+    thread_col = db[str(dbDetail["threadcollection"])+"_{}".format(date2DayAgo)]
+    print("Date2DayAgo to query:", date2DayAgo)
+    # date2DayAgo = today - 2
+    col_name = 'click-{}'.format(str(date2DayAgo))
     click_col = db_click[col_name]
     PIPELINE = [
         { '$match': {
