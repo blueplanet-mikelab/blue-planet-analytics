@@ -1,7 +1,10 @@
 import re, json, os
+from datetime import datetime, timedelta
+import requests
+
 this_file_abs_path = os.path.abspath(os.path.dirname(__file__))
-travel_guide_path = os.path.join(this_file_abs_path, 'travel_guide_average_071119.json' )
-country_list_path = os.path.join(this_file_abs_path, 'countriesListSorted.json' )
+travel_guide_path = os.path.join(this_file_abs_path, '../travel_guide_average_071119.json' )
+country_list_path = os.path.join(this_file_abs_path, '../countriesListSorted.json' )
 
 # get country list to classify country and find top country
 with open(travel_guide_path,'r', encoding="utf8") as travel_file:
@@ -310,3 +313,25 @@ def findThemeByKeyWord(content,tags):
     return [t for t in themes[:4] if t["count"] != 0]
 
 
+"""
+@params totalView a number of view of the forum
+        totalVote a number of votes for the forum
+        totalComment a number of comment on the forum
+        createdDate
+"""
+def calculatePopularity(totalView,totalVote,totalComment,createdTime):
+    diff = datetime.now() - datetime.fromtimestamp(createdTime)
+    diffDays = diff.days + diff.seconds/60/60/24
+
+    return (totalView+totalVote+totalComment) / diffDays
+
+"""
+@params content with HTML tags to find ing tag
+"""
+def findThumbnail(topicID):
+    response = requests.get("https://pantip.com/topic/{}".format(topicID))
+    p = re.compile(r'<img class="img-in-post" src="[^"]+')
+    m = p.search(response.text)
+    # print(m)
+    # print(m.group()[30:])
+    return m.group()[30:] if m != None else None

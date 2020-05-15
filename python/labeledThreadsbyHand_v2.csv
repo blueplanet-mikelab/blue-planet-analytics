@@ -1,4 +1,4 @@
-Timestamp,By,TopicID,Type,Country,Duration,Theme,Budget (maximum รวมค่าใช้จ่ายทั้งหมด) (ใส่ -1 ถ้ากระทู้ไม่ได้บอก)
+Timestamp,By,TopicID,Type,Country,Duration,Theme,Budget
 11/24/2019 18:03:27,Ben,39193841,Review,"""มองโกเลีย"": ""Mongolia""",Not Define,"Mountain, Waterfall, Religion, Historical",-1
 11/24/2019 18:11:14,Ben,39193512,Review,"""โรมาเนีย"": ""Romania""",11 Days,"Mountain, Sea, Sightseeing",45000
 11/24/2019 18:40:49,Ben,39195685,Review,"""ไทย"": ""Thailand""",1 Day,"Mountain, Sea, Religion",-1

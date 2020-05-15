@@ -1,0 +1,12 @@
+{
+    "countryJC": 0.8328947368421054,
+    "duration": {
+        "true": 184,
+        "false": 120
+    },
+    "themeJC": 0.31844454887218054,
+    "budget": {
+        "true": 113,
+        "false": 191
+    }
+}
