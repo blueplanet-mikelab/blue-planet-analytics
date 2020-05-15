@@ -11,9 +11,9 @@ from utils.preprocessDataUtil import createPreprocessData
 with open('./config/url.json') as json_data_file:
     URLCONFIG = json.load(json_data_file)
 
-if __name__ == "__main__":
-    today = 20200425
-    print("Today to query:", today)
+def classifyByPttern():
+    # today = 20200425
+    # print("Today to query:", today)
 
     with open('./config/database.json') as json_data_file:
         DBCONFIG = json.load(json_data_file)
@@ -32,8 +32,9 @@ if __name__ == "__main__":
 
     #!get topicID
     db_click = client[dbDetail['click_db']]
-    # date1DayAgo = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
-    date1DayAgo = today - 1
+    date1DayAgo = datetime.strftime(datetime.now() - timedelta(2), '%Y%m%d')
+    print("Date2DayAgo to query:", date1DayAgo)
+    # date1DayAgo = today - 2
     col_name = 'click-{}'.format(str(date1DayAgo))
     click_col = db_click[col_name]
     PIPELINE = [
@@ -132,3 +133,6 @@ if __name__ == "__main__":
         # break
     
     print('finish looping:',time.time() - start) #!
+
+if __name__ == "__main__":
+    classifyByPttern()
