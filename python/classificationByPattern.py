@@ -31,7 +31,9 @@ def classifyByPttern():
 
     #!get topicID
     db_click = client[dbDetail['click_db']]
-    date2DayAgo = datetime.strftime(datetime.now() - timedelta(2), '%Y%m%d')
+    today = datetime.now()
+    print("Today to query:", today)
+    date2DayAgo = datetime.strftime(today - timedelta(2), '%Y%m%d')
     thread_col = db[str(dbDetail["threadcollection"])+"_{}".format(date2DayAgo)]
     print("Date2DayAgo to query:", date2DayAgo)
     # date2DayAgo = today - 2
@@ -67,9 +69,9 @@ def classifyByPttern():
     start = time.time() #!
     #!prepare view weekly
     weeklyView = {}
-    for i in range(2,8):
-        # dateStr = datetime.strftime(datetime.now() - timedelta(i), '%Y%m%d')
-        dateStr = today - i
+    for i in range(3,9):
+        dateStr = datetime.strftime(today - timedelta(i), '%Y%m%d')
+        # dateStr = today - i
         print(dateStr)
         col = db_click['click-{}'.format(str(dateStr))]
         vieww = list(col.aggregate(PIPELINE))
