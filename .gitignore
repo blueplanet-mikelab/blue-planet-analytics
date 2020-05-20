@@ -14,5 +14,6 @@ python/image_pro/urban-and-rural-photos/
 python/image_pro/vgg16/
 backend/config.json
 backend/node_modules/
+python/.gitignore
 
 .vscode/
