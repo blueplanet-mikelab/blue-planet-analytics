@@ -1,0 +1,13 @@
+pymongo==3.10.1
+urllib3==1.23
+requests==2.22.0
+requests-file==1.4.3
+requests-ftp==0.3.1
+requests-oauthlib==1.2.0
+sklearn==0.0
+scikit-learn==0.22.1
+numpy==1.15.1
+pythainlp==2.0.7
+codes==0.1.2
+schedule==0.6.0
+thai-nlp==1.0.0
