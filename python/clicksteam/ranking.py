@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import pprint
 import urllib.request, ssl, requests
 from manageContentUtil import cleanContent, fullTokenizationToWordSummary
-from classificationUtil import findCountries
+from classification.classificationUtil import findCountries
 from fileWritingUtil import removeAndWriteFile
 
 with open('../config/url.json') as json_data_file:
