@@ -6,6 +6,6 @@ requests-ftp==0.3.1
 requests-oauthlib==1.2.0
 sklearn==0.0
 scikit-learn==0.22.1
-numpy==1.15.1
+numpy==1.22.0
 codes==0.1.2
 schedule==0.6.0
